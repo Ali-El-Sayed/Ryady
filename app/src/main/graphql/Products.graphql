@@ -1,0 +1,19 @@
+query ShopifyProducts{
+    products(first: 5){
+        edges {
+            node {
+                id
+                title
+                description
+
+                images(first: 50){
+                    edges {
+                        node{
+                            url
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
