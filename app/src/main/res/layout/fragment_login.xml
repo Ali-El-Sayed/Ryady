@@ -36,7 +36,7 @@
     <View
         android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="700dp"
         android:background="@drawable/background_login_screen"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="0dp" />

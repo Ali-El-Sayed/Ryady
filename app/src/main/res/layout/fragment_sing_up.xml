@@ -41,7 +41,7 @@
         app:lottie_loop="true"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        app:lottie_rawRes="@raw/sign_up2" />
+        app:lottie_rawRes="@raw/singup" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_user_name"
