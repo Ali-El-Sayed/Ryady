@@ -51,6 +51,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+
+    // Flotation Action Button
+    implementation ("com.getbase:floatingactionbutton:1.10.1")
+
     // Apollo
     implementation("com.apollographql.apollo3:apollo-runtime:4.0.0-beta.6")
     // retrofit
