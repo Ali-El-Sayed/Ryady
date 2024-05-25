@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SingUpFragment">
+    tools:context=".SignUp.view.SingUpFragment">
 
     <TextView
         android:id="@+id/tv_Title"
@@ -32,16 +32,14 @@
         app:layout_constraintTop_toBottomOf="@id/tv_Title" />
 
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animation"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+    <ImageView
         app:layout_constraintTop_toBottomOf="@id/sub_title"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        android:layout_marginHorizontal="20dp"
+        android:id="@+id/iv_signup"
         android:layout_marginTop="20dp"
-        app:lottie_rawRes="@raw/singup" />
+        android:layout_marginHorizontal="20dp"
+        android:src="@drawable/signup_logo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_user_name"
@@ -57,7 +55,7 @@
         app:boxStrokeColor="#CC1212"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:layout_constraintTop_toBottomOf="@id/animation"
+        app:layout_constraintTop_toBottomOf="@id/iv_signup"
         app:startIconDrawable="@drawable/baseline_person_24"
         app:startIconTint="@color/black"
 
