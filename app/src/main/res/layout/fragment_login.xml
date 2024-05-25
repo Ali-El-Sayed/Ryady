@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#CA59C4"
+    android:background="#9D4EDD"
     tools:context=".LoginFragment">
 
     <TextView
@@ -104,7 +104,7 @@
         android:layout_width="320dp"
         android:layout_height="60dp"
         android:layout_marginTop="40dp"
-        android:backgroundTint="#CA59C4"
+        android:backgroundTint="#9D4EDD"
         android:text="Login"
         android:textColor="@color/white"
         app:icon="@drawable/baseline_email_24"
