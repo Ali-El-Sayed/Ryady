@@ -1,4 +1,4 @@
-package com.example.ryady.SignUp.view
+package com.example.ryady.Login.View
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,10 +11,6 @@ import com.example.ryady.R
 class SingUpFragment : Fragment() {
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
