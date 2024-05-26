@@ -1,4 +1,4 @@
-package com.example.ryady.Login.View
+package com.example.ryady.SignUp.View
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,14 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.ryady.R
 
-class LoginFragment : Fragment() {
 
+class SingUpFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_sing_up, container, false)
     }
 
 }
