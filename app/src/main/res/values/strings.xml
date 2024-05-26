@@ -5,4 +5,8 @@
     <string name="search">Search</string>
     <string name="notification">Notification</string>
     <string name="hi_welcome">Hi Welcome 👋🏻</string>
+    <string name="discounts">Discounts</string>
+    <string name="special_offers">Special Offers</string>
+    <string name="product_image">product image</string>
+    <string name="products">Products</string>
 </resources>

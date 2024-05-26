@@ -2,12 +2,11 @@ package com.example.ryady.datasource.remote
 
 import com.apollographql.apollo3.ApolloClient
 import com.example.ShopifyProductsQuery
-import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
 
 interface IRemoteDataSource {
-    suspend fun fetchProducts(): Response<ArrayList<Product>>
+    suspend fun <T> fetchProducts(): Response<T>
 }
 
 class RemoteDataSource private constructor(private val client: ApolloClient) : IRemoteDataSource {
@@ -21,10 +20,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             }
     }
 
-    override suspend fun fetchProducts(): Response<ArrayList<Product>> {
+    override suspend fun <T> fetchProducts(): Response<T> {
         client.query(ShopifyProductsQuery()).execute().data?.products?.toProductList()
             ?.let {
-                return Response.Success(it)
+                return Response.Success(it as T)
             }
         return Response.Error("Data Not Found")
     }
