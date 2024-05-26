@@ -73,6 +73,8 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     // Lottie
     implementation("com.airbnb.android:lottie:6.4.0")
+    // Coil
+    implementation("io.coil-kt:coil:2.4.0")
 
     // === TESTING ===
     // hamcrest

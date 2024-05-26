@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.screens.home.view.HomeScreen">
+    <!--  Content View  -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--  Toolbar  -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:logo="@drawable/user"
+                app:menu="@menu/top_app_bar"
+                app:subtitle="Username"
+                app:title="@string/hi_welcome"
+                app:titleMarginStart="30dp"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+                app:titleTextColor="@android:color/darker_gray" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/discount_carousel_rv"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+            tools:listitem="@layout/carousel_discount_item"
+            tools:itemCount="4"
+            />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</FrameLayout>
