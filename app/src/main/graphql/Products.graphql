@@ -1,19 +1,33 @@
 query ShopifyProducts{
-    products(first: 5){
+    products(first: 10) {
         edges {
             node {
                 id
                 title
-                description
-
-                images(first: 50){
-                    edges {
-                        node{
-                            url
-                        }
+                availableForSale
+                productType
+                vendor
+                featuredImage {
+                    url
+                }
+                priceRange {
+                    minVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                    maxVariantPrice {
+                        amount
+                        currencyCode
                     }
                 }
             }
         }
     }
+
+    product(id: "gid://shopify/Product/7331203416147"){
+        id
+        vendor
+
+    }
 }
+

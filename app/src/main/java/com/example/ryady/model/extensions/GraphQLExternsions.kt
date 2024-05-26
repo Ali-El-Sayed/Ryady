@@ -11,10 +11,18 @@ fun ShopifyProductsQuery.Products.toProductList(): ArrayList<Product> {
         product.id = edge.node.id
         product.title = edge.node.title
         val images = ArrayList<Images>()
-        edge.node.images.edges.forEach {
-            images.add(Images(src = it.node.url as String))
-            print(it.node.url)
+        edge.node.featuredImage?.url.let {
+            images.add(Images(src = it as String))
         }
+        edge.node.priceRange.maxVariantPrice.let {
+            product.maxPrice = it.amount.toString()
+            product.currency = it.currencyCode.toString()
+        }
+        edge.node.priceRange.minVariantPrice.let {
+            product.minPrice = it.amount.toString()
+            product.currency = it.currencyCode.toString()
+        }
+        product.availableForSale = edge.node.availableForSale
         product.images = images
         productList.add(product)
     }
