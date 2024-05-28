@@ -1,16 +1,10 @@
 package com.example.ryady
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.example.ryady.datasource.remote.RemoteDataSource
-import com.example.ryady.network.GraphqlClient
-import com.example.ryady.network.model.Response
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity"
 
@@ -23,21 +17,6 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }
-
-        lifecycleScope.launch {
-            val response = RemoteDataSource.getInstance(GraphqlClient.apiService).fetchProducts()
-            when (response) {
-                is Response.Success -> {
-                    Log.d(TAG, "onCreate: ${response.data}")
-                }
-
-                is Response.Error -> {
-                }
-
-                else -> {
-                }
-            }
         }
     }
 }

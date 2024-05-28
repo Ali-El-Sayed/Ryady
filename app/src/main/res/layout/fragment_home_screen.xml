@@ -76,7 +76,6 @@
             tools:itemCount="4"
             tools:listitem="@layout/prodcut_card" />
 
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

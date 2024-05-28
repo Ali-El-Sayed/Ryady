@@ -22,6 +22,7 @@ fun ShopifyProductsQuery.Products.toProductList(): ArrayList<Product> {
             product.minPrice = it.amount.toString()
             product.currency = it.currencyCode.toString()
         }
+        product.vendor = edge.node.vendor
         product.availableForSale = edge.node.availableForSale
         product.images = images
         productList.add(product)
