@@ -5,5 +5,5 @@ sealed class Response<T> {
 
     class Error<T>(val message: String) : Response<T>()
 
-    object Loading : Response<Nothing>()
+    class Loading<T> : Response<T>()
 }
