@@ -8,8 +8,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.model.Product
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.product.viewModel.ProductViewModel
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity"

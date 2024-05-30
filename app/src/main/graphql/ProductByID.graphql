@@ -1,0 +1,27 @@
+query ProductById($id: ID!) {
+    product(id: $id) {
+        id
+        title
+        description
+        images(first: 5){
+            edges {
+                node {
+                    url
+                }
+            }
+        }
+        priceRange {
+            maxVariantPrice {
+                amount
+                currencyCode
+            }
+            minVariantPrice {
+                amount
+                currencyCode
+            }
+        }
+        totalInventory
+
+
+    }
+}
