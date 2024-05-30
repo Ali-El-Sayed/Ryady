@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            val response = RemoteDataSource.getInstance(GraphqlClient.apiService).fetchProducts()
+            val response = RemoteDataSource.getInstance(GraphqlClient.apiService).fetchProducts<Product>()
             when (response) {
                 is Response.Success -> {
                     Log.d(TAG, "onCreate: ${response.data}")
