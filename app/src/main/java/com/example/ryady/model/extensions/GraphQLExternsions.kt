@@ -1,7 +1,9 @@
 package com.example.ryady.model.extensions
 
+import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.Images
+import com.example.ryady.model.Brand
 import com.example.ryady.model.Product
 
 fun ShopifyProductsQuery.Products.toProductList(): ArrayList<Product> {
@@ -28,4 +30,21 @@ fun ShopifyProductsQuery.Products.toProductList(): ArrayList<Product> {
         productList.add(product)
     }
     return productList
+}
+
+fun ShopifyBrandsQuery.Collections.toBrandsList(): ArrayList<Brand> {
+    val brandsList = ArrayList<Brand>()
+    this?.edges?.forEach { edge ->
+        // skip first one
+        if (edge.node.title != "Home page") {
+            val brand = Brand()
+            brand.id = edge.node.id
+            brand.title = edge.node.title
+            edge.node.image?.let {
+                brand.imageUrl = it.url as String
+            }
+            brandsList.add(brand)
+        }
+    }
+    return brandsList
 }

@@ -38,7 +38,7 @@ class ProductsAdapter(private val products: List<Product>) :
             binding.productBrand.text = product.vendor
             binding.imageView.load(product.images[0].src) {
                 crossfade(true)
-                crossfade(1000)
+                crossfade(500)
                 placeholder(R.drawable.placeholder)
             }
         }

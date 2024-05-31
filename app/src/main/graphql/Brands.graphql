@@ -1,0 +1,13 @@
+query  ShopifyBrandsQuery {
+    collections(first: 13) {
+        edges {
+            node {
+                id
+                title
+                image {
+                    url
+                }
+            }
+        }
+    }
+}
