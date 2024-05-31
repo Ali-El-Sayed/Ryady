@@ -76,8 +76,7 @@ class HomeScreen : Fragment() {
                         false,
                     )
                     binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
-                        val bundle = bundleOf("brandId" to id)
-                        findNavController().navigate(R.id.action_homeScreen_to_productsByBrandFragment, bundle)
+                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
                     }
                 }
 
@@ -97,7 +96,10 @@ class HomeScreen : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    binding.productsRv.adapter = ProductsAdapter(it.data)
+                    binding.productsRv.adapter = ProductsAdapter(it.data){ id ->
+
+                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
+                    }
                 }
 
                 is Response.Error -> {

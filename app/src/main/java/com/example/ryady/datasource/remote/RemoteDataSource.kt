@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.flow
 
 private const val TAG = "RemoteDataSource"
 
-private const val TAG = "RemoteDataSource"
 
 interface IRemoteDataSource {
 

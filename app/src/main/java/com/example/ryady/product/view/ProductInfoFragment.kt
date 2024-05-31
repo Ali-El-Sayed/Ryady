@@ -6,14 +6,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.ProductByIdQuery
-import com.example.ryady.R
 import com.example.ryady.databinding.FragmentProductInfoBinding
+import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.product.viewModel.ProductViewModel
+import com.example.ryady.view.factory.ViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,8 +28,12 @@ private const val TAG = "ProductInfoFragment"
 
 class ProductInfoFragment : Fragment() {
 
-    lateinit var viewModel: ProductViewModel
     lateinit var binding: FragmentProductInfoBinding
+
+    private val viewModel by lazy {
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        ViewModelProvider(this, factory)[ProductViewModel::class.java]
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,9 +42,19 @@ class ProductInfoFragment : Fragment() {
         return binding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val id : String = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.fetchProductById(id)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel =  ProductViewModel("gid://shopify/Product/7331203514451")
         lifecycleScope.launch {
             viewModel.productInfo.collectLatest {
                 withContext(Dispatchers.Main){

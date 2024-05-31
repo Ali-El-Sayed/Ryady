@@ -16,16 +16,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "ProductViewModel"
-class ProductViewModel(id: String) :ViewModel() {
-    private val remoteDataSource: IRemoteDataSource
+class ProductViewModel(private val remoteDataSource: IRemoteDataSource) :ViewModel() {
+
+
     private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> = MutableStateFlow(Response.Loading())
     var productInfo : StateFlow<Response<ProductByIdQuery.Product>>  = _productInfo
-    init {
-        remoteDataSource = RemoteDataSource.getInstance(GraphqlClient.apiService)
-        fetchProductById(id)
-    }
 
-    private fun fetchProductById(id : String){
+     suspend fun fetchProductById(id : String){
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.fetchProductById(id = id)
                 .collectLatest {

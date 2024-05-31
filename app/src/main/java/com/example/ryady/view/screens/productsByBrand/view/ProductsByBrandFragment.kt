@@ -17,6 +17,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
+import com.example.ryady.view.screens.home.view.HomeScreenDirections
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
 import kotlinx.coroutines.launch
 
@@ -57,7 +58,10 @@ class ProductsByBrandFragment : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = GridLayoutManager(requireContext(), 2)
-                    binding.productsRv.adapter = ProductsAdapter(it.data)
+                    binding.productsRv.adapter = ProductsAdapter(it.data){ id ->
+
+                        findNavController().navigate(ProductsByBrandFragmentDirections.actionProductsByBrandFragmentToProductInfoFragment(productId = id))
+                    }
                     binding.topAppBar.title = it.data[0].vendor
                     binding.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
                 }

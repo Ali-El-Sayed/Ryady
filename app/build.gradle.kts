@@ -4,20 +4,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.apollographql.apollo3").version("4.0.0-beta.6")
-    id("androidx.navigation.safeargs.kotlin").version("2.7.7")
+    id("androidx.navigation.safeargs.kotlin")
     kotlin("kapt")
 }
 apollo {
     service("service") {
         packageName.set("com.example")
-    }
-}
-buildscript {
-    repositories {
-        google()
-    }
-    dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
     }
 }
 
