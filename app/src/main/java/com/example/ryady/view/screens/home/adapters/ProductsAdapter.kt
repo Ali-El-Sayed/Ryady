@@ -5,18 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.ryady.R
-import com.example.ryady.databinding.ProdcutCardBinding
+import com.example.ryady.databinding.ProductCardBinding
 import com.example.ryady.model.Product
+
+private const val TAG = "ProductsAdapter"
 
 class ProductsAdapter(private val products: List<Product>) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
-    private lateinit var binding: ProdcutCardBinding
+    private lateinit var binding: ProductCardBinding
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): ViewHolder {
-        binding = ProdcutCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ProductCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -29,12 +31,15 @@ class ProductsAdapter(private val products: List<Product>) :
         holder.bind(products[position])
     }
 
-    inner class ViewHolder(binding: ProdcutCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
             binding.currency.text = product.currency
             binding.maxPrice.text = product.maxPrice
             binding.minPrice.text = product.minPrice
-            binding.productName.text = product.title
+            binding.productName.let {
+                product.title = product.title.replace("\n", "")
+                it.text = product.title
+            }
             binding.productBrand.text = product.vendor
             binding.imageView.load(product.images[0].src) {
                 crossfade(true)

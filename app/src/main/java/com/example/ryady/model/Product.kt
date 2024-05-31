@@ -24,4 +24,5 @@ data class Product(
     var adminGraphqlApiId: String = "",
     var variants: List<Variant> = emptyList(),
     var images: List<Images> = emptyList(),
+    var vendorImageUrl:String = ""
 )

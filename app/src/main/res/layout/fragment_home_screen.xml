@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <!--  Toolbar  -->
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
@@ -27,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/primary"
                     android:minHeight="?attr/actionBarSize"
-                    app:logo="@drawable/user"
+                    app:logo="@drawable/ic_user"
                     app:menu="@menu/top_app_bar"
                     app:subtitle="Username"
                     app:subtitleTextAppearance="@font/regular"
@@ -51,13 +52,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/discount_carousel_rv"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="170dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
                 tools:itemCount="4"
-                tools:layout_height="170dp"
+                tools:layout_height="160dp"
                 tools:listitem="@layout/carousel_discount_item" />
 
             <!--  Brands List  -->
@@ -101,7 +102,7 @@
                 app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                 app:spanCount="2"
                 tools:itemCount="4"
-                tools:listitem="@layout/prodcut_card" />
+                tools:listitem="@layout/product_card" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -10,7 +10,9 @@ import com.example.ryady.model.Brand
 
 private const val TAG = "BrandsAdapter"
 
-class BrandsAdapter(private val brands: List<Brand>) :
+class BrandsAdapter(
+    private val brands: List<Brand>, private val onBrandClick: (id: String) -> Unit
+) :
     RecyclerView.Adapter<BrandsAdapter.ViewHolder>() {
     private lateinit var binding: BrandCardBinding
 
@@ -37,6 +39,9 @@ class BrandsAdapter(private val brands: List<Brand>) :
                 crossfade(true)
                 crossfade(500)
                 placeholder(R.drawable.placeholder)
+            }
+            binding.root.setOnClickListener {
+                onBrandClick(brand.id)
             }
         }
     }

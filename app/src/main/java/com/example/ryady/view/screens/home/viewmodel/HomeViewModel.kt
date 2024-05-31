@@ -14,12 +14,10 @@ import kotlinx.coroutines.launch
 private const val TAG = "HomeViewModel"
 
 class HomeViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
-    private var products: MutableStateFlow<Response<ArrayList<Product>>> =
-        MutableStateFlow(Response.Loading())
+    private var products: MutableStateFlow<Response<ArrayList<Product>>> = MutableStateFlow(Response.Loading())
     val productList = products.asStateFlow()
 
-    private var brands: MutableStateFlow<Response<ArrayList<Brand>>> =
-        MutableStateFlow(Response.Loading())
+    private var brands: MutableStateFlow<Response<ArrayList<Brand>>> = MutableStateFlow(Response.Loading())
     val brandList = brands.asStateFlow()
 
     init {
@@ -32,7 +30,6 @@ class HomeViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
     private suspend fun fetchProducts() {
         val response = remoteDataSource.fetchProducts<ArrayList<Product>>()
-
         when (response) {
             is Response.Loading -> products.value = Response.Loading()
             is Response.Success -> products.value = Response.Success(response.data)
@@ -41,14 +38,11 @@ class HomeViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
     }
 
     private suspend fun fetchBrands() {
+        brands.value = Response.Loading()
         val response = remoteDataSource.fetchBrands<ArrayList<Brand>>()
-
         when (response) {
             is Response.Loading -> brands.value = Response.Loading()
-            is Response.Success -> {
-                brands.value = Response.Success(response.data)
-            }
-
+            is Response.Success -> brands.value = Response.Success(response.data)
             is Response.Error -> brands.value = Response.Error(response.message)
         }
     }
