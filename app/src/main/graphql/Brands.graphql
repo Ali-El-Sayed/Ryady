@@ -1,0 +1,47 @@
+query  ShopifyBrandsQuery {
+    collections(first: 13) {
+        edges {
+            node {
+                id
+                title
+                image {
+                    url
+                }
+            }
+        }
+    }
+}
+
+
+query ShopifyBrandsByIdQuery($id:ID!){
+    collection(id: $id) {
+        title
+        image {
+            url
+        }
+        products(first: 50){
+            edges {
+                node {
+                    id
+                    title
+                    availableForSale
+                    productType
+                    vendor
+                    featuredImage {
+                        url
+                    }
+                    priceRange {
+                        minVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                        maxVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

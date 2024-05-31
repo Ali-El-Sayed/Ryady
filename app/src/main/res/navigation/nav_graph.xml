@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/homeScreen">
+
+    <fragment
+        android:id="@+id/homeScreen"
+        android:name="com.example.ryady.view.screens.home.view.HomeScreen"
+        android:label="Home"
+        tools:layout="@layout/fragment_home_screen">
+        <action
+            android:id="@+id/action_homeScreen_to_productsByBrandFragment"
+            app:destination="@id/productsByBrandFragment" />
+        <action
+            android:id="@+id/action_homeScreen_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/productsByBrandFragment"
+        android:name="com.example.ryady.view.screens.productsByBrand.view.ProductsByBrandFragment"
+        android:label="fragment_products_by_brands"
+        tools:layout="@layout/fragment_products_by_brands">
+        <argument
+            android:name="brandId"
+            android:defaultValue="2"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_productsByBrandFragment_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productInfoFragment"
+        android:name="com.example.ryady.product.view.ProductInfoFragment"
+        android:label="fragment_product_info"
+        tools:layout="@layout/fragment_product_info" >
+        <argument
+            android:name="productId"
+            app:argType="string"
+            android:defaultValue="123456" />
+    </fragment>
+</navigation>

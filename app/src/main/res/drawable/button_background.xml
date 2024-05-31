@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <solid android:color="#D0D0D0"/> <!-- Lighter gray when pressed -->
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#F0F0F0"/> <!-- Default button color -->
+            <stroke android:width="2dp" android:color="#C0C0C0"/>
+        </shape>
+    </item>
+</selector>

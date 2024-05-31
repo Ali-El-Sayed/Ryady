@@ -1,14 +1,18 @@
+import com.android.build.api.dsl.ApplicationBuildFeatures
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.apollographql.apollo3").version("4.0.0-beta.6")
+    id("androidx.navigation.safeargs.kotlin")
     kotlin("kapt")
-    id("com.apollographql.apollo3") version "4.0.0-beta.6"
 }
 apollo {
     service("service") {
         packageName.set("com.example")
     }
 }
+
 android {
     namespace = "com.example.ryady"
     compileSdk = 34
@@ -45,12 +49,16 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+
+    // Flotation Action Button
+    implementation("com.getbase:floatingactionbutton:1.10.1")
+
     // Apollo
     implementation("com.apollographql.apollo3:apollo-runtime:4.0.0-beta.6")
     // retrofit
@@ -73,6 +81,11 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     // Lottie
     implementation("com.airbnb.android:lottie:6.4.0")
+    // Coil
+    implementation("io.coil-kt:coil:2.4.0")
+
+    // Image Slider
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
     // === TESTING ===
     // hamcrest
@@ -85,7 +98,11 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.12")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
 }

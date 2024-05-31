@@ -1,8 +1,6 @@
 package com.example.ryady.model
 
-import com.example.ryady.Image
 import com.example.ryady.Images
-import com.example.ryady.Option
 import com.example.ryady.Variant
 
 data class Product(
@@ -11,6 +9,10 @@ data class Product(
     var bodyHtml: String = "",
     var vendor: String = "",
     var productType: String = "",
+    var availableForSale: Boolean = false,
+    var maxPrice: String = "",
+    var minPrice: String = "",
+    var currency: String = "",
     var createdAt: String = "",
     var handle: String = "",
     var updatedAt: String = "",
@@ -21,7 +23,6 @@ data class Product(
     var status: String = "",
     var adminGraphqlApiId: String = "",
     var variants: List<Variant> = emptyList(),
-    var options: List<Option> = emptyList(),
     var images: List<Images> = emptyList(),
-    var image: Image = Image(),
+    var vendorImageUrl:String = ""
 )
