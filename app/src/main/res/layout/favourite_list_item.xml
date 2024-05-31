@@ -75,7 +75,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:fab_colorPressed="#D24545"
             app:fab_size="mini"
-            app:fab_icon="@drawable/delete"
+            app:fab_icon="@drawable/ic_delete"
             app:fab_colorNormal="@color/white"
             />
 

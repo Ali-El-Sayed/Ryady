@@ -58,7 +58,7 @@
         app:hintAnimationEnabled="true"
         app:boxStrokeColor="#CC1212"
         app:startIconMinSize="32dp"
-        app:startIconDrawable="@drawable/baseline_email_24"
+        app:startIconDrawable="@drawable/ic_mail"
         app:startIconTint="@color/black"
 
         >
@@ -87,7 +87,7 @@
         app:layout_constraintTop_toBottomOf="@id/til_email"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/black"
-        app:startIconDrawable="@drawable/lock"
+        app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="@color/black">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -107,7 +107,7 @@
         android:backgroundTint="#9D4EDD"
         android:text="Login"
         android:textColor="@color/white"
-        app:icon="@drawable/baseline_email_24"
+        app:icon="@drawable/ic_mail"
         app:iconGravity="textStart"
         android:textAlignment="center"
         app:iconSize="30dp"

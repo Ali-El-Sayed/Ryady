@@ -1,4 +1,4 @@
-query ShopifyProducts{
+query ShopifyProductsQuery{
     products(first: 10) {
         edges {
             node {

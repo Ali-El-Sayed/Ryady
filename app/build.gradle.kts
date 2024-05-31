@@ -1,14 +1,26 @@
+import com.android.build.api.dsl.ApplicationBuildFeatures
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.apollographql.apollo3").version("4.0.0-beta.6")
+    id("androidx.navigation.safeargs.kotlin").version("2.7.7")
     kotlin("kapt")
-    id("com.apollographql.apollo3") version "4.0.0-beta.6"
 }
 apollo {
     service("service") {
         packageName.set("com.example")
     }
 }
+buildscript {
+    repositories {
+        google()
+    }
+    dependencies {
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
+    }
+}
+
 android {
     namespace = "com.example.ryady"
     compileSdk = 34
@@ -45,7 +57,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,9 +64,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
 
-
     // Flotation Action Button
-    implementation ("com.getbase:floatingactionbutton:1.10.1")
+    implementation("com.getbase:floatingactionbutton:1.10.1")
 
     // Apollo
     implementation("com.apollographql.apollo3:apollo-runtime:4.0.0-beta.6")

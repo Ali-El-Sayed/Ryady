@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="150dp"
     android:layout_margin="12dp"
     android:scaleType="centerCrop"
     app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
@@ -14,6 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        tools:src="@drawable/placeholder" />
+        tools:src="@drawable/ad1" />
 
 </com.google.android.material.carousel.MaskableFrameLayout>
