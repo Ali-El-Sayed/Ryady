@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.ryady.R
 import com.example.ryady.databinding.FragmentHomeScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -25,6 +23,7 @@ import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.google.android.material.carousel.CarouselSnapHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -40,11 +39,12 @@ class HomeScreen : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.discountCarouselRv.onFlingListener = null
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
-        inflatingUIJob = lifecycleScope.launch {
+        inflatingUIJob = lifecycleScope.launch(Dispatchers.IO){
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { fetchProducts() }
-                launch { fetchBrands() }
+                launch(Dispatchers.Main) { fetchProducts() }
+                launch(Dispatchers.Main) { fetchBrands() }
             }
         }
 
@@ -96,7 +96,7 @@ class HomeScreen : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    binding.productsRv.adapter = ProductsAdapter(it.data){ id ->
+                    binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
 
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
                     }

@@ -7,11 +7,14 @@
     <string name="notification">Notification</string>
     <string name="hi_welcome">Hi Welcome 👋🏻</string>
     <string name="discounts">Discounts</string>
-    <string name="special_offers">Special Offers</string>
+    <string name="hot_deals">Hot Deals</string>
     <string name="product_image">product image</string>
     <string name="products">Products</string>
 
     <string name="add_to_cart">Add To Cart</string>
 
     <string name="brands">Brands</string>
+    <string name="category">Category</string>
+    <string name="home">Home</string>
+    <string name="categories">CATEGORIES</string>
 </resources>

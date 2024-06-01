@@ -1,112 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+
+    <!--  Content View  -->
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary"
-        tools:context=".view.screens.home.view.HomeScreen">
-        <!--  Content View  -->
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+        android:orientation="vertical">
 
-            <!--  Toolbar  -->
-            <com.google.android.material.appbar.AppBarLayout
+        <!--  Toolbar  -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/primary">
+                android:background="@color/primary"
+                android:minHeight="?attr/actionBarSize"
+                app:logo="@drawable/ic_user"
+                app:menu="@menu/top_app_bar"
+                app:subtitle="Username"
+                app:subtitleTextAppearance="@font/regular"
+                app:title="@string/hi_welcome"
+                app:titleMarginStart="30dp"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+                app:titleTextColor="@android:color/darker_gray" />
 
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/topAppBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/primary"
-                    android:minHeight="?attr/actionBarSize"
-                    app:logo="@drawable/ic_user"
-                    app:menu="@menu/top_app_bar"
-                    app:subtitle="Username"
-                    app:subtitleTextAppearance="@font/regular"
-                    app:title="@string/hi_welcome"
-                    app:titleMarginStart="30dp"
-                    app:titleTextAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-                    app:titleTextColor="@android:color/darker_gray" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-            </com.google.android.material.appbar.AppBarLayout>
+        <!--  Discount Carousel  -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="6dp"
+            android:paddingStart="12dp">
 
-            <!--  Discount Carousel  -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:text="@string/special_offers"
+                android:text="@string/hot_deals"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/discount_carousel_rv"
-                android:layout_width="match_parent"
-                android:layout_height="170dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
-                tools:itemCount="4"
-                tools:layout_height="160dp"
-                tools:listitem="@layout/carousel_discount_item" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_hot_deals" />
+        </LinearLayout>
 
-            <!--  Brands List  -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/discount_carousel_rv"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:background="@color/list_background"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+            tools:itemCount="4"
+            tools:layout_height="160dp"
+            tools:listitem="@layout/carousel_discount_item" />
+
+        <!--  Brands List  -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="6dp"
+            android:paddingStart="12dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
                 android:text="@string/brands"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/brands_rv"
-                android:layout_width="match_parent"
-                android:layout_height="105dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:padding="4dp"
-                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="10"
-                tools:listitem="@layout/brand_card" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_brands" />
+        </LinearLayout>
 
-            <!--   Products List     -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/brands_rv"
+            android:layout_width="match_parent"
+            android:layout_height="105dp"
+            android:background="@color/list_background"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            tools:itemCount="10"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/brand_card" />
+
+        <!--   Products List     -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="6dp"
+            android:paddingStart="12dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="12dp"
                 android:text="@string/products"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/products_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="4"
-                tools:listitem="@layout/product_card" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_shopping" />
+        </LinearLayout>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/products_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/list_background"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:spanCount="2"
+            tools:itemCount="4"
+            tools:listitem="@layout/product_card" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>
 
 
-    </FrameLayout>
-
-</ScrollView>

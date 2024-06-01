@@ -2,11 +2,15 @@ package com.example.ryady.datasource.remote
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
+
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
+import com.example.ShopifyProductByCategoryTypeQuery
+import com.example.ShopifyProductByIdQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
@@ -23,8 +27,8 @@ interface IRemoteDataSource {
 
     suspend fun <T> fetchProducts(): Response<T>
 
-    suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
 
+    suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
 
     suspend fun <T> fetchBrands(): Response<T>
 
@@ -33,6 +37,8 @@ interface IRemoteDataSource {
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
 
     suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>
+
+    suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -89,9 +95,19 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
 
+
+
+
+    override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
+        val response = client.query(ShopifyProductByCategoryTypeQuery(category)).execute()
+        return when {
+            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            else -> Response.Success(response.data?.products?.toProductList() as T)
+        }
+    }
+
     override suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>> {
-        client.query(ProductByIdQuery(id))
-            .execute().data?.product?.let {
+        client.query(ProductByIdQuery(id)).execute().data?.product?.let {
                 return flow { emit(Response.Success(it)) }
             }
 
