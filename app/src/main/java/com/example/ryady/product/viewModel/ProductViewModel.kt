@@ -3,7 +3,7 @@ package com.example.ryady.product.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ShopifyProductByIdQuery
+import com.example.ProductByIdQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -19,8 +19,8 @@ private const val TAG = "ProductViewModel"
 class ProductViewModel(private val remoteDataSource: IRemoteDataSource) :ViewModel() {
 
 
-    private var _productInfo: MutableStateFlow<Response<ShopifyProductByIdQuery.Product>> = MutableStateFlow(Response.Loading())
-    var productInfo : StateFlow<Response<ShopifyProductByIdQuery.Product>>  = _productInfo
+    private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> = MutableStateFlow(Response.Loading())
+    var productInfo : StateFlow<Response<ProductByIdQuery.Product>>  = _productInfo
 
      suspend fun fetchProductById(id : String){
         viewModelScope.launch(Dispatchers.IO) {

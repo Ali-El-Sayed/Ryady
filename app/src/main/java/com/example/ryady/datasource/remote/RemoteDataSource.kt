@@ -10,7 +10,6 @@ import com.example.ProductByIdQuery
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
-import com.example.ShopifyProductByIdQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList

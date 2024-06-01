@@ -25,7 +25,7 @@ query ShopifyProductsQuery{
     }
 }
 
-query ShopifyProductById($id: ID!) {
+query ProductById($id: ID!) {
     product(id: $id) {
         id
         title
@@ -37,6 +37,7 @@ query ShopifyProductById($id: ID!) {
                 }
             }
         }
+
         priceRange {
             maxVariantPrice {
                 amount
@@ -47,12 +48,30 @@ query ShopifyProductById($id: ID!) {
                 currencyCode
             }
         }
+        totalInventory
         vendor
         tags
+        descriptionHtml
+        variants(first : 5) {
+            edges{
+                node {
+                    price {
+                        amount
+                    }
+                    weight
+                    barcode
+                    id
+                    title
+                    unitPrice {
+                        amount
+                    }
+
+                }
+            }
+        }
 
     }
 }
-
 query ShopifyProductByCategoryType($query: String!){
     products(first: 50, query: $query){
         edges {
