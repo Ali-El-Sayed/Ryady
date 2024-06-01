@@ -10,6 +10,7 @@ query ProductById($id: ID!) {
                 }
             }
         }
+
         priceRange {
             maxVariantPrice {
                 amount
@@ -23,6 +24,24 @@ query ProductById($id: ID!) {
         totalInventory
         vendor
         tags
+        descriptionHtml
+        variants(first : 5) {
+            edges{
+                node {
+                    price {
+                        amount
+                    }
+                    weight
+                    barcode
+                    id
+                    title
+                    unitPrice {
+                        amount
+                    }
+
+                }
+            }
+        }
 
     }
 }

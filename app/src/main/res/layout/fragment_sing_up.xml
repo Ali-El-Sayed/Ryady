@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login.View.SingUpFragment">
+    tools:context=".login.view.SingUpFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
 
     <TextView
         android:id="@+id/tv_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="60dp"
         android:text="Complete Your account"
         android:textAlignment="center"
         android:textColor="@color/black"
+        android:layout_marginTop="20dp"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
@@ -42,27 +47,61 @@
         android:layout_height="200dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_user_name"
+        android:id="@+id/til_first_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="30dp"
-        android:hint="User Name"
+        android:hint="First Name"
         app:boxCornerRadiusBottomEnd="20dp"
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#CC1212"
+        app:boxStrokeColor="#0023AA"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
+        android:textColorHint="@color/black"
         app:layout_constraintTop_toBottomOf="@id/iv_signup"
         app:startIconDrawable="@drawable/ic_person"
         app:startIconTint="@color/black"
-
+        app:hintTextColor="@color/black"
+        app:cursorColor="@color/black"
         >
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_user_name"
+            android:id="@+id/et_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp"
+        android:hint="Last Name"
+        app:boxCornerRadiusBottomEnd="20dp"
+        app:boxCornerRadiusBottomStart="20dp"
+        app:cursorColor="@color/black"
+
+        app:boxCornerRadiusTopEnd="20dp"
+        app:boxCornerRadiusTopStart="20dp"
+        app:boxStrokeColor="#0023AA"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        android:textColorHint="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/til_first_name"
+        app:startIconDrawable="@drawable/ic_person"
+        app:startIconTint="@color/black"
+        app:hintTextColor="@color/black"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
@@ -76,18 +115,20 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
+        app:cursorColor="@color/black"
         android:hint="Email"
         app:boxCornerRadiusBottomEnd="20dp"
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#CC1212"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:layout_constraintTop_toBottomOf="@id/til_user_name"
+        app:layout_constraintTop_toBottomOf="@id/til_last_name"
         app:startIconDrawable="@drawable/ic_mail"
+        android:textColorHint="@color/black"
+        app:hintTextColor="@color/black"
         app:startIconTint="@color/black"
-
+        app:boxStrokeColor="#0023AA"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -110,12 +151,13 @@
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#6202ee"
         app:hintEnabled="true"
         app:hintTextColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/til_email"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/black"
+        app:boxStrokeColor="#0023AA"
+        app:cursorColor="@color/black"
         app:startIconDrawable="@drawable/ic_lock"
         app:startIconTint="@color/black">
 
@@ -127,70 +169,15 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="Confirm Password"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#6202ee"
-        app:hintEnabled="true"
-        app:hintTextColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/til_password"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/black"
-        app:startIconDrawable="@drawable/ic_lock"
-        app:startIconTint="@color/black">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_confirm_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_phone_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="Phone Number"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#6202ee"
-        app:hintEnabled="true"
-        app:hintTextColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/til_confirm_password"
-        app:passwordToggleTint="@color/black"
-        app:startIconDrawable="@drawable/ic_smartphone"
-        app:startIconTint="@color/black">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
         android:layout_width="320dp"
         android:layout_height="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#9D4EDD"
         android:text="Login"
         android:textAlignment="center"
+
         android:textColor="@color/white"
         android:textSize="18sp"
         app:icon="@drawable/ic_mail"
@@ -199,7 +186,8 @@
         app:iconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_phone_number" />
+        app:layout_constraintTop_toBottomOf="@id/til_password" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

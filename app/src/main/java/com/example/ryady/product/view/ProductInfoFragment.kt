@@ -1,6 +1,7 @@
 package com.example.ryady.product.view
 
 import android.os.Bundle
+import android.util.Log
 
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ class ProductInfoFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         val id : String = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
+        Log.i(TAG, "onCreate Id: $id")
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.fetchProductById(id)
@@ -60,12 +62,13 @@ class ProductInfoFragment : Fragment() {
                 withContext(Dispatchers.Main){
                     when(it){
                         is Response.Error -> {
-
+                            Log.i(TAG, "onViewCreated: Error ${it.message}")
                         }
                         is Response.Loading -> {
 
                         }
                         is Response.Success -> {
+                            Log.i(TAG, "onViewCreated: Success ${it.data.title}")
                             updateUi(it.data)
                         }
                     }
