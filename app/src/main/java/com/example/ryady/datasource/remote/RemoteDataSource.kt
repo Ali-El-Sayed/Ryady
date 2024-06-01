@@ -1,9 +1,10 @@
 package com.example.ryady.datasource.remote
 
 import com.apollographql.apollo3.ApolloClient
-import com.example.ProductByIdQuery
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
+import com.example.ShopifyProductByCategoryTypeQuery
+import com.example.ShopifyProductByIdQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
@@ -18,12 +19,13 @@ interface IRemoteDataSource {
 
     suspend fun <T> fetchProducts(): Response<T>
 
-    suspend fun  fetchProductById(id:String): Flow<Response<ProductByIdQuery.Product>>
+    suspend fun fetchProductById(id: String): Flow<Response<ShopifyProductByIdQuery.Product>>
 
 
     suspend fun <T> fetchBrands(): Response<T>
 
     suspend fun <T> fetchProductsByBrandId(id: String): Response<T>
+    suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -69,8 +71,16 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    override suspend fun fetchProductById(id:String): Flow<Response<ProductByIdQuery.Product>> {
-       client.query(ProductByIdQuery(id))
+    override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
+        val response = client.query(ShopifyProductByCategoryTypeQuery(category)).execute()
+        return when {
+            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            else -> Response.Success(response.data?.products?.toProductList() as T)
+        }
+    }
+
+    override suspend fun fetchProductById(id: String): Flow<Response<ShopifyProductByIdQuery.Product>> {
+        client.query(ShopifyProductByIdQuery(id))
             .execute().data?.product?.let {
                 return flow { emit(Response.Success(it)) }
             }

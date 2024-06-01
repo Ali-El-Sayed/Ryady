@@ -6,4 +6,5 @@
     <color name="primary">#FAF8F8</color>
     <color name="icon_color">#000000</color>
     <color name="btn_background">#23939393</color>
+    <color name="list_background">#55E8E5E5</color>
 </resources>

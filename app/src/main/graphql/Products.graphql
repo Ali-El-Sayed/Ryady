@@ -23,11 +23,59 @@ query ShopifyProductsQuery{
             }
         }
     }
+}
 
-    product(id: "gid://shopify/Product/7331203416147"){
+query ShopifyProductById($id: ID!) {
+    product(id: $id) {
         id
+        title
+        description
+        images(first: 5){
+            edges {
+                node {
+                    url
+                }
+            }
+        }
+        priceRange {
+            maxVariantPrice {
+                amount
+                currencyCode
+            }
+            minVariantPrice {
+                amount
+                currencyCode
+            }
+        }
         vendor
+        tags
 
+    }
+}
+
+query ShopifyProductByCategoryType($query: String!){
+    products(first: 50, query: $query){
+        edges {
+            node {
+                id
+                title
+                vendor
+                productType
+                priceRange {
+                    maxVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                    minVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                }
+                featuredImage {
+                    url
+                }
+            }
+        }
     }
 }
 

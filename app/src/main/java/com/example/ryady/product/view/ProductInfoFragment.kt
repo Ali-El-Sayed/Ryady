@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
-import com.example.ProductByIdQuery
+import com.example.ShopifyProductByIdQuery
 import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -75,7 +75,7 @@ class ProductInfoFragment : Fragment() {
     }
 
 
-    private fun updateUi(productInfo : ProductByIdQuery.Product){
+    private fun updateUi(productInfo : ShopifyProductByIdQuery.Product){
         val productImagesUrl : MutableList<SlideModel> = mutableListOf()
         productInfo.images.edges.forEach{
             productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))

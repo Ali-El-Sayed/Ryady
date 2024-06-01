@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.ApplicationBuildFeatures
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -23,7 +21,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -46,8 +43,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
 
+}
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -83,9 +80,9 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.4.0")
     // Coil
     implementation("io.coil-kt:coil:2.4.0")
-
     // Image Slider
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+
 
     // === TESTING ===
     // hamcrest
@@ -97,9 +94,6 @@ dependencies {
     // Robolectric
     testImplementation("org.robolectric:robolectric:4.12")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-
-
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

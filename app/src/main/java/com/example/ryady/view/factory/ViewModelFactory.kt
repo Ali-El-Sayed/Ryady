@@ -7,6 +7,7 @@ import com.example.ryady.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
 
+@Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val remote: IRemoteDataSource) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {

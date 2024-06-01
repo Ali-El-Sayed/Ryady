@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_homeScreen_to_productInfoFragment"
             app:destination="@id/productInfoFragment" />
+        <action
+            android:id="@+id/action_homeScreen_self"
+            app:destination="@id/homeScreen" />
+        <action
+            android:id="@+id/action_homeScreen_to_categoryScreen"
+            app:destination="@id/categoryScreen" />
 
     </fragment>
     <fragment
@@ -40,5 +46,21 @@
             android:name="productId"
             app:argType="string"
             android:defaultValue="123456" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryScreen"
+        android:name="com.example.ryady.view.screens.category.view.CategoryScreen"
+        android:label="fragment_category_screen"
+        tools:layout="@layout/fragment_category_screen" >
+        <argument
+            android:name="category"
+            app:argType="string"
+            android:defaultValue="product_type:SHOES" />
+        <action
+            android:id="@+id/action_categoryScreen_to_homeScreen"
+            app:destination="@id/homeScreen" />
+        <action
+            android:id="@+id/action_categoryScreen_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
     </fragment>
 </navigation>
