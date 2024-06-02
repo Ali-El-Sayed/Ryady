@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.screens.category.view.CategoryScreen">
+
+    <!--   Toolbar   -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:minHeight="?attr/actionBarSize"
+            app:logoAdjustViewBounds="true"
+            app:logoScaleType="fitCenter"
+            app:navigationIcon="@drawable/ic_back"
+            app:subtitleTextAppearance="@font/regular"
+            app:title="@string/categories"
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+           />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--   Chips   -->
+    <HorizontalScrollView
+        android:id="@+id/chips_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_bar"
+        android:background="@color/list_background">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_shoes"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="SHOES" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_shirts"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="T-SHIRTS" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_accessories"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="ACCESSORIES" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:clickable="true"
+                android:text="ALL" />
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <!--   Products   -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/products_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/chips_container"
+        android:background="@color/list_background"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/product_card"
+        tools:spanCount="2" />
+
+    <!--  Loading Bar  -->
+    <ProgressBar
+        android:id="@+id/loading_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:elevation="4dp" />
+</RelativeLayout>

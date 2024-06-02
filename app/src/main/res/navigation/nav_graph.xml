@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/homeScreen">
+    app:startDestination="@id/loginFragment">
 
     <fragment
         android:id="@+id/homeScreen"
@@ -16,6 +16,12 @@
         <action
             android:id="@+id/action_homeScreen_to_productInfoFragment"
             app:destination="@id/productInfoFragment" />
+        <action
+            android:id="@+id/action_homeScreen_self"
+            app:destination="@id/homeScreen" />
+        <action
+            android:id="@+id/action_homeScreen_to_categoryScreen"
+            app:destination="@id/categoryScreen" />
 
     </fragment>
     <fragment
@@ -40,5 +46,41 @@
             android:name="productId"
             app:argType="string"
             android:defaultValue="123456" />
+    </fragment>
+    <fragment
+        android:id="@+id/singUpFragment"
+        android:name="com.example.ryady.login.view.SingUpFragment"
+        android:label="fragment_sing_up"
+        tools:layout="@layout/fragment_sing_up" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.ryady.login.view.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_singUpFragment"
+            app:destination="@id/singUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeScreen"
+            app:destination="@id/homeScreen"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+        <fragment
+        android:id="@+id/categoryScreen"
+        android:name="com.example.ryady.view.screens.category.view.CategoryScreen"
+        android:label="fragment_category_screen"
+        tools:layout="@layout/fragment_category_screen" >
+        <argument
+            android:name="category"
+            app:argType="string"
+            android:defaultValue="product_type:SHOES" />
+        <action
+            android:id="@+id/action_categoryScreen_to_homeScreen"
+            app:destination="@id/homeScreen" />
+        <action
+            android:id="@+id/action_categoryScreen_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
+
     </fragment>
 </navigation>

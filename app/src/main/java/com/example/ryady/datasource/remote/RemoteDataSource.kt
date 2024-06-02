@@ -1,13 +1,21 @@
 package com.example.ryady.datasource.remote
 
+import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+
+import com.example.CustomerAccessTokenCreateMutation
+import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
+
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
+import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
+import com.example.type.CustomerAccessTokenCreateInput
+import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -18,12 +26,18 @@ interface IRemoteDataSource {
 
     suspend fun <T> fetchProducts(): Response<T>
 
-    suspend fun  fetchProductById(id:String): Flow<Response<ProductByIdQuery.Product>>
 
+    suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
 
     suspend fun <T> fetchBrands(): Response<T>
 
     suspend fun <T> fetchProductsByBrandId(id: String): Response<T>
+
+    suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
+
+    suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>
+
+    suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -40,7 +54,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     override suspend fun <T> fetchProducts(): Response<T> {
         val response = client.query(ShopifyProductsQuery()).execute()
         return when {
-            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            response.hasErrors() -> Response.Error(
+                response.errors?.first()?.message ?: "Data Not Found"
+            )
+
             else -> response.data?.products?.toProductList().let {
                 return Response.Success(it as T)
             }
@@ -51,7 +68,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     override suspend fun <T> fetchBrands(): Response<T> {
         val response = client.query(ShopifyBrandsQuery()).execute()
         return when {
-            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            response.hasErrors() -> Response.Error(
+                response.errors?.first()?.message ?: "Data Not Found"
+            )
+
             else -> response.data?.collections?.toBrandsList().let {
                 return Response.Success(it as T)
             }
@@ -61,20 +81,74 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     override suspend fun <T> fetchProductsByBrandId(id: String): Response<T> {
         val response = client.query(ShopifyBrandsByIdQuery(id)).execute()
         return when {
-            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            response.hasErrors() -> Response.Error(
+                response.errors?.first()?.message ?: "Data Not Found"
+            )
+
             else -> response.data?.collection?.products?.toProductList().let {
-                it?.get(0)?.vendorImageUrl = (response.data?.collection?.image?.url ?: "").toString()
+                it?.get(0)?.vendorImageUrl =
+                    (response.data?.collection?.image?.url ?: "").toString()
                 return Response.Success(it as T)
             }
         }
     }
 
-    override suspend fun fetchProductById(id:String): Flow<Response<ProductByIdQuery.Product>> {
-       client.query(ProductByIdQuery(id))
-            .execute().data?.product?.let {
+
+
+
+
+    override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
+        val response = client.query(ShopifyProductByCategoryTypeQuery(category)).execute()
+        return when {
+            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            else -> Response.Success(response.data?.products?.toProductList() as T)
+        }
+    }
+
+    override suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>> {
+        client.query(ProductByIdQuery(id)).execute().data?.product?.let {
                 return flow { emit(Response.Success(it)) }
             }
 
         return flow { emit(Response.Error("Error get data from remote")) }
+    }
+
+    override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
+        val response = client.mutation(CustomerCreateMutation(newCustomer))
+            .execute()
+
+
+
+        return when {
+
+            (((response.data?.customerCreate?.customerUserErrors?.size ?: -1) > 0)) -> {
+                Response.Error(
+                    response.data?.customerCreate?.customerUserErrors?.first()?.message
+                        ?: "customer error == null"
+                )
+            }
+
+            else -> {
+                response.data?.customerCreate?.customer.let {
+                    Response.Success(it as T)
+                }
+            }
+        }
+    }
+
+    override suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>{
+        Log.i(TAG, "createAccessToken: ")
+        val response = client.mutation(CustomerAccessTokenCreateMutation(customer)).execute()
+
+        return  when{
+
+            (response.data?.customerAccessTokenCreate?.customerUserErrors?.size ?: -1) > 0 -> {
+                flow {emit(Response.Error(response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message ?:"Error NUll"))  }
+            }
+
+            else -> {
+                flow {emit(Response.Success(response.data?.customerAccessTokenCreate?.customerAccessToken?.accessToken as T))  }
+            }
+        }
     }
 }

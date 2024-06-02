@@ -1,0 +1,10 @@
+query GetCustomerData($input: String!) {
+    customer(customerAccessToken: $input) {
+        id
+        firstName
+        lastName
+        acceptsMarketing
+        email
+        phone
+    }
+}

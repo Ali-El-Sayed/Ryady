@@ -18,9 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primary"
+            android:minHeight="?attr/actionBarSize"
             app:logoAdjustViewBounds="true"
             app:logoScaleType="fitCenter"
-            android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
             app:subtitleTextAppearance="@font/regular"
             app:titleCentered="true"
@@ -29,11 +29,13 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!--   Products   -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/products_rv"
         android:layout_width="match_parent"
-        android:padding="8dp"
         android:layout_height="match_parent"
+        android:background="@color/list_background"
+        android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         tools:listitem="@layout/product_card"
         tools:spanCount="2" />
