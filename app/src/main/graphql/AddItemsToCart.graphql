@@ -1,0 +1,56 @@
+mutation AddItemsToCart {
+    cartLinesAdd(
+        cartId: "gid://shopify/Cart/123456789", # Replace with your cart ID
+        lines: [
+            {
+                quantity: 1,
+                merchandiseId: "gid://shopify/ProductVariant/2" # Replace with the Product Variant ID you want to add
+            },
+            {
+                quantity: 2,
+                merchandiseId: "gid://shopify/ProductVariant/3" # Replace with another Product Variant ID you want to add
+            }
+        ]
+    ) {
+        cart {
+            id
+            createdAt
+            updatedAt
+            lines(first: 10) {
+                edges {
+                    node {
+                        id
+                        quantity
+                        merchandise {
+                            ... on ProductVariant {
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+            cost {
+                totalAmount {
+                    amount
+                    currencyCode
+                }
+                subtotalAmount {
+                    amount
+                    currencyCode
+                }
+                totalTaxAmount {
+                    amount
+                    currencyCode
+                }
+                totalDutyAmount {
+                    amount
+                    currencyCode
+                }
+            }
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
