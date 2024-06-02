@@ -11,7 +11,7 @@ import com.example.ryady.model.Brand
 private const val TAG = "BrandsAdapter"
 
 class BrandsAdapter(
-    private val brands: List<Brand>, private val onBrandClick: (id: String) -> Unit
+    private val brands: List<Brand> = mutableListOf(), private val onBrandClick: (id: String) -> Unit
 ) :
     RecyclerView.Adapter<BrandsAdapter.ViewHolder>() {
     private lateinit var binding: BrandCardBinding

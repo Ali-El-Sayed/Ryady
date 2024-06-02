@@ -24,7 +24,6 @@ query ShopifyProductsQuery{
         }
     }
 }
-
 query ProductById($id: ID!) {
     product(id: $id) {
         id

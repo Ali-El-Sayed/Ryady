@@ -29,6 +29,7 @@ class HomeViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
     }
 
     private suspend fun fetchProducts() {
+        products.value = Response.Loading()
         val response = remoteDataSource.fetchProducts<ArrayList<Product>>()
         when (response) {
             is Response.Loading -> products.value = Response.Loading()

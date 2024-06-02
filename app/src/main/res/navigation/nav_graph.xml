@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/homeScreen">
 
     <fragment
         android:id="@+id/homeScreen"
@@ -41,11 +41,11 @@
         android:id="@+id/productInfoFragment"
         android:name="com.example.ryady.product.view.ProductInfoFragment"
         android:label="fragment_product_info"
-        tools:layout="@layout/fragment_product_info" >
+        tools:layout="@layout/fragment_product_info">
         <argument
             android:name="productId"
-            app:argType="string"
-            android:defaultValue="123456" />
+            android:defaultValue="123456"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/singUpFragment"
@@ -56,7 +56,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.ryady.login.view.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_singUpFragment"
             app:destination="@id/singUpFragment" />
@@ -66,15 +66,15 @@
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
     </fragment>
-        <fragment
+    <fragment
         android:id="@+id/categoryScreen"
         android:name="com.example.ryady.view.screens.category.view.CategoryScreen"
         android:label="fragment_category_screen"
-        tools:layout="@layout/fragment_category_screen" >
+        tools:layout="@layout/fragment_category_screen">
         <argument
             android:name="category"
-            app:argType="string"
-            android:defaultValue="product_type:SHOES" />
+            android:defaultValue="product_type:SHOES"
+            app:argType="string" />
         <action
             android:id="@+id/action_categoryScreen_to_homeScreen"
             app:destination="@id/homeScreen" />

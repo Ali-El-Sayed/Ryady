@@ -17,4 +17,6 @@
     <string name="category">Category</string>
     <string name="home">Home</string>
     <string name="categories">CATEGORIES</string>
+    <string name="exit">Exit</string>
+    <string name="retry">Retry</string>
 </resources>
