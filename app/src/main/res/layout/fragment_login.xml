@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#9D4EDD"
-    tools:context=".login.view.LoginFragment">
+    tools:context=".view.screens.auth.login.view.LoginFragment">
 
     <TextView
         android:id="@+id/tv_title"
@@ -111,7 +111,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="40dp"
         android:backgroundTint="#9D4EDD"
-        android:text="Login"
+        android:text="@string/login"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"
@@ -129,7 +129,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:text="don't have an account?"
+        android:text="@string/don_t_have_an_account"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_sign_up"
         app:layout_constraintHorizontal_bias="0.5"

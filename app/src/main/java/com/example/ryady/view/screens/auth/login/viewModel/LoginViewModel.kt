@@ -1,4 +1,4 @@
-package com.example.ryady.login.viewModel
+package com.example.ryady.view.screens.auth.login.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,13 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.CustomerCreateMutation
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.network.model.Response
-import com.example.type.Customer
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -41,7 +39,6 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
 
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.createAccessToken<String>(userAccount).collect {
-
                 _loginAccountState.value = it
                 Log.i(TAG, "loginToAccount: ${_loginAccountState.value}")
             }

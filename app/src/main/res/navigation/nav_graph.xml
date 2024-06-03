@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/productInfoFragment"
-        android:name="com.example.ryady.product.view.ProductInfoFragment"
+        android:name="com.example.ryady.view.screens.product.view.ProductInfoFragment"
         android:label="fragment_product_info"
         tools:layout="@layout/fragment_product_info">
         <argument
@@ -47,25 +47,25 @@
             android:defaultValue="123456"
             app:argType="string" />
     </fragment>
-    <fragment
-        android:id="@+id/singUpFragment"
-        android:name="com.example.ryady.login.view.SingUpFragment"
-        android:label="fragment_sing_up"
-        tools:layout="@layout/fragment_sing_up" />
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.ryady.login.view.LoginFragment"
-        android:label="fragment_login"
-        tools:layout="@layout/fragment_login">
-        <action
-            android:id="@+id/action_loginFragment_to_singUpFragment"
-            app:destination="@id/singUpFragment" />
-        <action
-            android:id="@+id/action_loginFragment_to_homeScreen"
-            app:destination="@id/homeScreen"
-            app:popUpTo="@id/loginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/singUpFragment"-->
+<!--        android:name="com.example.ryady.view.screens.auth.login.view.SingUpFragment"-->
+<!--        android:label="fragment_sing_up"-->
+<!--        tools:layout="@layout/fragment_sing_up" />-->
+<!--    <fragment-->
+<!--        android:id="@+id/loginFragment"-->
+<!--        android:name="com.example.ryady.view.screens.auth.login.view.LoginFragment"-->
+<!--        android:label="fragment_login"-->
+<!--        tools:layout="@layout/fragment_login">-->
+<!--        <action-->
+<!--            android:id="@+id/action_loginFragment_to_singUpFragment"-->
+<!--            app:destination="@id/singUpFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_loginFragment_to_homeScreen"-->
+<!--            app:destination="@id/homeScreen"-->
+<!--            app:popUpTo="@id/loginFragment"-->
+<!--            app:popUpToInclusive="true" />-->
+<!--    </fragment>-->
     <fragment
         android:id="@+id/categoryScreen"
         android:name="com.example.ryady.view.screens.category.view.CategoryScreen"

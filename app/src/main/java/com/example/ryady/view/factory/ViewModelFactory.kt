@@ -3,8 +3,8 @@ package com.example.ryady.view.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ryady.datasource.remote.IRemoteDataSource
-import com.example.ryady.login.viewModel.LoginViewModel
-import com.example.ryady.product.viewModel.ProductViewModel
+import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
+import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
 

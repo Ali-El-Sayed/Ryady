@@ -1,4 +1,4 @@
-package com.example.ryady.product.viewModel
+package com.example.ryady.view.screens.product.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

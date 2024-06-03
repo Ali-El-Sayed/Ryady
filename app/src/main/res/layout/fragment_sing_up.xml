@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".login.view.SingUpFragment">
+    tools:context=".view.screens.auth.login.view.SingUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -175,9 +175,8 @@
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:backgroundTint="#9D4EDD"
-        android:text="Login"
+        android:text="@string/sing_up"
         android:textAlignment="center"
-
         android:textColor="@color/white"
         android:textSize="18sp"
         app:icon="@drawable/ic_mail"

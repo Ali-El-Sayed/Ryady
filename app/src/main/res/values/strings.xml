@@ -19,4 +19,7 @@
     <string name="categories">CATEGORIES</string>
     <string name="exit">Exit</string>
     <string name="retry">Retry</string>
+    <string name="sing_up">Sing Up</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_an_account">don\'t have an account?</string>
 </resources>
