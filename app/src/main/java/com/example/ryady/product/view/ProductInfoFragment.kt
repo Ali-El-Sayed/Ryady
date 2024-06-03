@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.ProductByIdQuery
+import com.example.ryady.Variant
 import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -30,6 +32,7 @@ private const val TAG = "ProductInfoFragment"
 class ProductInfoFragment : Fragment() {
 
     lateinit var binding: FragmentProductInfoBinding
+    var variantId =""
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -69,10 +72,28 @@ class ProductInfoFragment : Fragment() {
                         }
                         is Response.Success -> {
                             Log.i(TAG, "onViewCreated: Success ${it.data.title}")
+                            variantId = it.data.variants.edges.first().node.id
                             updateUi(it.data)
                         }
                     }
                 }
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.addItemToCartInfo.collectLatest {
+                withContext(Dispatchers.Main){
+                    when(it){
+                        is Response.Error -> Log.i(TAG, "onViewCreated: Error ${it.message}")
+                        is Response.Loading -> {}
+                        is Response.Success -> Toast.makeText(activity, "Item Added Successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        binding.addToCart.setOnClickListener {
+            lifecycleScope.launch {
+                    viewModel.addItemToCart(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e", varientID = variantId, quantity = 1)
             }
         }
     }

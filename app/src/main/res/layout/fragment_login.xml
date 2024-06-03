@@ -71,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:text="mh95568@gmail.com" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,7 +102,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:text="123456" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

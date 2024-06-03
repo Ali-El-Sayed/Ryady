@@ -21,12 +21,27 @@ class ProductViewModel(private val remoteDataSource: IRemoteDataSource) :ViewMod
 
     private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> = MutableStateFlow(Response.Loading())
     var productInfo : StateFlow<Response<ProductByIdQuery.Product>>  = _productInfo
+    private var _addItemToCartInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
+    var addItemToCartInfo : StateFlow<Response<Int>>  = _addItemToCartInfo
 
      suspend fun fetchProductById(id : String){
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.fetchProductById(id = id)
                 .collectLatest {
                 _productInfo.value = it
+            }
+        }
+
+    }
+    suspend fun addItemToCart(cartId: String,
+                              varientID: String,
+                              quantity: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = remoteDataSource.addItemToCart<Int>(cartId = cartId, varientID = varientID, quantity = quantity)
+            when(response){
+                is Response.Error -> _addItemToCartInfo.value = Response.Error(response.message)
+                is Response.Loading -> _addItemToCartInfo.value = Response.Loading()
+                is Response.Success -> _addItemToCartInfo.value = Response.Success(response.data)
             }
         }
 

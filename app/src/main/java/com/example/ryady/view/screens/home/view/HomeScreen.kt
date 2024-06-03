@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -48,6 +49,10 @@ class HomeScreen : Fragment() {
             }
         }
 
+        binding.topAppBar.menu.getItem(1).setOnMenuItemClickListener {
+            findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
+            true
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,7 +102,6 @@ class HomeScreen : Fragment() {
                 is Response.Success -> {
                     binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
-
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
                     }
                 }

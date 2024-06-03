@@ -2,6 +2,7 @@ package com.example.ryady.view.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.ryady.cart.viewModel.CartViewModel
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.login.viewModel.LoginViewModel
 import com.example.ryady.product.viewModel.ProductViewModel
@@ -16,6 +17,8 @@ class ViewModelFactory(private val remote: IRemoteDataSource) : ViewModelProvide
             modelClass.isAssignableFrom(ProductsViewmodel::class.java) -> ProductsViewmodel(remote) as T
             modelClass.isAssignableFrom(ProductViewModel::class.java) -> ProductViewModel(remote) as T
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(remote) as T
+            modelClass.isAssignableFrom(CartViewModel::class.java) -> CartViewModel(remote) as T
+
 
             else -> throw IllegalArgumentException("ViewModel Not Found")
         }
