@@ -1,0 +1,138 @@
+query RetrieveCart($cartId : ID!) {
+        cart(
+            id: $cartId
+        ) {
+            checkoutUrl
+            createdAt
+            id
+            note
+            totalQuantity
+            updatedAt
+            cost {
+                subtotalAmountEstimated
+                totalAmountEstimated
+                totalAmount {
+                    amount
+                    currencyCode
+                }
+                checkoutChargeAmount {
+                    amount
+                    currencyCode
+                }
+            }
+            estimatedCost {
+                subtotalAmount {
+                    amount
+                    currencyCode
+                }
+                totalAmount {
+                    amount
+                    currencyCode
+                }
+            }
+            buyerIdentity {
+                countryCode
+                email
+                phone
+                walletPreferences
+                deliveryAddressPreferences {
+                    ... on MailingAddress {
+                        address1
+                        address2
+                        city
+                        company
+                        country
+                        countryCode
+                        countryCodeV2
+                        firstName
+                        formatted
+                        formattedArea
+                        id
+                        lastName
+                        latitude
+                        longitude
+                        name
+                        phone
+                        province
+                        provinceCode
+                        zip
+                    }
+                }
+                customer {
+                    acceptsMarketing
+                    createdAt
+                    displayName
+                    email
+                    firstName
+                    id
+                    lastName
+                    numberOfOrders
+                    phone
+                    tags
+                    updatedAt
+                }
+            }
+            lines(first: 100) {
+                edges {
+                    cursor
+                    node {
+                        id
+                        merchandise {
+                            ... on ProductVariant {
+                                availableForSale
+                                barcode
+                                currentlyNotInStock
+                                id
+                                quantityAvailable
+                                requiresShipping
+                                sku
+                                taxable
+                                title
+                                weight
+                                weightUnit
+                                image {
+                                    altText
+                                    height
+                                    id
+                                    originalSrc
+                                    src
+                                    transformedSrc
+                                    url
+                                    width
+                                }
+                                price {
+                                    amount
+                                    currencyCode
+                                }
+                                unitPrice {
+                                    amount
+                                    currencyCode
+                                }
+                            }
+                        }
+                        quantity
+                        cost {
+                            subtotalAmount {
+                                amount
+                                currencyCode
+                            }
+                            totalAmount {
+                                amount
+                                currencyCode
+                            }
+                        }
+                        discountAllocations {
+                            discountedAmount {
+                                amount
+                                currencyCode
+                            }
+                        }
+                    }
+                }
+            }
+            discountCodes {
+                applicable
+                code
+            }
+        }
+    }

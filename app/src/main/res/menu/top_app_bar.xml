@@ -7,10 +7,11 @@
         android:icon="@drawable/ic_search"
         android:title="@string/search"
         app:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/notification"
-        android:icon="@drawable/ic_notificaiton"
-        android:title="@string/notification"
+        android:id="@+id/shopping_cart"
+        android:icon="@drawable/ic_shoping_cart"
+        android:title="@string/shopping_cart"
         app:showAsAction="ifRoom" />
 
 </menu>

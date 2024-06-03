@@ -25,6 +25,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding= true
     }
 
     buildTypes {
@@ -51,6 +52,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.paymob.sdk:Paymob-SDK:1.1.0")
 
 
     // Flotation Action Button
@@ -71,6 +73,10 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.fragment.ktx)
     kapt("androidx.room:room-compiler:2.6.1")
     // work manager
     implementation("androidx.work:work-runtime-ktx:2.9.0")

@@ -1,0 +1,16 @@
+mutation AddItemsToCart($cartid : ID!,$quantity : Int!,$varientid : ID!) {
+    cartLinesAdd(
+        cartId: $cartid, # Replace with your cart ID gid://shopify/Cart/123456789
+        lines: [
+            {
+                quantity: $quantity,
+                merchandiseId:$varientid# Replace with the Product Variant ID you want to add
+            },
+        ]
+    ) {
+        userErrors {
+            field
+            message
+        }
+    }
+}

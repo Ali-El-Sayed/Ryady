@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeScreen_to_categoryScreen"
             app:destination="@id/categoryScreen" />
+        <action
+            android:id="@+id/action_homeScreen_to_cartFragment"
+            app:destination="@id/cartFragment" />
 
     </fragment>
     <fragment
@@ -83,4 +86,9 @@
             app:destination="@id/productInfoFragment" />
 
     </fragment>
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.ryady.cart.view.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
 </navigation>

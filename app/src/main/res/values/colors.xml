@@ -7,4 +7,8 @@
     <color name="icon_color">#000000</color>
     <color name="btn_background">#23939393</color>
     <color name="list_background">#55E8E5E5</color>
+    <color name="button_text_color">#4A4A4A</color> <!-- Dark gray text color -->
+    <color name="count_text_color">#4A4A4A</color> <!-- Dark gray text color -->
+    <color name="button_pressed">#D0D0D0</color> <!-- Lighter gray -->
+    <color name="button_default">#F0F0F0</color> <!-- Default gray -->
 </resources>

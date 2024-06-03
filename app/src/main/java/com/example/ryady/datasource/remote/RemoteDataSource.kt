@@ -2,15 +2,21 @@ package com.example.ryady.datasource.remote
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.example.AddItemsToCartMutation
 
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
+import com.example.RetrieveCartQuery
 
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
+import com.example.payment.PaymentCreationResult
+import com.example.payment.PaymentRequest
+import com.example.payment.PaymentService
+import com.example.payment.RetrofitHelper
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
@@ -18,6 +24,7 @@ import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.ResponseBody
 
 private const val TAG = "RemoteDataSource"
 
@@ -29,19 +36,36 @@ interface IRemoteDataSource {
 
     suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
 
+    suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>>
+
     suspend fun <T> fetchBrands(): Response<T>
 
     suspend fun <T> fetchProductsByBrandId(id: String): Response<T>
 
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
 
+    suspend fun <T> addItemToCart(cartId: String,varientID : String,quantity : Int): Response<T>
+
     suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
+
+    suspend fun makePaymentCall(
+        publicKey: String,
+        clientSecret: String,
+    ): Flow<retrofit2.Response<ResponseBody>>
+
+    suspend fun createPayment(
+        paymentRequest: PaymentRequest
+    ): Flow<retrofit2.Response<PaymentCreationResult>>
+
 }
 
 @Suppress("UNCHECKED_CAST")
 class RemoteDataSource private constructor(private val client: ApolloClient) : IRemoteDataSource {
+    private val retrofitService : PaymentService by lazy {
+        RetrofitHelper.retrofit.create(PaymentService::class.java)
+    }
     companion object {
         @Volatile
         private var instance: IRemoteDataSource? = null
@@ -113,6 +137,14 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         return flow { emit(Response.Error("Error get data from remote")) }
     }
 
+    override suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>> {
+        client.query(RetrieveCartQuery(id)).execute().data?.cart?.let {
+            return flow { emit(Response.Success(it)) }
+        }
+
+        return flow { emit(Response.Error("Error get data from remote")) }
+    }
+
     override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
         val response = client.mutation(CustomerCreateMutation(newCustomer))
             .execute()
@@ -136,6 +168,31 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
+    override suspend fun <T> addItemToCart(
+        cartId: String,
+        varientID: String,
+        quantity: Int
+    ): Response<T> {
+        val response = client.mutation(AddItemsToCartMutation(cartid = cartId, varientid = varientID, quantity = quantity))
+            .execute()
+
+
+        return when {
+
+            (((response.data?.cartLinesAdd?.userErrors?.size ?: -1) > 0)) -> {
+                Response.Error(
+                    response.data?.cartLinesAdd?.userErrors?.first()?.message
+                        ?: "add to cart error == null"
+                )
+            }
+
+            else -> {
+                    Response.Success(1 as T)
+
+            }
+        }
+    }
+
     override suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>{
         Log.i(TAG, "createAccessToken: ")
         val response = client.mutation(CustomerAccessTokenCreateMutation(customer)).execute()
@@ -150,5 +207,17 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 flow {emit(Response.Success(response.data?.customerAccessTokenCreate?.customerAccessToken?.accessToken as T))  }
             }
         }
+    }
+    override  suspend fun makePaymentCall(
+        publicKey: String,
+        clientSecret: String,
+    ): Flow<retrofit2.Response<ResponseBody>> = flow {
+        emit(retrofitService.getPaymentPage(publicKey,clientSecret))
+    }
+
+    override  suspend fun createPayment(
+        paymentRequest: PaymentRequest
+    ): Flow<retrofit2.Response<PaymentCreationResult>> = flow {
+        emit(retrofitService.createPayment(paymentRequest))
     }
 }
