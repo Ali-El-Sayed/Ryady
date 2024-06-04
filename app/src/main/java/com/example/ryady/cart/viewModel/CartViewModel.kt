@@ -21,6 +21,23 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
     var cartInfo : StateFlow<Response<RetrieveCartQuery.Cart>> = _cartInfo
     private var _order= MutableStateFlow<State>(State.Loading)
     val order:StateFlow<State> = _order
+    private var _updateCartItemInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
+    var updateCartItemInfo : StateFlow<Response<Int>>  = _updateCartItemInfo
+
+
+    suspend fun updateCartLine(cartId: String,
+                              lineID: String,
+                              quantity: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = remoteDataSource.updateCartLine<Int>(cartId = cartId, lineID = lineID, quantity = quantity)
+            when(response){
+                is Response.Error -> _updateCartItemInfo.value = Response.Error(response.message)
+                is Response.Loading -> _updateCartItemInfo.value = Response.Loading()
+                is Response.Success -> _updateCartItemInfo.value = Response.Success(response.data)
+            }
+        }
+
+    }
 
     suspend fun fetchCartById(id : String){
         viewModelScope.launch(Dispatchers.IO) {

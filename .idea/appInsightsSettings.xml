@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.ryady" />
+                  <option name="mobileSdkAppId" value="1:3961313986:android:ec2d39da2f1077251af95b" />
+                  <option name="projectId" value="ryady-bf500" />
+                  <option name="projectNumber" value="3961313986" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -1,6 +1,5 @@
 package com.example.ryady.cart.view
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,19 +16,14 @@ import com.example.payment.BillingData
 import com.example.payment.Item
 import com.example.payment.PaymentRequest
 import com.example.payment.State
-import com.example.ryady.R
 import com.example.ryady.cart.viewModel.CartViewModel
 import com.example.ryady.databinding.FragmentCartBinding
-import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
-import com.example.ryady.product.viewModel.ProductViewModel
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.home.adapters.CartAdapter
 import com.paymob.paymob_sdk.PaymobSdk
 import com.paymob.paymob_sdk.ui.PaymobSdkListener
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -44,6 +38,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
      var total:Double =0.0
     var mytax:Int = 0
     var pricessummed:Int =0
+    lateinit var myadapter:CartAdapter
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -68,12 +63,20 @@ class CartFragment : Fragment(), PaymobSdkListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+         myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope){
+            // the onclick procedure
+        }
+        binding.cartRecycler.adapter = myadapter
+
         lifecycleScope.launch {
-            viewModel.cartInfo.collect{ result ->
+            viewModel.cartInfo.collectLatest{ result ->
                 when(result){
                     is Response.Error -> {}
                     is Response.Loading -> {}
                     is Response.Success -> {
+                        nlist.clear()
                         result.data.lines.edges.forEach {
                             nlist.add(it.node)
                         }
@@ -84,10 +87,18 @@ class CartFragment : Fragment(), PaymobSdkListener {
                         binding.totalPrice.text = result.data.cost.totalAmount.amount.toString()+" "+result.data.cost.totalAmount.currencyCode.toString()
                         binding.subtotalPrice.text = result.data.cost.checkoutChargeAmount.amount.toString()
                         binding.tax.text = BigDecimal(result.data.cost.totalAmount.amount.toString().toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()
-                        binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-                        binding.cartRecycler.adapter = CartAdapter(nodes = nlist){
-                            // the onclick procedure
-                        }
+                        myadapter.updateList(nlist)
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.updateCartItemInfo.collectLatest {result ->
+                when(result){
+                    is Response.Error -> {}
+                    is Response.Loading -> {}
+                    is Response.Success -> {
+                        viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e")
                     }
                 }
             }

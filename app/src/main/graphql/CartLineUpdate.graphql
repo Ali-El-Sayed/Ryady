@@ -1,0 +1,15 @@
+mutation CartLinesUpdate($cartid : ID!,$quantity : Int!,$linetid : ID!) {
+    cartLinesUpdate(
+        cartId: $cartid
+        lines: {
+            id: $linetid
+            quantity: $quantity
+        }
+    ) {
+        userErrors {
+            code
+            field
+            message
+        }
+    }
+}

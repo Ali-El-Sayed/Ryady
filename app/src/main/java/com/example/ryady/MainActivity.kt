@@ -10,7 +10,10 @@ import androidx.core.view.WindowInsetsCompat
 
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.CustomerCreateMutation
 import com.example.ryady.databinding.ActivityMainBinding
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 
 
 private const val TAG = "MainActivity"
@@ -24,6 +27,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(binding.root)
+       // init firebase
+        FirebaseApp.initializeApp(this)
+        val database = FirebaseDatabase.getInstance()
+        val customerRef = database.getReference("Customers")
+        //val item = CustomerCreateMutation.Customer(firstName = "ahmed", lastName = "ghon", email = "ahmeduuugogo@gmail.com", phone = "+20123456123", acceptsMarketing = true,)
+       // customerRef.push().setValue(item)
+
         // Disable night mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

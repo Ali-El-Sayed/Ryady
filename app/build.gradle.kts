@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.apollographql.apollo3").version("4.0.0-beta.6")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
     kotlin("kapt")
 }
 apollo {
@@ -53,6 +54,11 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation("com.paymob.sdk:Paymob-SDK:1.1.0")
+
+    //FireBase
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-database:20.0.5")
 
 
     // Flotation Action Button
