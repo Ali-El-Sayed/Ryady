@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "3961313986",
+    "project_id": "ryady-bf500",
+    "storage_bucket": "ryady-bf500.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3961313986:android:ec2d39da2f1077251af95b",
+        "android_client_info": {
+          "package_name": "com.example.ryady"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpmr1nfTZXh7dkhrMjjkCGXs4HGp39j60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
