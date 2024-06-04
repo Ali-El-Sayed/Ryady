@@ -1,5 +1,6 @@
 package com.example.ryady.cart.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
 
+const val TAG = "CartAdapter"
 class CartAdapter(
     private var nodes: List<RetrieveCartQuery.Node>,
     private  val viewModel: CartViewModel,
@@ -40,6 +42,8 @@ class CartAdapter(
     fun updateList(newnodes: List<RetrieveCartQuery.Node>){
         nodes=newnodes
         notifyDataSetChanged()
+        Log.d(TAG, "Updated data in adapter. New node count: ${nodes.size}")
+
     }
 
     inner class ViewHolder(private val binding: CartListItemBinding) : RecyclerView.ViewHolder(binding.root) {

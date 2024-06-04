@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.CustomerCreateMutation
 import com.example.RetrieveCartQuery
 import com.example.payment.BillingData
 import com.example.payment.Item
@@ -22,6 +23,9 @@ import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
+import com.example.type.CustomerCreateInput
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.FirebaseDatabase
 import com.paymob.paymob_sdk.PaymobSdk
 import com.paymob.paymob_sdk.ui.PaymobSdkListener
 import kotlinx.coroutines.flow.collectLatest
@@ -46,6 +50,18 @@ class CartFragment : Fragment(), PaymobSdkListener {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+/*
+        val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+        val customerRef = database.getReference("CustomerCart")
+        val email = "mh95568@gmail.com"
+        val cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e"
+        fun encodeEmail(email: String): String {
+            return email.replace(".", ",").replace("@", "_at_")
+        }
+        customerRef.child(encodeEmail(email)).setValue(cartId)
+*/
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e")
@@ -73,10 +89,12 @@ class CartFragment : Fragment(), PaymobSdkListener {
         lifecycleScope.launch {
             viewModel.cartInfo.collectLatest{ result ->
                 when(result){
-                    is Response.Error -> {}
+                    is Response.Error -> {
+                        Log.d(TAG, "Error retriving cart: ${result.message}")}
                     is Response.Loading -> {}
                     is Response.Success -> {
-                        nlist.clear()
+                        Log.d(TAG, "retriving cart went fine")
+                    nlist.clear()
                         result.data.lines.edges.forEach {
                             nlist.add(it.node)
                         }
