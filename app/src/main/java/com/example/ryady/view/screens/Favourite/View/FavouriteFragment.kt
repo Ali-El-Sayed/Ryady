@@ -1,4 +1,4 @@
-package com.example.ryady.Favourite.View
+package com.example.ryady.view.screens.Favourite.View
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

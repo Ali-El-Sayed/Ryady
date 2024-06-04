@@ -42,7 +42,7 @@ class HomeScreen : Fragment() {
         super.onCreate(savedInstanceState)
         binding.discountCarouselRv.onFlingListener = null
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
-        inflatingUIJob = lifecycleScope.launch(Dispatchers.IO){
+        inflatingUIJob = lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch(Dispatchers.Main) { fetchProducts() }
                 launch(Dispatchers.Main) { fetchBrands() }
@@ -80,7 +80,7 @@ class HomeScreen : Fragment() {
                         LinearLayoutManager.HORIZONTAL,
                         false,
                     )
-                    binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
+                    binding.brandsRv.adapter = BrandsAdapter(it?.data?:mutableListOf()) { id ->
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
                     }
                 }
@@ -101,7 +101,7 @@ class HomeScreen : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
+                    binding.productsRv.adapter = ProductsAdapter(it?.data ?: mutableListOf()) { id ->
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
                     }
                 }

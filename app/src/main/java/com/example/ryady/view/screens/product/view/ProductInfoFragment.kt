@@ -1,4 +1,4 @@
-package com.example.ryady.product.view
+package com.example.ryady.view.screens.product.view
 
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +20,7 @@ import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
-import com.example.ryady.product.viewModel.ProductViewModel
+import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.factory.ViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest

@@ -10,9 +10,9 @@ import com.example.ryady.model.Product
 
 private const val TAG = "ProductsAdapter"
 
-class ProductsAdapter(private val products: List<Product>, private val onProductClick: (id: String) -> Unit
-) :
-    RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
+class ProductsAdapter(
+    private val products: List<Product> = mutableListOf(), private val onProductClick: (id: String) -> Unit
+) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
     private lateinit var binding: ProductCardBinding
 
     override fun onCreateViewHolder(
