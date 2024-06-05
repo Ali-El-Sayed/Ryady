@@ -3,6 +3,7 @@ package com.example.ryady.datasource.remote
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
 import com.example.AddItemsToCartMutation
+import com.example.CartLinesRemoveMutation
 import com.example.CartLinesUpdateMutation
 
 import com.example.CustomerAccessTokenCreateMutation
@@ -47,6 +48,8 @@ interface IRemoteDataSource {
 
     suspend fun <T> addItemToCart(cartId: String,varientID : String,quantity : Int): Response<T>
     suspend fun <T> updateCartLine(cartId: String,lineID : String,quantity : Int): Response<T>
+    suspend fun <T> deleteCartLine(cartId: String,lineID : String): Response<T>
+
 
     suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>
 
@@ -218,6 +221,26 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             }
         }    }
+
+    override suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T> {
+        val response = client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID))
+            .execute()
+
+
+        return when {
+
+            (((response.data?.cartLinesRemove?.userErrors?.size ?: -1) > 0)) -> {
+                Response.Error(
+                    response.data?.cartLinesRemove?.userErrors?.first()?.message
+                        ?: "remove from cart error == null"
+                )
+            }
+
+            else -> {
+                Response.Success(1 as T)
+
+            }
+        }      }
 
     override suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>{
         Log.i(TAG, "createAccessToken: ")
