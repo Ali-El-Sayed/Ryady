@@ -41,6 +41,20 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
     }
 
+    suspend fun deleteCartLine(cartId: String,
+                               lineID: String){
+        _updateCartItemInfo.value = Response.Loading()
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = remoteDataSource.deleteCartLine<Int>(cartId = cartId, lineID = lineID)
+            when(response){
+                is Response.Error -> _updateCartItemInfo.value = Response.Error(response.message)
+                is Response.Loading -> _updateCartItemInfo.value = Response.Loading()
+                is Response.Success -> _updateCartItemInfo.value = Response.Success(response.data)
+            }
+        }
+
+    }
+
     suspend fun fetchCartById(id : String){
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.fetchCartById(id = id)
@@ -63,6 +77,7 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
             }
         }
     }
+
 
 
 }

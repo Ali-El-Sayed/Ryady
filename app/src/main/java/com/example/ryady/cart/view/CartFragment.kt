@@ -1,11 +1,15 @@
 package com.example.ryady.cart.view
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ImageSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +21,7 @@ import com.example.payment.BillingData
 import com.example.payment.Item
 import com.example.payment.PaymentRequest
 import com.example.payment.State
+import com.example.ryady.R
 import com.example.ryady.cart.viewModel.CartViewModel
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
@@ -81,7 +86,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
-         myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope){
+         myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope, context = requireContext()){
             // the onclick procedure
         }
         binding.cartRecycler.adapter = myadapter
@@ -114,7 +119,8 @@ class CartFragment : Fragment(), PaymobSdkListener {
             viewModel.updateCartItemInfo.collectLatest {result ->
                 when(result){
                     is Response.Error -> {}
-                    is Response.Loading -> {}
+                    is Response.Loading -> {
+                    }
                     is Response.Success -> {
                         viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e")
                     }
@@ -142,6 +148,8 @@ class CartFragment : Fragment(), PaymobSdkListener {
             }
         }
 
+
+
         binding.button.setOnClickListener {
             var items = ArrayList<Item>()
             nlist.forEach {
@@ -167,6 +175,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
             viewModel.createPayment(request)
         }
     }
+
 
     override fun onFailure() {
         TODO("Not yet implemented")

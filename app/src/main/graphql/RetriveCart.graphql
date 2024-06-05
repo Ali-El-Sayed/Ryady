@@ -90,6 +90,13 @@ query RetrieveCart($cartId : ID!) {
                                 title
                                 weight
                                 weightUnit
+                                product {
+                                    createdAt
+                                    description
+                                    id
+                                    title
+                                    vendor
+                                }
                                 image {
                                     altText
                                     height
