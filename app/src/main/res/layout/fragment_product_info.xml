@@ -1,109 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.screens.product.view.ProductInfoFragment">
+    tools:context=".product.view.ProductInfoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/mySlider"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.denzcoskun.imageslider.ImageSlider
-            android:id="@+id/image_slider"
+        <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:iss_auto_cycle="true"
-            app:iss_delay="1000"
-            app:iss_period="1000"
-            app:iss_corner_radius="20"
-            app:iss_selected_dot="@color/black"  />
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Title : VANS | \nERA 59 MOROCCAN | GEO/DRESS BLUES" />
 
-    </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="22sp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textAlignment="textStart"
-        tools:text="Title : VANS | \nERA 59 MOROCCAN | GEO/DRESS BLUES"
-        app:layout_constraintTop_toBottomOf="@id/mySlider"/>
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textAlignment="textStart"
-        android:textColor="#9E9E9E"
-        tools:text="Description : Vans are a staple in skate culture and street style, and the Vans Era 59 is no exception. This classic lace-up skate shoe is focused on ultimate comfort and cool. Constructed from canvas with leather accents which sets it apart from the original Era, it features a soft footbed, double stitched vamp, a padded tongue and lining, as well as Vans' signature waffle sole."
-        app:layout_constraintTop_toBottomOf="@id/title"/>
-    <TextView
-        android:id="@+id/price_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:text="Price"
-        app:layout_constraintTop_toBottomOf="@id/description"/>
-    <TextView
-        android:id="@+id/price"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        tools:text="119.95"
-        app:layout_constraintTop_toBottomOf="@id/price_title"/>
-    <TextView
-        android:id="@+id/price_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="10dp"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        tools:text="EGP"
-        app:layout_constraintStart_toEndOf="@id/price"
-        app:layout_constraintTop_toBottomOf="@id/price_title"/>
 
-    <Button
-        android:id="@+id/add_to_cart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginHorizontal="25dp"
-        android:text="@string/add_to_cart"
-        android:backgroundTint="@color/secondary"
-        android:textSize="25sp"
-        app:layout_constraintTop_toBottomOf="@id/price_unit"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mySlider"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            app:cardElevation="50dp"
+            app:cardCornerRadius="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintTop_toBottomOf="@id/title">
+
+            <com.denzcoskun.imageslider.ImageSlider
+                android:id="@+id/image_slider"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:iss_auto_cycle="true"
+                app:iss_corner_radius="20"
+
+                app:iss_delay="1000"
+                app:iss_period="1000" />
+        </androidx.cardview.widget.CardView>
+
+
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="25dp"
+            android:textAlignment="textStart"
+            android:textColor="#EC6037"
+            android:textSize="30sp"
+
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mySlider"
+            tools:text="119.95" />
+
+        <TextView
+            android:id="@+id/price_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="25dp"
+            android:textAlignment="textStart"
+            android:textColor="#EC6037"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/price"
+            app:layout_constraintStart_toEndOf="@id/price"
+            app:layout_constraintTop_toBottomOf="@id/mySlider"
+            tools:text="EGP" />
+
+
+        <TextView
+            android:id="@+id/size_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="10dp"
+            android:textAlignment="textStart"
+            android:textSize="30sp"
+            android:textColor="@color/secondary"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/price"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/size_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/size_title"
+            tools:listitem="@layout/size_item" />
+
+        <TextView
+            android:id="@+id/brand_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Brand: "
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="30sp"
+            android:textColor="@color/secondary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/size_list"/>
+        <TextView
+            android:id="@+id/brand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="VANS"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:textSize="22sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/brand_title"
+            app:layout_constraintStart_toEndOf="@id/brand_title"
+            app:layout_constraintTop_toBottomOf="@id/size_list"/>
+
+
+        <TextView
+            android:id="@+id/description_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Overview"
+            android:textSize="30sp"
+            android:textColor="@color/secondary"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="10dp"
+            app:layout_constraintTop_toBottomOf="@id/brand_title"/>
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="5dp"
+            android:textAlignment="textStart"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/description_title"
+            tools:text="Description : Vans are a staple in skate culture and street style, and the Vans Era 59 is no exception. This classic lace-up skate shoe is focused on ultimate comfort and cool. Constructed from canvas with leather accents which sets it apart from the original Era, it features a soft footbed, double stitched vamp, a padded tongue and lining, as well as Vans' signature waffle sole." />
+
+
+        <Button
+            android:id="@+id/add_to_cart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="5dp"
+            android:backgroundTint="@color/secondary"
+            android:text="@string/add_to_cart"
+            android:textSize="25sp"
+            app:layout_constraintTop_toBottomOf="@id/description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

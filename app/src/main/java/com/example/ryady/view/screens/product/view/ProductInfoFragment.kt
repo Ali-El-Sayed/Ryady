@@ -12,6 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.ProductByIdQuery
@@ -104,12 +106,25 @@ class ProductInfoFragment : Fragment() {
         productInfo.images.edges.forEach{
             productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))
         }
+        binding.brand.text = productInfo.vendor.lowercase().replaceFirstChar {
+            it.uppercase()
+        }
         binding.title.text = productInfo.title
         binding.description.text = productInfo.description
         binding.price.text = productInfo.priceRange.maxVariantPrice.amount.toString()
         binding.priceUnit.text = productInfo.priceRange.maxVariantPrice.currencyCode.toString()
         binding.imageSlider.setImageList(productImagesUrl)
         binding.imageSlider.setSlideAnimation(AnimationTypes.FOREGROUND_TO_BACKGROUND)
+        val layoutManager= LinearLayoutManager(requireContext())
+        layoutManager.orientation = RecyclerView.HORIZONTAL
+        binding.sizeList.layoutManager = layoutManager
+        val sizeList : MutableList<String>  = mutableListOf()
+        productInfo.variants.edges.forEach {
+            sizeList.add(it.node.title.split("/")[0])
+        }
+
+
+        binding.sizeList.adapter = SizeAdapter(sizeList.toList())
     }
 
 }
