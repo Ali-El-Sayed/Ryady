@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.auth.login
+package com.example.ryady.view.screens.order
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -8,16 +8,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.ryady.R
 
-class AuthActivity : AppCompatActivity() {
+class OrderActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // Disable night mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        setContentView(R.layout.activity_auth)
+        setContentView(R.layout.activity_order)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
             insets
         }
     }

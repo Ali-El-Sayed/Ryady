@@ -1,4 +1,4 @@
-package com.example.ryady.cart.viewModel
+package com.example.ryady.view.screens.cart.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,7 @@ import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
 import com.example.payment.PaymentRequest
 import com.example.payment.State
-import com.example.ryady.cart.view.TAG
+import com.example.ryady.view.screens.cart.view.TAG
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.network.model.Response
 import kotlinx.coroutines.Dispatchers

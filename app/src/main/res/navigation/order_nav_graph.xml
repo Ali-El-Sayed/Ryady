@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/order_nav_host"
+    app:startDestination="@id/customerDataFragment">
+
+    <fragment
+        android:id="@+id/customerDataFragment"
+        android:name="com.example.ryady.view.screens.order.view.CustomerDataFragment"
+        android:label="fragment_customer_data"
+        tools:layout="@layout/fragment_customer_data" >
+        <action
+            android:id="@+id/action_customerDataFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.ryady.view.screens.order.view.OrderDetailsFragment"
+        android:label="OrderDetailsFragment" />
+</navigation>

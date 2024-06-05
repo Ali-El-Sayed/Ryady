@@ -1,6 +1,5 @@
 package com.example.ryady.view.screens.auth.login.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.apollographql.apollo3.api.Optional
-import com.example.ryady.BaseActivity
 import com.example.ryady.databinding.FragmentSingUpBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
@@ -59,7 +58,7 @@ class SingUpFragment : Fragment() {
                     when (account) {
                         is Response.Loading -> {}
                         is Response.Success -> {
-                            (requireActivity() as BaseActivity).move(requireContext(), MainActivity::class.java)
+                            requireActivity().move(requireContext(), MainActivity::class.java)
                             requireActivity().finish()
                         }
 
