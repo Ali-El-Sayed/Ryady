@@ -1,5 +1,6 @@
 package com.example.ryady.cart.view
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -33,15 +34,22 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.paymob.paymob_sdk.PaymobSdk
 import com.paymob.paymob_sdk.ui.PaymobSdkListener
+import com.shopify.checkoutsheetkit.CheckoutEventProcessor
+import com.shopify.checkoutsheetkit.CheckoutException
+import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
+import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
+import com.shopify.checkoutsheetkit.lifecycleevents.CheckoutCompletedEvent
+import com.shopify.checkoutsheetkit.pixelevents.PixelEvent
 
 class CartFragment : Fragment(), PaymobSdkListener {
 
     lateinit var binding: FragmentCartBinding
     var cartId =""
+    var checkouturl = ""
     var nlist:ArrayList<RetrieveCartQuery.Node> = ArrayList()
     lateinit var buyer:RetrieveCartQuery.BuyerIdentity
      var total:Double =0.0
@@ -56,7 +64,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-/*
+
         val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
         val customerRef = database.getReference("CustomerCart")
         val email = "mh95568@gmail.com"
@@ -65,7 +73,9 @@ class CartFragment : Fragment(), PaymobSdkListener {
             return email.replace(".", ",").replace("@", "_at_")
         }
         customerRef.child(encodeEmail(email)).setValue(cartId)
-*/
+
+
+
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -85,6 +95,26 @@ class CartFragment : Fragment(), PaymobSdkListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+         val checkoutEventProcessorsd = object : DefaultCheckoutEventProcessor(requireContext()) {
+             override fun onCheckoutCanceled() {
+
+             }
+
+             override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
+
+             }
+
+             override fun onCheckoutFailed(error: CheckoutException) {
+                 Log.d(TAG, "onCheckoutFailed: "+error.message)
+
+                 Log.d(TAG, "onCheckoutFailed: "+error.errorDescription)
+
+                 Log.d(TAG, "onCheckoutFailed: "+error.printStackTrace())
+             }
+
+
+         }
+
         binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
          myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope, context = requireContext()){
             // the onclick procedure
@@ -103,6 +133,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
                         result.data.lines.edges.forEach {
                             nlist.add(it.node)
                         }
+                        checkouturl = result.data.checkoutUrl.toString()
                          mytax = ((result.data.cost.totalAmount.amount.toString().toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble())*100).toInt()
 
                         buyer = result.data.buyerIdentity
@@ -148,9 +179,11 @@ class CartFragment : Fragment(), PaymobSdkListener {
             }
         }
 
-
-
         binding.button.setOnClickListener {
+            ShopifyCheckoutSheetKit.present("https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e", requireActivity(), checkoutEventProcessorsd)
+        }
+
+      /*  binding.button.setOnClickListener {
             var items = ArrayList<Item>()
             nlist.forEach {
                 pricessummed+=((it.merchandise.onProductVariant?.price?.amount.toString().toDouble()*100).toInt()*it.quantity)
@@ -168,17 +201,16 @@ class CartFragment : Fragment(), PaymobSdkListener {
             val billingData = BillingData(first_name = buyer.customer?.firstName ?: "no name", last_name = buyer.customer?.lastName ?: "no name", email = buyer.email ?: "no email" , phone_number = buyer.customer?.phone ?: "no phone number" , street = "null" , building = "null" , city = "null" , country = "null")
 
             var methods = ArrayList<Int>()
-            methods.add(4589069)
+            methods.add(4586706)
             Log.d("Pricessummed", pricessummed.toString())
             Log.d("total", (total*100).toInt().toString())
             val request = PaymentRequest(amount =  (total*100).toInt(), currency = nlist.first().cost.totalAmount.currencyCode.name , payment_methods = methods, items = items , billingData)
             viewModel.createPayment(request)
-        }
+        }*/
     }
 
 
     override fun onFailure() {
-        TODO("Not yet implemented")
     }
 
     override fun onPending() {
@@ -186,7 +218,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
     }
 
     override fun onSuccess() {
-        TODO("Not yet implemented")
+        Log.d("Payment", "payment sucess")
     }
 
 }

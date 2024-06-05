@@ -96,7 +96,8 @@ dependencies {
     // Image Slider
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
-
+//shopify payment
+    implementation ("com.shopify:checkout-sheet-kit:3.0.1")
     // === TESTING ===
     // hamcrest
     testImplementation("org.hamcrest:hamcrest-all:1.3")
