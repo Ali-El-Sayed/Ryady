@@ -3,6 +3,7 @@ package com.example.ryady.model
 import com.example.ryady.Images
 import com.example.ryady.Variant
 
+
 data class Product(
     var id: String = "",
     var title: String = "",
@@ -24,5 +25,7 @@ data class Product(
     var adminGraphqlApiId: String = "",
     var variants: List<Variant> = emptyList(),
     var images: List<Images> = emptyList(),
-    var vendorImageUrl:String = ""
+    var vendorImageUrl:String = "",
+    var imageUrl:String = "",
+    var priceCode : String = "$"
 )

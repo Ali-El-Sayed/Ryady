@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".product.view.ProductInfoFragment">
+    tools:context=".view.screens.product.view.ProductInfoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -49,7 +49,19 @@
         </androidx.cardview.widget.CardView>
 
 
-
+       <com.getbase.floatingactionbutton.FloatingActionButton
+           android:id="@+id/btn_favourite"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           app:layout_constraintTop_toBottomOf="@id/mySlider"
+           app:layout_constraintEnd_toEndOf="parent"
+           android:layout_marginTop="25dp"
+           android:layout_marginEnd="25dp"
+           app:fab_icon="@drawable/favorite"
+           app:fab_size="mini"
+           android:scaleType="fitXY"
+           app:fab_colorPressed="@color/black"
+           app:fab_colorNormal="@color/secondary"/>
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
@@ -135,6 +147,10 @@
             app:layout_constraintTop_toBottomOf="@id/size_list"/>
 
 
+
+
+
+
         <TextView
             android:id="@+id/description_title"
             android:layout_width="match_parent"
@@ -164,7 +180,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="25dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
             android:backgroundTint="@color/secondary"
             android:text="@string/add_to_cart"
             android:textSize="25sp"

@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
-            android:gravity="center"
+
             android:singleLine="false"
             android:text="TextView"
             android:textAlignment="viewStart"
@@ -71,7 +71,7 @@
             android:gravity="center"
             android:singleLine="false"
             android:text="TextView"
-            android:textColor="@color/material_dynamic_neutral30"
+            android:textColor="#4A4C4E"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/cart_product_title"
             app:layout_constraintTop_toBottomOf="@+id/cart_product_title"
@@ -143,7 +143,7 @@
             app:layout_constraintTop_toTopOf="@+id/button_decrement"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/animloadingwave" />
+            />
 
         <LinearLayout
             android:id="@+id/delete_layout"

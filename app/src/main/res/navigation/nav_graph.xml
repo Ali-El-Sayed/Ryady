@@ -91,4 +91,13 @@
         android:name="com.example.ryady.cart.view.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/favouriteFragment"
+        android:name="com.example.ryady.view.screens.Favourite.View.FavouriteFragment"
+        android:label="fragment_favourite"
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
+    </fragment>
 </navigation>

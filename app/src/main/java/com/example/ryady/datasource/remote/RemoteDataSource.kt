@@ -10,7 +10,7 @@ import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
-
+import com.example.ProductByIdQuery.*
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
@@ -19,14 +19,27 @@ import com.example.payment.PaymentCreationResult
 import com.example.payment.PaymentRequest
 import com.example.payment.PaymentService
 import com.example.payment.RetrofitHelper
+import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
+import kotlinx.coroutines.flow.callbackFlow
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import okhttp3.ResponseBody
+import java.util.EventListener
+import java.util.Objects
 
 private const val TAG = "RemoteDataSource"
 
@@ -46,12 +59,12 @@ interface IRemoteDataSource {
 
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
 
-    suspend fun <T> addItemToCart(cartId: String,varientID : String,quantity : Int): Response<T>
-    suspend fun <T> updateCartLine(cartId: String,lineID : String,quantity : Int): Response<T>
-    suspend fun <T> deleteCartLine(cartId: String,lineID : String): Response<T>
+    suspend fun <T> addItemToCart(cartId: String, varientID: String, quantity: Int): Response<T>
+    suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
+    suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T>
 
 
-    suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>
+    suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>>
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 
@@ -64,13 +77,31 @@ interface IRemoteDataSource {
         paymentRequest: PaymentRequest
     ): Flow<retrofit2.Response<PaymentCreationResult>>
 
+
+    suspend fun addItemToFavourite(product: ProductByIdQuery.Product)
+
+    suspend fun getAllFavouriteItem(
+        email: String = "mh95568@gmail.com",
+        productListL: (products: List<Product>) -> Unit
+    )
+
+    suspend fun deleteItem(itemId: String)
+
+
+    suspend fun searchForAnItem(itemId: String,isFound: (found: Boolean) -> Unit)
+
 }
 
 @Suppress("UNCHECKED_CAST")
 class RemoteDataSource private constructor(private val client: ApolloClient) : IRemoteDataSource {
-    private val retrofitService : PaymentService by lazy {
+    private val retrofitService: PaymentService by lazy {
         RetrofitHelper.retrofit.create(PaymentService::class.java)
     }
+
+    private val database: FirebaseDatabase by lazy {
+        FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+    }
+
     companion object {
         @Volatile
         private var instance: IRemoteDataSource? = null
@@ -122,22 +153,21 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-
-
-
-
     override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
         val response = client.query(ShopifyProductByCategoryTypeQuery(category)).execute()
         return when {
-            response.hasErrors() -> Response.Error(response.errors?.first()?.message ?: "Data Not Found")
+            response.hasErrors() -> Response.Error(
+                response.errors?.first()?.message ?: "Data Not Found"
+            )
+
             else -> Response.Success(response.data?.products?.toProductList() as T)
         }
     }
 
     override suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>> {
         client.query(ProductByIdQuery(id)).execute().data?.product?.let {
-                return flow { emit(Response.Success(it)) }
-            }
+            return flow { emit(Response.Success(it)) }
+        }
 
         return flow { emit(Response.Error("Error get data from remote")) }
     }
@@ -178,7 +208,13 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         varientID: String,
         quantity: Int
     ): Response<T> {
-        val response = client.mutation(AddItemsToCartMutation(cartid = cartId, varientid = varientID, quantity = quantity))
+        val response = client.mutation(
+            AddItemsToCartMutation(
+                cartid = cartId,
+                varientid = varientID,
+                quantity = quantity
+            )
+        )
             .execute()
 
 
@@ -192,7 +228,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             }
 
             else -> {
-                    Response.Success(1 as T)
+                Response.Success(1 as T)
 
             }
         }
@@ -203,7 +239,13 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         lineID: String,
         quantity: Int
     ): Response<T> {
-        val response = client.mutation(CartLinesUpdateMutation(cartid = cartId, linetid = lineID, quantity = quantity))
+        val response = client.mutation(
+            CartLinesUpdateMutation(
+                cartid = cartId,
+                linetid = lineID,
+                quantity = quantity
+            )
+        )
             .execute()
 
 
@@ -220,7 +262,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 Response.Success(1 as T)
 
             }
-        }    }
+        }
+    }
 
     override suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T> {
         val response = client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID))
@@ -240,33 +283,101 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 Response.Success(1 as T)
 
             }
-        }      }
+        }
+    }
 
-    override suspend fun <T> createAccessToken(customer : CustomerAccessTokenCreateInput) : Flow<Response<T>>{
+    override suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>> {
         Log.i(TAG, "createAccessToken: ")
         val response = client.mutation(CustomerAccessTokenCreateMutation(customer)).execute()
 
-        return  when{
+        return when {
 
             (response.data?.customerAccessTokenCreate?.customerUserErrors?.size ?: -1) > 0 -> {
-                flow {emit(Response.Error(response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message ?:"Error NUll"))  }
+                flow {
+                    emit(
+                        Response.Error(
+                            response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message
+                                ?: "Error NUll"
+                        )
+                    )
+                }
             }
 
             else -> {
-                flow {emit(Response.Success(response.data?.customerAccessTokenCreate?.customerAccessToken?.accessToken as T))  }
+                flow { emit(Response.Success(response.data?.customerAccessTokenCreate?.customerAccessToken?.accessToken as T)) }
             }
         }
     }
-    override  suspend fun makePaymentCall(
+
+    override suspend fun makePaymentCall(
         publicKey: String,
         clientSecret: String,
     ): Flow<retrofit2.Response<ResponseBody>> = flow {
-        emit(retrofitService.getPaymentPage(publicKey,clientSecret))
+        emit(retrofitService.getPaymentPage(publicKey, clientSecret))
     }
 
-    override  suspend fun createPayment(
+    override suspend fun createPayment(
         paymentRequest: PaymentRequest
     ): Flow<retrofit2.Response<PaymentCreationResult>> = flow {
         emit(retrofitService.createPayment(paymentRequest))
+    }
+
+
+    override suspend fun addItemToFavourite(product: ProductByIdQuery.Product) {
+        val parentRef = database.getReference("FavouriteCart")
+        val email = "mh95568@gmail.com"
+        parentRef.child(encodeEmail(email)).child(product.id).setValue(product)
+        Log.i(TAG, "addItemToFavourite: Done added")
+    }
+
+    private fun encodeEmail(email: String): String {
+        return email.replace(".", ",").replace("@", "_at_")
+    }
+
+
+    override suspend fun getAllFavouriteItem(
+        email: String,
+        productListL: (products: List<Product>) -> Unit
+    ) {
+
+        val parentRef = database.getReference("FavouriteCart")
+        val listProduct: MutableList<Product> = mutableListOf()
+
+        parentRef.child(encodeEmail(email)).get().addOnSuccessListener {
+            it.child("gid:").child("shopify").child("Product").children.forEach { prod ->
+
+                val product = Product(
+                    id = prod.child("id").value as String,
+                    title = prod.child("title").value as String,
+                    maxPrice = prod.child("priceRange").child("maxVariantPrice")
+                        .child("amount").value as String,
+                    priceCode = prod.child("priceRange").child("maxVariantPrice")
+                        .child("currencyCode").value as String,
+                    imageUrl = prod.child("images").child("edges").child("0")
+                        .child("node").child("url").value as String
+
+                )
+                listProduct.add(product)
+
+                Log.i(TAG, "getAllFavouriteItem: ${listProduct.size}")
+            }
+            productListL(listProduct)
+        }
+    }
+
+
+    override suspend fun deleteItem(itemId: String) {
+        val parentRef = database.getReference("FavouriteCart")
+        parentRef.child(encodeEmail("mh95568@gmail.com")).child(itemId).removeValue()
+    }
+
+    override suspend fun searchForAnItem(
+        itemId: String,
+        isFound: (found: Boolean) -> Unit
+    ) {
+        val parentRef = database.getReference("FavouriteCart")
+        parentRef.child(encodeEmail("mh95568@gmail.com")).child(itemId).get().addOnSuccessListener {
+           isFound(it.exists())
+        }
     }
 }

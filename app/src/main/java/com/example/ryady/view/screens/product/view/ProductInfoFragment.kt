@@ -17,11 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.ProductByIdQuery
-import com.example.ryady.Variant
+import com.example.ryady.R
 import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.model.Product
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.factory.ViewModelFactory
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +37,8 @@ class ProductInfoFragment : Fragment() {
 
     lateinit var binding: FragmentProductInfoBinding
     var variantId =""
-
+    var isFavourite : Boolean = false
+    var id : String =""
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[ProductViewModel::class.java]
@@ -51,18 +54,21 @@ class ProductInfoFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val id : String = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
+        id  = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
         Log.i(TAG, "onCreate Id: $id")
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 viewModel.fetchProductById(id)
+                viewModel.searchForAnItem(itemId = id){
+                    isFavourite = it
+                }
             }
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             viewModel.productInfo.collectLatest {
                 withContext(Dispatchers.Main){
                     when(it){
@@ -98,6 +104,8 @@ class ProductInfoFragment : Fragment() {
                     viewModel.addItemToCart(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e", varientID = variantId, quantity = 1)
             }
         }
+
+
     }
 
 
@@ -123,8 +131,27 @@ class ProductInfoFragment : Fragment() {
             sizeList.add(it.node.title.split("/")[0])
         }
 
+        if (isFavourite){
+            binding.btnFavourite.setIcon(R.drawable.favorite_fill)
+        }else{
+            binding.btnFavourite.setIcon(R.drawable.favorite)
 
+        }
         binding.sizeList.adapter = SizeAdapter(sizeList.toList())
-    }
 
+        binding.btnFavourite.setOnClickListener {
+            if (isFavourite){
+                viewModel.deleteItem(id)
+                Toast.makeText(requireContext(),"Product Removed from Favourites",Toast.LENGTH_LONG).show()
+                binding.btnFavourite.setIcon(R.drawable.favorite)
+            }else{
+                viewModel.addItemToFav(productInfo)
+                Toast.makeText(requireContext(),"Product Added To Favourites",Toast.LENGTH_LONG).show()
+                binding.btnFavourite.setIcon(R.drawable.favorite_fill)
+            }
+
+        }
+
+
+    }
 }

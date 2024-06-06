@@ -10,7 +10,7 @@
         android:id="@+id/rv_favourite_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp"
+
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         tools:listitem="@layout/favourite_list_item" />
