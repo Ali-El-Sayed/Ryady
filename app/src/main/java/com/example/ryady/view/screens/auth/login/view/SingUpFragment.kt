@@ -1,16 +1,21 @@
 package com.example.ryady.view.screens.auth.login.view
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.api.Optional
 import com.example.ryady.BaseActivity
+import com.example.ryady.R
 import com.example.ryady.databinding.FragmentSingUpBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -19,6 +24,8 @@ import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
 import com.example.type.CustomerCreateInput
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,9 +33,14 @@ import kotlinx.coroutines.withContext
 
 class SingUpFragment : Fragment() {
 
-    private val binding: FragmentSingUpBinding by lazy { FragmentSingUpBinding.inflate(layoutInflater) }
+    private val binding: FragmentSingUpBinding by lazy {
+        FragmentSingUpBinding.inflate(
+            layoutInflater
+        )
+    }
     private val viewModel: LoginViewModel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory =
+            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[LoginViewModel::class.java]
     }
     private lateinit var customer: CustomerCreateInput
@@ -41,15 +53,12 @@ class SingUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnLogin.setOnClickListener {
             if (checkIsEmpty()) {
-                Toast.makeText(requireContext(), " empty", Toast.LENGTH_LONG).show()
                 showErrorMessage()
             } else {
                 removeErrorMessage()
                 createCustomerData()
-                lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.createAccount(customer)
-                }
-                Toast.makeText(requireContext(), " no empty", Toast.LENGTH_LONG).show()
+                viewModel.createAccountFirebase(customer)
+                showVerificationAlert(customer)
             }
 
         }
@@ -59,11 +68,16 @@ class SingUpFragment : Fragment() {
                     when (account) {
                         is Response.Loading -> {}
                         is Response.Success -> {
-                            (requireActivity() as BaseActivity).move(requireContext(), MainActivity::class.java)
+                            (requireActivity() as BaseActivity).move(
+                                requireContext(),
+                                MainActivity::class.java
+                            )
                             requireActivity().finish()
                         }
 
-                        is Response.Error -> {}
+                        is Response.Error -> {
+                            Toast.makeText(requireContext(), "verfiy", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -114,6 +128,32 @@ class SingUpFragment : Fragment() {
             binding.tilPassword.isErrorEnabled = false
         }
 
+    }
+
+
+    private fun showVerificationAlert(customer: CustomerCreateInput) {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        builder.setTitle("Verify Account")
+            .setMessage("Please go to your Email and verify your Account after that Click Verified")
+            .setBackground(
+                ResourcesCompat.getDrawable(
+                    requireContext().resources, R.drawable.delete_dialog_background, requireContext().theme
+                )
+            )
+            .setPositiveButton("Verified") { dialog, _ ->
+                viewModel.checkVerification(customer) {
+                    if (it) {
+                        viewModel.createAccount(customer)
+                    } else {
+                        showVerificationAlert(customer)
+                       Snackbar.make(requireView(),"Please Verify Your Account and try Again",Snackbar.ANIMATION_MODE_SLIDE).show()
+                    }
+                }
+
+            }.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+
+            }.show()
     }
 
 }

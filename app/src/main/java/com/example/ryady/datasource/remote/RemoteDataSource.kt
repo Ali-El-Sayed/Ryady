@@ -10,7 +10,6 @@ import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
-import com.example.ProductByIdQuery.*
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
@@ -23,23 +22,15 @@ import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
-import kotlinx.coroutines.flow.callbackFlow
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import okhttp3.ResponseBody
-import java.util.EventListener
-import java.util.Objects
 
 private const val TAG = "RemoteDataSource"
 
@@ -68,6 +59,7 @@ interface IRemoteDataSource {
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 
+
     suspend fun makePaymentCall(
         publicKey: String,
         clientSecret: String,
@@ -88,7 +80,15 @@ interface IRemoteDataSource {
     suspend fun deleteItem(itemId: String)
 
 
-    suspend fun searchForAnItem(itemId: String,isFound: (found: Boolean) -> Unit)
+    suspend fun searchForAnItem(itemId: String, isFound: (found: Boolean) -> Unit)
+    suspend fun createAccountUsingFirebase(
+        newCustomer: CustomerCreateInput
+    )
+
+    suspend fun checkVerification(
+        newCustomer: CustomerCreateInput,
+        isVerified: (isVerified: Boolean) -> Unit
+    )
 
 }
 
@@ -377,7 +377,31 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     ) {
         val parentRef = database.getReference("FavouriteCart")
         parentRef.child(encodeEmail("mh95568@gmail.com")).child(itemId).get().addOnSuccessListener {
-           isFound(it.exists())
+            isFound(it.exists())
         }
+    }
+
+    override suspend fun createAccountUsingFirebase(
+        newCustomer: CustomerCreateInput,
+        ) {
+        val auth = Firebase.auth
+
+        auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password)
+            .addOnSuccessListener {
+                auth.currentUser?.sendEmailVerification()
+            }
+    }
+
+    override suspend fun checkVerification(
+        newCustomer: CustomerCreateInput,
+        isVerified: (isVerified: Boolean) -> Unit
+    ) {
+        val auth = Firebase.auth
+        Log.i(TAG, "checkVerification: ${newCustomer.email}")
+        auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password)
+            .addOnSuccessListener {
+                auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
+            }
+
     }
 }

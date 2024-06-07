@@ -22,7 +22,7 @@ import com.example.type.CustomerAccessTokenCreateInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "LoginFragment"
+const val TAG = "LoginFragment"
 
 class LoginFragment : Fragment() {
 
