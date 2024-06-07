@@ -146,30 +146,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Payment Method -->
-        <TextView
-            android:id="@+id/tv_payment_method"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:paddingVertical="4dp"
-            android:text="@string/payment_method"
-            android:textAlignment="center"
-            android:textSize="24sp" />
-
-        <com.skydoves.powerspinner.PowerSpinnerView
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:padding="12dp"
-            app:spinner_arrow_animate="true"
-            app:spinner_arrow_gravity="end"
-            app:spinner_selected_item_background="@color/list_background"
-            app:spinner_arrow_tint="@color/secondary"
-            app:spinner_popup_animation="dropdown"
-            app:spinner_popup_background="@color/list_background"
-            app:spinner_popup_elevation="2dp" />
 
     </LinearLayout>
     <!-- Cancel Button -->

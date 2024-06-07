@@ -12,6 +12,8 @@
     <string name="products">Products</string>
 
     <string name="add_to_cart">Add To Cart</string>
+    <string name="enable_gps">Enable GPS</string>
+    <string name="gps_is_disabled_do_you_want_to_enable_it">GPS is disabled. Do you want to enable it?</string>
 
     <string name="brands">Brands</string>
     <string name="category">Category</string>
@@ -40,4 +42,7 @@
     <string name="order_info">Order Info</string>
     <string name="address">Address</string>
     <string name="get_current_location">Get Current Location</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="location">Location</string>
 </resources>

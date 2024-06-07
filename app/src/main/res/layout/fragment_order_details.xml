@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.screens.order.view.Order"
     android:background="@color/primary">
 
     <!-- Toolbar -->
@@ -49,7 +48,7 @@
             android:id="@+id/til_customer_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/phone"
+            android:hint="@string/location"
             android:textColorHint="@color/black"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
@@ -64,13 +63,14 @@
             app:startIconTint="@color/black">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_customer_phone"
+                android:id="@+id/et_customer_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
+                android:inputType="text"
                 android:maxLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <TextView
             android:id="@+id/tv_get_current_location"
