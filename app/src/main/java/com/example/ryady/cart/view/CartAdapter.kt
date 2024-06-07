@@ -66,7 +66,7 @@ class CartAdapter(
                  curr++
                 passedScope.launch {
                     viewModel.updateCartLine(
-                        cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e",
+                        cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
                         lineID = node.id,
                         quantity = curr
                     )
@@ -82,7 +82,7 @@ class CartAdapter(
                     binding.animationView.visibility = View.VISIBLE
                     passedScope.launch {
                         viewModel.updateCartLine(
-                            cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e",
+                            cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
                             lineID = node.id,
                             quantity = curr
                         )
@@ -90,7 +90,7 @@ class CartAdapter(
                 }
                 else{
                     passedScope.launch {
-                        viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e",
+                        viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
                             lineID = node.id)
                     }
                 }
@@ -98,7 +98,7 @@ class CartAdapter(
             }
             binding.deleteLayout.setOnClickListener {
                 passedScope.launch {
-                    viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e",
+                    viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
                         lineID = node.id)
                 }
             }

@@ -68,7 +68,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
         val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
         val customerRef = database.getReference("CustomerCart")
         val email = "mh95568@gmail.com"
-        val cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e"
+        val cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaUzg3WDU4NTRXMzBZM1pHUjczV1RXNg?key=d7d3965ec0575bdea103f231051d2171"
         fun encodeEmail(email: String): String {
             return email.replace(".", ",").replace("@", "_at_")
         }
@@ -79,7 +79,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e")
+                viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5")
             }
         }
 
@@ -153,7 +153,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
                     is Response.Loading -> {
                     }
                     is Response.Success -> {
-                        viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e")
+                        viewModel.fetchCartById("gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5")
                     }
                 }
             }
@@ -180,7 +180,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
         }
 
         binding.button.setOnClickListener {
-            ShopifyCheckoutSheetKit.present("https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e", requireActivity(), checkoutEventProcessorsd)
+            ShopifyCheckoutSheetKit.present("https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5", requireActivity(), checkoutEventProcessorsd)
         }
 
       /*  binding.button.setOnClickListener {
