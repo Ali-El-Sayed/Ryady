@@ -9,30 +9,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.RetrieveCartQuery
 import com.example.ryady.R
-import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.databinding.CartListItemBinding
-import com.example.ryady.datasource.remote.RemoteDataSource
-import com.example.ryady.network.GraphqlClient
-import com.example.ryady.view.factory.ViewModelFactory
+import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 const val TAG = "CartAdapter"
+
 class CartAdapter(
     private var nodes: List<RetrieveCartQuery.Node>,
-    private  val viewModel: CartViewModel,
-    private  val passedScope: CoroutineScope,
+    private val viewModel: CartViewModel,
+    private val passedScope: CoroutineScope,
     private val context: Context,
+    private val cartId: String =
+        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203",
     private val onMerchandiseClick: (id: String) -> Unit
-
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,8 +40,9 @@ class CartAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(nodes[position])
     }
-    fun updateList(newnodes: List<RetrieveCartQuery.Node>){
-        nodes=newnodes
+
+    fun updateList(newnodes: List<RetrieveCartQuery.Node>) {
+        nodes = newnodes
         notifyDataSetChanged()
         Log.d(TAG, "Updated data in adapter. New node count: ${nodes.size}")
 
@@ -54,19 +50,19 @@ class CartAdapter(
 
     inner class ViewHolder(private val binding: CartListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(node: RetrieveCartQuery.Node) {
-//            binding.favView.setOnLongClickListener {
-//                binding.checkb.visibility = View.VISIBLE
-//                true
-//            }
+            binding.favView.setOnLongClickListener {
+                binding.checkb.visibility = View.VISIBLE
+                true
+            }
 
             binding.buttonIncrement.setOnClickListener {
                 binding.textCount.visibility = View.INVISIBLE
                 binding.animationView.visibility = View.VISIBLE
                 var curr = binding.textCount.text.toString().toInt()
-                 curr++
+                curr++
                 passedScope.launch {
                     viewModel.updateCartLine(
-                        cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
+                        cartId,
                         lineID = node.id,
                         quantity = curr
                     )
@@ -82,28 +78,31 @@ class CartAdapter(
                     binding.animationView.visibility = View.VISIBLE
                     passedScope.launch {
                         viewModel.updateCartLine(
-                            cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
+                            cartId,
                             lineID = node.id,
                             quantity = curr
                         )
                     }
-                }
-                else{
+                } else {
                     passedScope.launch {
-                        viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
-                            lineID = node.id)
+                        viewModel.deleteCartLine(
+                            cartId,
+                            lineID = node.id
+                        )
                     }
                 }
 
             }
             binding.deleteLayout.setOnClickListener {
                 passedScope.launch {
-                    viewModel.deleteCartLine(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5",
-                        lineID = node.id)
+                    viewModel.deleteCartLine(
+                        cartId,
+                        lineID = node.id
+                    )
                 }
             }
 
-         fun deleteLambda(){
+            fun deleteLambda() {
                 val modifiedText = "%icon%" // you can use resource string here
                 val span = SpannableString(modifiedText)
                 val drawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_delete, null)
@@ -111,26 +110,26 @@ class CartAdapter(
                 val image = drawable?.let { ImageSpan(it, ImageSpan.ALIGN_BOTTOM) }
                 val startIndex = modifiedText.indexOf("%icon%")
 
-//Replace %icon% with drawable
+                //Replace %icon% with drawable
                 span.setSpan(image, startIndex, startIndex + 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
                 binding.buttonDecrement.text = span
             }
 
             binding.cartProductTitle.text = node.merchandise.onProductVariant?.product?.title
             binding.cartProductBrand.text = node.merchandise.onProductVariant?.product?.vendor
-            if (node.quantity == 1){
+            if (node.quantity == 1) {
                 deleteLambda()
-            }else{
+            } else {
                 binding.buttonDecrement.text = "-"
             }
-            if(node.merchandise.onProductVariant?.quantityAvailable == node.quantity){
+            if (node.merchandise.onProductVariant?.quantityAvailable == node.quantity) {
                 binding.buttonIncrement.isClickable = false
                 binding.buttonIncrement.alpha = 0.5f
-            }else{
+            } else {
                 binding.buttonIncrement.isClickable = true
                 binding.buttonIncrement.alpha = 1f
             }
-                binding.textCount.text = node.quantity.toString()
+            binding.textCount.text = node.quantity.toString()
             binding.textCount.visibility = View.VISIBLE
             binding.animationView.visibility = View.GONE
             val priceText = "${node.cost.totalAmount.amount} ${node.merchandise.onProductVariant?.price?.currencyCode}"
@@ -141,9 +140,7 @@ class CartAdapter(
                 placeholder(R.drawable.placeholder)
             }
 
-            itemView.setOnClickListener {
-                node.id?.let { id -> onMerchandiseClick(id) }
-            }
+            itemView.setOnClickListener { onMerchandiseClick(node.id) }
         }
     }
 }

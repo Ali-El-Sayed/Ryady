@@ -57,8 +57,6 @@ class FavouriteListAdapter(
                 }.setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }.show()
-
-
         }
 
 

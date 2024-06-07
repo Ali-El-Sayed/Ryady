@@ -143,7 +143,7 @@
             app:layout_constraintTop_toTopOf="@+id/button_decrement"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            />
+            app:lottie_rawRes="@raw/animloadingwave" />
 
         <LinearLayout
             android:id="@+id/delete_layout"

@@ -12,34 +12,35 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.RetrieveCartQuery
-import com.example.payment.BillingData
-import com.example.payment.Item
-import com.example.payment.PaymentRequest
-import com.example.payment.State
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
-import com.paymob.paymob_sdk.PaymobSdk
-import com.paymob.paymob_sdk.ui.PaymobSdkListener
+import com.shopify.checkoutsheetkit.CheckoutException
+import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
+import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
+import com.shopify.checkoutsheetkit.lifecycleevents.CheckoutCompletedEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class CartFragment : Fragment(), PaymobSdkListener {
+class CartFragment : Fragment() {
 
     lateinit var binding: FragmentCartBinding
     var cartId =
-        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU1pQTTc3TllHRERXVDNKR0I1RUNaTg?key=98f6ed4ca45637590d2e1ed864808623"
+        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203"
+
+    var checkouturl =
+        "https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203"
+
     var nlist: ArrayList<RetrieveCartQuery.Node> = ArrayList()
     lateinit var buyer: RetrieveCartQuery.BuyerIdentity
     var total: Double = 0.0
     var mytax: Int = 0
-    var totalCash: Int = 0
+    var pricessummed: Int = 0
     lateinit var myadapter: CartAdapter
 
     private val viewModel by lazy {
@@ -49,7 +50,11 @@ class CartFragment : Fragment(), PaymobSdkListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch { repeatOnLifecycle(Lifecycle.State.STARTED) { viewModel.fetchCartById(cartId) } }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchCartById(cartId)
+            }
+        }
 
     }
 
@@ -63,6 +68,19 @@ class CartFragment : Fragment(), PaymobSdkListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val checkoutEventProcessorsd = object : DefaultCheckoutEventProcessor(requireContext()) {
+            override fun onCheckoutCanceled() {
+
+            }
+
+            override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
+
+            }
+
+            override fun onCheckoutFailed(error: CheckoutException) {}
+
+        }
+
         binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope, context = requireContext()) {
             // the onclick procedure
@@ -72,7 +90,9 @@ class CartFragment : Fragment(), PaymobSdkListener {
         lifecycleScope.launch {
             viewModel.cartInfo.collectLatest { result ->
                 when (result) {
-                    is Response.Error -> {}
+                    is Response.Error -> {
+                        Log.d(TAG, "Error retriving cart: ${result.message}")
+                    }
 
                     is Response.Loading -> {}
                     is Response.Success -> {
@@ -81,6 +101,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
                         result.data.lines.edges.forEach {
                             nlist.add(it.node)
                         }
+                        checkouturl = result.data.checkoutUrl.toString()
                         mytax = ((result.data.cost.totalAmount.amount.toString()
                             .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()) * 100).toInt()
 
@@ -107,85 +128,14 @@ class CartFragment : Fragment(), PaymobSdkListener {
                 }
             }
         }
-        lifecycleScope.launch {
-            viewModel.order.collectLatest { result ->
-                when (result) {
-                    is State.Failure -> {}
-                    State.Loading -> {}
-                    is State.Success -> {
-                        Log.d("Secret", result.data.clientSecret ?: "no secret")
-                        val paymobsdk = PaymobSdk.Builder(
-                            context = requireContext(),
-                            clientSecret = result.data.clientSecret ?: "",  //  Place Client Secret here
-                            publicKey = "egy_pk_test_FgzmlcKNjL1wftgERMqnpEHTyk09tLCY", // Place Public Key here
-                            paymobSdkListener = this@CartFragment,
-                        ).build()
-                        paymobsdk.start()
-                    }
-                }
-            }
-        }
 
         binding.button.setOnClickListener {
-            val items = ArrayList<Item>()
-            nlist.forEach {
-                totalCash += ((it.merchandise.onProductVariant?.price?.amount.toString().toDouble() * 100).toInt() * it.quantity)
-                Timber.tag("Prices").d(
-                    ((it.merchandise.onProductVariant?.price?.amount.toString()
-                        .toDouble() * 100).toInt() * it.quantity).toString()
-                )
-                Timber.tag("Pricessummed").d(totalCash.toString())
-                (it.merchandise.onProductVariant?.price?.amount.toString().toDouble() * 100).toInt()
-                var item = Item(
-                    name = it.merchandise?.onProductVariant?.title ?: "no title",
-                    amount = (it.merchandise.onProductVariant?.price?.amount.toString().toDouble() * 100).toInt(),
-                    description = it.merchandise.onProductVariant?.barcode ?: "barcode missing",
-                    quantity = it.quantity
-                )
-                items.add(item)
-            }
-            val tax = Item(name = "Tax", amount = mytax, description = "tax", quantity = 1)
-            items.add(tax)
-            totalCash += mytax
-            Timber.tag("Prices").d(mytax.toString())
-            Timber.tag("Pricessummed").d(totalCash.toString())
-            val billingData = BillingData(
-                first_name = buyer.customer?.firstName ?: "no name",
-                last_name = buyer.customer?.lastName ?: "no name",
-                email = buyer.email ?: "no email",
-                phone_number = buyer.customer?.phone ?: "no phone number",
-                street = "null",
-                building = "null",
-                city = "null",
-                country = "null"
+            ShopifyCheckoutSheetKit.present(
+                checkouturl, requireActivity(), checkoutEventProcessorsd
             )
 
-            var methods = ArrayList<Int>()
-            methods.add(4589069)
-            Timber.tag("Pricessummed").d(totalCash.toString())
-            Timber.tag("total").d((total * 100).toInt().toString())
-            val request = PaymentRequest(
-                amount = (total * 100).toInt(),
-                currency = nlist.first().cost.totalAmount.currencyCode.name,
-                payment_methods = methods,
-                items = items,
-                billingData
-            )
-            viewModel.createPayment(request)
+
         }
-    }
-
-
-    override fun onFailure() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onPending() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSuccess() {
-        TODO("Not yet implemented")
     }
 
 }
