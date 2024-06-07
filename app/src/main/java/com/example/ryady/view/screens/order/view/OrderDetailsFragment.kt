@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.text.Editable.Factory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,14 +41,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.paymob.paymob_sdk.ui.PaymobSdkListener
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
-import timber.log.Timber
 import java.io.IOException
 import java.util.Locale
 
 class OrderDetailsFragment : Fragment(), PaymobSdkListener {
     private val DELAY_IN_LOCATION_REQUEST = 2000000L
     private val REQUEST_LOCATION_PERMISSION = 1
-
+    private val TAG = "OrderDetailsFragment"
     private val binding by lazy { FragmentOrderDetailsBinding.inflate(layoutInflater) }
     private val viewModel: OrderViewModel by lazy {
         val factory = ViewModelFactory(
@@ -64,6 +64,7 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
             val location = p0.lastLocation
             location?.let {
                 getLocationFromCoordinates(requireContext(), it.latitude, it.longitude)
+                hideLoadingIndicator()
             }
         }
     }
@@ -77,7 +78,7 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
             if (isGPSEnabled(requireContext())) getFreshLocation(locationCallback)
             else showEnableGPSDialog()
         }
-        binding.btnNext.setOnClickListener {
+        binding.btnCheckout.setOnClickListener {
             // Save Order Shipping Address
             viewModel.currentOrder.shippingAddress = binding.etCustomerLocation.text.toString()
             // Save Order Payment Method
@@ -114,24 +115,31 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
         }
         // Back Button
         binding.btnCancel.setOnClickListener { findNavController().popBackStack() }
+
+        // Checkout Button
+        binding.btnCheckout.setOnClickListener {
+
+        }
     }
 
     @SuppressLint("MissingPermission")
     private fun getFreshLocation(callback: LocationCallback) {
         if (isGPSPermissionGranted(requireContext())) {
             if (isGPSEnabled(requireContext())) {
+                showLoadingIndicator()
                 fusedLocationProviderClient.requestLocationUpdates(
                     LocationRequest.Builder(DELAY_IN_LOCATION_REQUEST).apply {
                         setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                     }.build(), callback, Looper.myLooper()
                 ).exception?.let {
-                    Timber.e("Error getting location: ${it.message}")
+                    Log.d(TAG, "Error getting location: ${it.message}")
                 }
             } else showEnableGPSDialog()
         } else {
             requestPermission()
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun getLocationFromCoordinates(context: Context, latitude: Double, longitude: Double) {
@@ -143,7 +151,6 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
                         val address = it[0]
                         val locationName = address.getAddressLine(0)
                         binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
-                        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Try Again", Toast.LENGTH_SHORT).show()
@@ -193,6 +200,7 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
         return fineLocationPermission || coarseLocationPermission
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -210,6 +218,15 @@ class OrderDetailsFragment : Fragment(), PaymobSdkListener {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
+
+    private fun showLoadingIndicator() {
+        binding.frameLayout.visibility = View.VISIBLE
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.frameLayout.visibility = View.GONE
+    }
+
 
     override fun onFailure() {
         TODO("Not yet implemented")

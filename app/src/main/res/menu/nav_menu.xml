@@ -14,4 +14,10 @@
         android:title="@string/category"
         app:showAsAction="always"
         app:tooltipText="@string/category" />
+    <item
+        android:id="@+id/favouriteFragment"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/category"
+        app:showAsAction="always"
+        app:tooltipText="@string/category" />
 </menu>

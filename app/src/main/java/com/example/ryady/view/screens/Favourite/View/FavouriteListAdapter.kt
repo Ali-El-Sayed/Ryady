@@ -14,7 +14,6 @@ import com.example.ryady.databinding.FavouriteListItemBinding
 import com.example.ryady.model.Product
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 
 class FavouriteListAdapter(
     private val listProduct: MutableList<Product>,
@@ -55,11 +54,6 @@ class FavouriteListAdapter(
                     listener.deleteItem(listProduct[position].id)
                     listProduct.removeAt(position)
                     notifyDataSetChanged()
-                    Snackbar.make(
-                        binding.root,
-                        "Item Deleted Successfully",
-                        Snackbar.ANIMATION_MODE_SLIDE
-                    ).show()
                 }.setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
                 }.show()

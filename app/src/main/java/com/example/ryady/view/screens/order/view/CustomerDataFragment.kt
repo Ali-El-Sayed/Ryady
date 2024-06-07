@@ -38,12 +38,10 @@ class CustomerDataFragment : Fragment() {
             // customer email
             viewModel.currentOrder.customerEmail = binding.etCustomerEmail.text.toString()
             // customer name
-            viewModel.currentOrder.customerName = binding.etCustomerName.text.toString()
+            viewModel.currentOrder.customerFirstName = binding.etCustomerFirstName.text.toString()
+            viewModel.currentOrder.customerLastName = binding.etCustomerLastName.text.toString()
             // phone number
-            if (binding.etAnotherPhone.text.toString().isNotEmpty()) {
-                viewModel.currentOrder.customerPhoneNumbers =
-                    "${binding.etAnotherPhone.text.toString()}, ${binding.etAnotherPhone.text.toString()}"
-            } else viewModel.currentOrder.customerPhoneNumbers = binding.etCustomerPhone.text.toString()
+            viewModel.currentOrder.customerPhoneNumbers = binding.etCustomerPhone.text.toString()
             findNavController().navigate(CustomerDataFragmentDirections.actionCustomerDataFragmentToOrderDetailsFragment())
         }
 

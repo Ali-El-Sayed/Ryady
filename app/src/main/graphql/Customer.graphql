@@ -8,3 +8,32 @@ query GetCustomerData($input: String!) {
         phone
     }
 }
+mutation createAddress(
+    $token:String!,
+    $firstname:String!,
+    $lastName:String!,
+    $phone:String!,
+    $address:String!,
+    $country:String!,
+    $city:String!,
+    $zip:String!,
+
+) {
+    customerAddressCreate(
+        address: {
+            firstName: $firstname
+            lastName: $lastName
+            phone: $phone
+            address1: $address
+            city: $city
+            country: $country
+            zip: $zip
+        }
+        customerAccessToken: $token
+    ) {
+        userErrors {
+            field
+            message
+        }
+    }
+}

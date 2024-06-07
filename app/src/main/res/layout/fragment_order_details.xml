@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:background="@color/primary"
             android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_back"
             app:subtitleTextAppearance="@font/regular"
             app:title="@string/order_info"
             app:titleCentered="true" />
@@ -59,15 +58,15 @@
             app:hintAnimationEnabled="true"
             app:hintEnabled="true"
             app:hintTextColor="@color/black"
-            app:startIconDrawable="@drawable/ic_location"
-            app:startIconTint="@color/black">
+            app:startIconDrawable="@drawable/ic_location">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_customer_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:textColor="@color/black" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -111,31 +110,29 @@
 
     </LinearLayout>
     <!-- Cancel Button -->
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/secondary"
-        android:padding="12dp"
-        android:text="@string/cancel" />
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_back_btn" />
+
     <!-- Next Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_next"
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btn_checkout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/secondary"
-        android:padding="12dp"
-        android:text="@string/next" />
+        android:contentDescription="@string/next"
+        android:src="@drawable/ic_next"
+        android:text="Checkout" />
 
     <FrameLayout
         android:id="@+id/frameLayout"

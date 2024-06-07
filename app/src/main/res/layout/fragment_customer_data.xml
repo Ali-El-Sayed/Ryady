@@ -34,12 +34,12 @@
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingTop="24dp">
-        <!-- Customer Name -->
+        <!-- Customer First Name -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_customer_name"
+            android:id="@+id/til_customer_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name"
+            android:hint="@string/first_name"
             android:textColorHint="@color/black"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
@@ -54,7 +54,35 @@
             app:startIconTint="@color/black">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_customer_name"
+                android:id="@+id/et_customer_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+        <!-- Customer Last Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_customer_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/last_name"
+            android:textColorHint="@color/black"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxStrokeColor="#0023AA"
+            app:cursorColor="@color/black"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/black"
+            app:startIconDrawable="@drawable/ic_person"
+            app:startIconTint="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_customer_last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
@@ -66,7 +94,7 @@
             android:id="@+id/til_customer_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:hint="@string/e_mail"
             android:textColorHint="@color/black"
             app:boxCornerRadiusBottomEnd="8dp"
@@ -94,7 +122,7 @@
             android:id="@+id/til_customer_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:hint="@string/phone"
             android:textColorHint="@color/black"
             app:boxCornerRadiusBottomEnd="8dp"
@@ -117,63 +145,32 @@
                 android:maxLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>
-        <!-- Another Phone -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_another_phone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:hint="@string/another_phone"
-            android:textColorHint="@color/black"
-            app:boxCornerRadiusBottomEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusTopStart="8dp"
-            app:boxStrokeColor="#0023AA"
-            app:cursorColor="@color/black"
-            app:hintAnimationEnabled="true"
-            app:hintEnabled="true"
-            app:hintTextColor="@color/black"
-            app:startIconDrawable="@drawable/ic_phone"
-            app:startIconTint="@color/black">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_another_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
 
     </LinearLayout>
     <!-- Cancel Button -->
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/secondary"
-        android:padding="12dp"
-        android:text="@string/cancel" />
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_back_btn" />
+
     <!-- Next Button -->
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/secondary"
-        android:padding="12dp"
-        android:text="@string/next" />
+        android:contentDescription="@string/next"
+        android:src="@drawable/ic_next" />
 
     <FrameLayout
         android:id="@+id/frameLayout"

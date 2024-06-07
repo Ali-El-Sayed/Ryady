@@ -1,9 +1,6 @@
 package com.example.ryady.view.screens.auth.login.view
 
-import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +9,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.api.Optional
+import com.example.ryady.R
 import com.example.ryady.databinding.FragmentSingUpBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -142,7 +139,8 @@ class SingUpFragment : Fragment() {
                         viewModel.createAccount(customer)
                     } else {
                         showVerificationAlert(customer)
-                       Snackbar.make(requireView(),"Please Verify Your Account and try Again",Snackbar.ANIMATION_MODE_SLIDE).show()
+                        Snackbar.make(requireView(), "Please Verify Your Account and try Again", Snackbar.ANIMATION_MODE_SLIDE)
+                            .show()
                     }
                 }
 
