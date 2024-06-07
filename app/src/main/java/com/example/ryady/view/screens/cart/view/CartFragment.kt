@@ -1,4 +1,4 @@
-package com.example.ryady.cart.view
+package com.example.ryady.view.screens.cart.view
 
 import android.os.Bundle
 import android.text.Spannable
@@ -21,8 +21,7 @@ import com.example.payment.BillingData
 import com.example.payment.Item
 import com.example.payment.PaymentRequest
 import com.example.payment.State
-import com.example.ryady.R
-import com.example.ryady.cart.viewModel.CartViewModel
+import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -47,7 +46,7 @@ class CartFragment : Fragment(), PaymobSdkListener {
      var total:Double =0.0
     var mytax:Int = 0
     var pricessummed:Int =0
-    lateinit var myadapter:CartAdapter
+    lateinit var myadapter: CartAdapter
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))

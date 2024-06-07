@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.play.services.location)
     kapt("androidx.room:room-compiler:2.6.1")
     // work manager
     implementation("androidx.work:work-runtime-ktx:2.9.0")

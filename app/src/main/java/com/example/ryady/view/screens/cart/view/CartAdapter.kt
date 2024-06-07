@@ -1,4 +1,4 @@
-package com.example.ryady.cart.view
+package com.example.ryady.view.screens.cart.view
 
 import android.content.Context
 import android.text.Spannable
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.RetrieveCartQuery
 import com.example.ryady.R
-import com.example.ryady.cart.viewModel.CartViewModel
+import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.databinding.CartListItemBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient

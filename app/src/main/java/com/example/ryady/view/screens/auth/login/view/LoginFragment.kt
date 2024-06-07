@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.ryady.BaseActivity
 import com.example.ryady.databinding.FragmentLoginBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
@@ -67,7 +67,7 @@ class LoginFragment : Fragment() {
                     is Response.Loading -> {}
 
                     is Response.Success -> {
-                        (requireActivity() as BaseActivity).move(requireContext(), MainActivity::class.java)
+                        requireActivity().move(requireContext(), MainActivity::class.java)
                         requireActivity().finish()
                     }
                 }

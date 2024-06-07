@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +22,9 @@ import com.example.ryady.view.screens.home.adapters.BrandsAdapter
 import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
+import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
+import com.google.android.material.carousel.HeroCarouselStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -80,7 +81,7 @@ class HomeScreen : Fragment() {
                         LinearLayoutManager.HORIZONTAL,
                         false,
                     )
-                    binding.brandsRv.adapter = BrandsAdapter(it?.data?:mutableListOf()) { id ->
+                    binding.brandsRv.adapter = BrandsAdapter(it?.data ?: emptyList()) { id ->
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
                     }
                 }
