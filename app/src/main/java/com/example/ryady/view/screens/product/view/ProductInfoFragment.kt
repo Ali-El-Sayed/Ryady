@@ -101,7 +101,7 @@ class ProductInfoFragment : Fragment() {
 
         binding.addToCart.setOnClickListener {
             lifecycleScope.launch {
-                    viewModel.addItemToCart(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaQVJHR1A1NlI2UlZIVEtHRVJCWkY3Tg?key=e785dd439005aa6e0b09a2b9dae2017e", varientID = variantId, quantity = 1)
+                    viewModel.addItemToCart(cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaU0FTMTJETVhUU1NaUDIxWU5UWUIzQg?key=a1ce71f0aff6abf1558ee326266537a5", varientID = variantId, quantity = 1)
             }
         }
 

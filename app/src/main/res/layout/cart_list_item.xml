@@ -151,21 +151,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="@+id/button_decrement"
+            app:layout_constraintStart_toStartOf="@+id/price"
             app:layout_constraintTop_toBottomOf="@+id/button_decrement">
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 app:srcCompat="@drawable/ic_deletered" />
 
             <TextView
                 android:id="@+id/delete_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="-4dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginLeft="-2dp"
+                android:layout_marginTop="3dp"
                 android:singleLine="false"
                 android:text="@string/delete"
                 android:textColor="@color/red"
