@@ -161,8 +161,6 @@ class CartFragment : Fragment() {
             ShopifyCheckoutSheetKit.present(
                 checkouturl, requireActivity(), checkoutEventProcessorsd
             )
-
-
         }
     }
 

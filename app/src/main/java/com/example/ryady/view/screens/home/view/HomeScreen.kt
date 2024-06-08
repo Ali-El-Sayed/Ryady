@@ -3,7 +3,6 @@ package com.example.ryady.view.screens.home.view
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,9 +75,8 @@ class HomeScreen : Fragment() {
         binding.addImageSlider.setItemClickListener(itemClickListener = object : ItemClickListener {
             override fun doubleClick(position: Int) {}
             override fun onItemSelected(position: Int) {
-                val clipboard: ClipboardManager? =
-                    getSystemService(requireContext(), ClipboardManager::class.java)
-                val clip = ClipData.newPlainText("label", "copied")
+                val clipboard: ClipboardManager? = getSystemService(requireContext(), ClipboardManager::class.java)
+                val clip = ClipData.newPlainText("label", "Eid20")
                 clipboard?.setPrimaryClip(clip)
                 Toast.makeText(requireContext(), "voucher copied", Toast.LENGTH_SHORT).show()
             }
@@ -101,13 +99,12 @@ class HomeScreen : Fragment() {
                 }
 
                 is Response.Success -> {
-                    Log.d(TAG, "onCreate: $it")
                     binding.brandsRv.layoutManager = LinearLayoutManager(
                         requireContext(),
                         LinearLayoutManager.HORIZONTAL,
                         false,
                     )
-                    binding.brandsRv.adapter = BrandsAdapter(it?.data ?: emptyList()) { id ->
+                    binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
                     }
                 }
@@ -128,7 +125,7 @@ class HomeScreen : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    binding.productsRv.adapter = ProductsAdapter(it?.data ?: mutableListOf()) { id ->
+                    binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
                         findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
                     }
                 }
