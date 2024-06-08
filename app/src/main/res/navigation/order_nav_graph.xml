@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/order_nav_host"
-    app:startDestination="@id/customerDataFragment">
+    app:startDestination="@id/cartFragment2">
 
     <fragment
         android:id="@+id/customerDataFragment"
         android:name="com.example.ryady.view.screens.order.view.CustomerDataFragment"
         android:label="fragment_customer_data"
-        tools:layout="@layout/fragment_customer_data" >
+        tools:layout="@layout/fragment_customer_data">
         <action
             android:id="@+id/action_customerDataFragment_to_orderDetailsFragment"
             app:destination="@id/orderDetailsFragment" />
@@ -17,5 +17,15 @@
     <fragment
         android:id="@+id/orderDetailsFragment"
         android:name="com.example.ryady.view.screens.order.view.OrderDetailsFragment"
-        android:label="OrderDetailsFragment" />
+        android:label="OrderDetailsFragment"
+        tools:layout="@layout/fragment_order_details" />
+    <fragment
+        android:id="@+id/cartFragment2"
+        android:name="com.example.ryady.view.screens.cart.view.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment2_to_customerDataFragment"
+            app:destination="@id/customerDataFragment" />
+    </fragment>
 </navigation>

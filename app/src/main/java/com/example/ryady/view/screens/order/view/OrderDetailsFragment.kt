@@ -7,13 +7,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.provider.Settings
 import android.text.Editable.Factory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,65 +26,110 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.apollographql.apollo3.api.Optional
+import com.example.RetrieveCartQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentOrderDetailsBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
+import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.order.viewmodel.OrderViewModel
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.example.ryady.view.screens.cart.viewModel.CartViewModel
+import com.example.type.CartLineInput
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.shopify.checkoutsheetkit.CheckoutException
+import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
+import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
+import com.shopify.checkoutsheetkit.lifecycleevents.CheckoutCompletedEvent
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Locale
 
 class OrderDetailsFragment() : Fragment() {
-    private val DELAY_IN_LOCATION_REQUEST = 2000000L
     private val REQUEST_LOCATION_PERMISSION = 1
     private var address: Address? = null
     private val TAG = "OrderDetailsFragment"
     private val binding by lazy { FragmentOrderDetailsBinding.inflate(layoutInflater) }
-    private val viewModel: OrderViewModel by lazy {
+    private val viewModel: CartViewModel by lazy {
         val factory = ViewModelFactory(
             RemoteDataSource.getInstance(
                 GraphqlClient.apiService
             )
         )
-        ViewModelProvider(requireActivity(), factory)[OrderViewModel::class.java]
-    }
-    private val locationCallback = object : LocationCallback() {
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-        override fun onLocationResult(p0: LocationResult) {
-            super.onLocationResult(p0)
-            val location = p0.lastLocation
-            location?.let {
-                getLocationFromCoordinates(requireActivity(), it.latitude, it.longitude)
-                hideLoadingIndicator()
-            }
-        }
+        ViewModelProvider(requireActivity(), factory)[CartViewModel::class.java]
     }
     private val fusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
+    /*+++++++++++++++Cart Details++++++++++++++++*/
+    var email: String = "alielsayed99@gmail.com"
+    var customerToken: String = "f4093054bf8cf9c70e84961dd8a27ed3"
+    var prelines = ArrayList<CartLineInput>()
+    lateinit var lines: List<CartLineInput>
+    private var nlist: ArrayList<RetrieveCartQuery.Node> = ArrayList()
+    private val checkoutEventProcessors by lazy {
+        object : DefaultCheckoutEventProcessor(requireActivity()) {
+            override fun onCheckoutCanceled() {
+                prelines.clear()
+                nlist.forEach {
+                    lateinit var cartLineInput: CartLineInput
+                    it.merchandise.onProductVariant?.let { it1 ->
+                        cartLineInput = CartLineInput(
+                            merchandiseId = it1.id, quantity = Optional.present(it.quantity)
+                        )
+                    }
+                    prelines.add(cartLineInput)
+                }
+                lines = prelines
+                lifecycleScope.launch { viewModel.createCartWithLines(lines, customerToken, email) }
+            }
+
+            override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {}
+
+            override fun onCheckoutFailed(error: CheckoutException) {}
+        }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            viewModel.cartInfo.collectLatest { result ->
+                when (result) {
+                    is Response.Error -> {}
+                    is Response.Loading -> {}
+                    is Response.Success -> {
+                        nlist.clear()
+                        result.data.lines.edges.forEach { nlist.add(it.node) }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View = binding.root
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Get Current Location
         binding.tvGetCurrentLocation.setOnClickListener {
-            if (isGPSEnabled(requireActivity())) getFreshLocation(locationCallback)
+            toggleLoadingIndicator()
+            if (isGPSEnabled(requireActivity())) getFreshLocation()
             else showEnableGPSDialog()
+            toggleLoadingIndicator()
         }
         // Payment Method Spinner
         binding.spinner.apply {
@@ -97,7 +141,7 @@ class OrderDetailsFragment() : Fragment() {
                     ), IconSpinnerItem(text = context.getString(R.string.credit_card), iconRes = R.drawable.ic_credit_card)
                 )
             )
-            getSpinnerRecyclerView().layoutManager = LinearLayoutManager(requireActivity())
+            getSpinnerRecyclerView().layoutManager = LinearLayoutManager(requireContext())
             selectItemByIndex(1) // select a default item.
             lifecycleOwner = lifecycleOwner
         }
@@ -111,24 +155,33 @@ class OrderDetailsFragment() : Fragment() {
                 viewModel.currentOrder.city = address?.adminArea ?: ""
                 viewModel.currentOrder.postalCode = address?.postalCode ?: ""
                 viewModel.currentOrder.countryName = address?.countryName ?: ""
-                Log.d(TAG, "onViewCreated: $address")
-                Log.d(TAG, "onViewCreated: ${viewModel.currentOrder}")
                 viewModel.createOrderInformation()
             }
+            ShopifyCheckoutSheetKit.present(
+                viewModel.checkoutUrl, requireActivity(), checkoutEventProcessors
+            )
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("MissingPermission")
-    private fun getFreshLocation(callback: LocationCallback) {
+    private fun getFreshLocation() {
         if (isGPSPermissionGranted(requireActivity())) {
             if (isGPSEnabled(requireActivity())) {
-                showLoadingIndicator()
-                fusedLocationProviderClient.requestLocationUpdates(
-                    LocationRequest.Builder(DELAY_IN_LOCATION_REQUEST).apply {
-                        setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                    }.build(), callback, Looper.myLooper()
-                ).exception?.let {
-                    Log.d(TAG, "Error getting location: ${it.message}")
+                val cancellationTokenSource = CancellationTokenSource()
+                fusedLocationProviderClient.getCurrentLocation(
+                    Priority.PRIORITY_HIGH_ACCURACY,
+                    cancellationTokenSource.token
+                ).addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        lifecycleScope.launch {
+                            getLocationFromCoordinates(requireActivity(), location.latitude, location.longitude)
+                        }
+                    } else {
+                        Toast.makeText(requireActivity(), "Location not available", Toast.LENGTH_SHORT).show()
+                    }
+                }.addOnFailureListener { exception ->
+                    Toast.makeText(requireActivity(), "Failed to get location: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
             } else showEnableGPSDialog()
         } else requestPermission()
@@ -136,18 +189,22 @@ class OrderDetailsFragment() : Fragment() {
 
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun getLocationFromCoordinates(context: Context, latitude: Double, longitude: Double) {
+    suspend fun getLocationFromCoordinates(context: Context, latitude: Double, longitude: Double) {
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
             geocoder.getFromLocation(latitude, longitude, 1) {
-                try {
-                    if (it.size > 0) {
-                        address = it[0]
-                        val locationName = address?.getAddressLine(0) ?: ""
-                        binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
+                lifecycleScope.launch {
+                    try {
+                        if (it.size > 0) {
+                            address = it[0]
+                            val locationName = address?.getAddressLine(0) ?: ""
+                            withContext(Dispatchers.Main) {
+                                binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(requireActivity(), "Try Again", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(requireActivity(), "Try Again", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: IOException) {
@@ -213,16 +270,9 @@ class OrderDetailsFragment() : Fragment() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    private fun showLoadingIndicator() {
-        binding.frameLayout.visibility = View.VISIBLE
+    private fun toggleLoadingIndicator() {
+        if (binding.frameLayout.visibility == View.GONE) binding.frameLayout.visibility = View.VISIBLE
+        else binding.frameLayout.visibility = View.GONE
     }
 
-    private fun hideLoadingIndicator() {
-        binding.frameLayout.visibility = View.GONE
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
 }

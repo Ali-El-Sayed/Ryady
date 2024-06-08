@@ -11,19 +11,19 @@ import com.example.ryady.databinding.FragmentCustomerDataBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.order.viewmodel.OrderViewModel
+import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 
 
 class CustomerDataFragment : Fragment() {
     private val binding by lazy { FragmentCustomerDataBinding.inflate(layoutInflater) }
 
-    private val viewModel: OrderViewModel by lazy {
+    private val viewModel: CartViewModel by lazy {
         val factory = ViewModelFactory(
             RemoteDataSource.getInstance(
                 GraphqlClient.apiService
             )
         )
-        ViewModelProvider(requireActivity(), factory)[OrderViewModel::class.java]
+        ViewModelProvider(requireActivity(), factory)[CartViewModel::class.java]
     }
 
     override fun onCreateView(

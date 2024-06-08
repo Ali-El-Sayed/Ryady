@@ -23,11 +23,13 @@ import com.example.ryady.databinding.FragmentHomeScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
 import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
+import com.example.ryady.view.screens.order.OrderActivity
 import com.google.android.material.carousel.CarouselSnapHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,7 +61,7 @@ class HomeScreen : Fragment() {
             true
         }
         binding.topAppBar.menu.getItem(1).setOnMenuItemClickListener {
-            findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
+            requireActivity().move(requireContext(), OrderActivity::class.java)
             true
         }
     }
