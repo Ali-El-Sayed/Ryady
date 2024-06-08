@@ -38,7 +38,7 @@ class ProductInfoFragment : Fragment() {
     var isFavourite: Boolean = false
     var id: String = ""
     var cartId =
-        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203"
+        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))

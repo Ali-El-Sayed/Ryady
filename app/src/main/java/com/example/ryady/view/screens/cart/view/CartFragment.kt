@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.apollographql.apollo3.api.Optional
 import com.example.RetrieveCartQuery
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
@@ -18,6 +19,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
+import com.example.type.CartLineInput
 import com.shopify.checkoutsheetkit.CheckoutException
 import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
 import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
@@ -31,11 +33,15 @@ class CartFragment : Fragment() {
 
     lateinit var binding: FragmentCartBinding
     var cartId =
-        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203"
+        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
 
     var checkouturl =
-        "https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203"
+        "https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
 
+    var email : String = "alielsayed99@gmail.com"
+    var customerToken : String = "f4093054bf8cf9c70e84961dd8a27ed3"
+     var prelines = ArrayList<CartLineInput>()
+    lateinit var lines: List<CartLineInput>
     var nlist: ArrayList<RetrieveCartQuery.Node> = ArrayList()
     lateinit var buyer: RetrieveCartQuery.BuyerIdentity
     var total: Double = 0.0
@@ -70,7 +76,16 @@ class CartFragment : Fragment() {
 
         val checkoutEventProcessorsd = object : DefaultCheckoutEventProcessor(requireContext()) {
             override fun onCheckoutCanceled() {
-
+                nlist.forEach {
+                   lateinit var cli : CartLineInput
+                    it.merchandise.onProductVariant?.let { it1 -> cli = CartLineInput(merchandiseId = it1.id, quantity = Optional.present(it.quantity)) }
+                    prelines.add(cli)
+                }
+                lines = prelines
+                lifecycleScope.launch {
+                    viewModel.createCartWithLines(lines,customerToken,email)
+                }
+                Log.d("Checkout", "onCheckoutCanceled: ")
             }
 
             override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
@@ -82,7 +97,7 @@ class CartFragment : Fragment() {
         }
 
         binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope, context = requireContext()) {
+        myadapter = CartAdapter(nodes = nlist, viewModel = viewModel, passedScope = lifecycleScope, context = requireContext(),cartId =cartId) {
             // the onclick procedure
         }
         binding.cartRecycler.adapter = myadapter
@@ -96,6 +111,7 @@ class CartFragment : Fragment() {
 
                     is Response.Loading -> {}
                     is Response.Success -> {
+
                         Log.d(TAG, "retriving cart went fine")
                         nlist.clear()
                         result.data.lines.edges.forEach {
@@ -125,6 +141,18 @@ class CartFragment : Fragment() {
                     is Response.Error -> {}
                     is Response.Loading -> {}
                     is Response.Success -> viewModel.fetchCartById(cartId)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.cartCreate.collectLatest { result ->
+                when (result) {
+                    is Response.Error -> {}
+                    is Response.Loading -> {}
+                    is Response.Success -> {
+                        cartId =result.data.first
+                        checkouturl = result.data.second
+                        viewModel.fetchCartById(cartId)}
                 }
             }
         }

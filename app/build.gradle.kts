@@ -74,6 +74,7 @@ dependencies {
     // Glide
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.auth.ktx)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     // Settings Preference
     implementation("androidx.preference:preference-ktx:1.2.0")

@@ -25,8 +25,7 @@ class CartAdapter(
     private val viewModel: CartViewModel,
     private val passedScope: CoroutineScope,
     private val context: Context,
-    private val cartId: String =
-        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVDZBVFkwN0hHQTNFOUQ0WFBQVktRMg?key=f413b421b8dfdefb0de01861ab320203",
+    private val cartId: String,
     private val onMerchandiseClick: (id: String) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 

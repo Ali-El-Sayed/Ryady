@@ -6,6 +6,7 @@ import com.example.RetrieveCartQuery
 import com.example.payment.State
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.network.model.Response
+import com.example.type.CartLineInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,8 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
     val order: StateFlow<State> = _order
     private var _updateCartItemInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
     var updateCartItemInfo: StateFlow<Response<Int>> = _updateCartItemInfo
+    private var _cartCreate: MutableStateFlow<Response<Pair<String, String>>> = MutableStateFlow(Response.Loading())
+    var cartCreate: StateFlow<Response<Pair<String, String>>> = _cartCreate
 
 
     suspend fun updateCartLine(
@@ -62,6 +65,19 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
                 .collectLatest {
                     _cartInfo.value = it
                 }
+        }
+
+    }
+    suspend fun createCartWithLines(lines : List<CartLineInput>,customerToken : String,email:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = remoteDataSource.createCartWithLines<Pair<String, String>>(lines,customerToken,email)
+
+            when (response) {
+                is Response.Error -> {}
+                is Response.Loading -> {}
+                is Response.Success -> _cartCreate.value = Response.Success(response.data)
+            }
+
         }
 
     }
