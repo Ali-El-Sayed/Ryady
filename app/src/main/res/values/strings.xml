@@ -32,7 +32,7 @@
     <string name="delete">Delete</string>
     <string name="e_mail">E-mail</string>
     <string name="name">Name</string>
-    <string name="phone">+20 1234567890</string>
+    <string name="phone">Phone</string>
     <string name="payment_method">Payment Method</string>
     <string name="another_phone">Another Phone\n</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
