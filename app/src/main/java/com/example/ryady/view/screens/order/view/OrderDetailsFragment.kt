@@ -126,10 +126,8 @@ class OrderDetailsFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Get Current Location
         binding.tvGetCurrentLocation.setOnClickListener {
-            toggleLoadingIndicator()
             if (isGPSEnabled(requireActivity())) getFreshLocation()
             else showEnableGPSDialog()
-            toggleLoadingIndicator()
         }
         // Payment Method Spinner
         binding.spinner.apply {
@@ -168,6 +166,7 @@ class OrderDetailsFragment() : Fragment() {
     private fun getFreshLocation() {
         if (isGPSPermissionGranted(requireActivity())) {
             if (isGPSEnabled(requireActivity())) {
+                toggleLoadingIndicator()
                 val cancellationTokenSource = CancellationTokenSource()
                 fusedLocationProviderClient.getCurrentLocation(
                     Priority.PRIORITY_HIGH_ACCURACY,
@@ -200,6 +199,7 @@ class OrderDetailsFragment() : Fragment() {
                             val locationName = address?.getAddressLine(0) ?: ""
                             withContext(Dispatchers.Main) {
                                 binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
+                                toggleLoadingIndicator()
                             }
                         }
                     } catch (e: Exception) {
