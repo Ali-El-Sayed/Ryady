@@ -7,6 +7,7 @@ import com.example.AddItemsToCartMutation
 import com.example.CartLinesRemoveMutation
 import com.example.CartLinesUpdateMutation
 import com.example.CreateAddressMutation
+import com.example.CreateCartMutation
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
@@ -25,6 +26,7 @@ import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
+import com.example.type.CartLineInput
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import com.google.firebase.Firebase
@@ -52,6 +54,8 @@ interface IRemoteDataSource {
     suspend fun <T> fetchProductsByBrandId(id: String): Response<T>
 
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
+
+     suspend fun <T> createCartWithLines(lines : List<CartLineInput>,customerToken: String,email:String): Response<T>
 
     suspend fun <T> addItemToCart(cartId: String, varientID: String, quantity: Int): Response<T>
     suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
@@ -212,6 +216,12 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 }
             }
         }
+    }
+    override suspend fun <T> createCartWithLines(lines : List<CartLineInput>,customerToken : String,email:String): Response<T> {
+        val response = client.mutation(CreateCartMutation(lines,customerToken,email)).execute()
+
+        return  Response.Success(Pair(first = response.data?.cartCreate?.cart?.id , second = response.data?.cartCreate?.cart?.checkoutUrl) as T)
+
     }
 
     override suspend fun <T> addItemToCart(

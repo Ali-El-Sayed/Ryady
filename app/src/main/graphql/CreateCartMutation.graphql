@@ -1,38 +1,16 @@
-mutation CreateCart {
+mutation CreateCart($lines : [CartLineInput!]!,$customerToken : String!,$email :String!) {
   cartCreate(
     input: {
-      lines: [
-        {
-          quantity: 1
-          merchandiseId: "gid://shopify/ProductVariant/1"
-        }
-      ],
-      buyerIdentity: {
-        email: "example@example.com",
-        countryCode: CA,
-        deliveryAddressPreferences: [
-          {
-            deliveryAddress: {
-              address1: "150 Elgin Street",
-              address2: "8th Floor",
-              city: "Ottawa",
-              province: "Ontario",
-              country: "CA",
-              zip: "K2P 1L4"
-            }
-          }
-        ]
+      lines: $lines
+      buyerIdentity:{
+        email: $email
+        customerAccessToken: $customerToken
       }
-      attributes: [
-        {
-          key: "cart_attribute",
-          value: "This is a cart attribute"
-        }
-      ]
     }
   ) {
     cart {
       id
+      checkoutUrl
       createdAt
       updatedAt
       lines(first: 10) {
