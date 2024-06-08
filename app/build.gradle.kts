@@ -101,6 +101,8 @@ dependencies {
 
 //shopify payment
     implementation ("com.shopify:checkout-sheet-kit:3.0.1")
+    implementation ("com.google.android.material:material:1.12.0")
+
     // === TESTING ===
     // hamcrest
     testImplementation("org.hamcrest:hamcrest-all:1.3")

@@ -113,9 +113,10 @@ class ProductInfoFragment : Fragment() {
     }
 
 
-    private fun updateUi(productInfo: ProductByIdQuery.Product) {
-        val productImagesUrl: MutableList<SlideModel> = mutableListOf()
-        productInfo.images.edges.forEach {
+
+    private fun updateUi(productInfo : ProductByIdQuery.Product){
+        val productImagesUrl : MutableList<SlideModel> = mutableListOf()
+        productInfo.images.edges.forEach{
             productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))
         }
         binding.brand.text = productInfo.vendor.lowercase().replaceFirstChar {
@@ -125,7 +126,9 @@ class ProductInfoFragment : Fragment() {
         binding.description.text = productInfo.description
         binding.price.text = productInfo.priceRange.maxVariantPrice.amount.toString()
         binding.priceUnit.text = productInfo.priceRange.maxVariantPrice.currencyCode.toString()
+
         binding.imageSlider.setImageList(productImagesUrl)
+
         binding.imageSlider.setSlideAnimation(AnimationTypes.FOREGROUND_TO_BACKGROUND)
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.orientation = RecyclerView.HORIZONTAL

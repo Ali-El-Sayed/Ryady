@@ -50,6 +50,10 @@ class HomeScreen : Fragment() {
             }
         }
 
+        binding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
+            findNavController().navigate(HomeScreenDirections.actionHomeScreenToSearchFragment())
+            true
+        }
         binding.topAppBar.menu.getItem(1).setOnMenuItemClickListener {
             findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
             true

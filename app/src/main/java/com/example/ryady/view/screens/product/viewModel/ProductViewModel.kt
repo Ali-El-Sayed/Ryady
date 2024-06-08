@@ -1,13 +1,9 @@
 package com.example.ryady.view.screens.product.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ProductByIdQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
-import com.example.ryady.datasource.remote.RemoteDataSource
-import com.example.ryady.model.Product
-import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,9 +61,9 @@ class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMo
         }
     }
 
-    fun searchForAnItem(itemId:String,isFound: (found: Boolean) -> Unit) {
+    fun searchForAnItem(itemId: String, isFound: (found: Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            remoteDataSource.searchForAnItem(itemId,isFound)
+            remoteDataSource.searchForAnItem(itemId, isFound)
         }
     }
 

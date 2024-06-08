@@ -2,6 +2,7 @@ package com.example.ryady.datasource.remote
 
 import android.util.Log
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.example.AddItemsToCartMutation
 import com.example.CartLinesRemoveMutation
 import com.example.CartLinesUpdateMutation
@@ -10,6 +11,7 @@ import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
+import com.example.SearchProductsQuery
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
@@ -41,6 +43,7 @@ interface IRemoteDataSource {
 
 
     suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
+    suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>>
 
     suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>>
 
@@ -54,8 +57,8 @@ interface IRemoteDataSource {
     suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
     suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T>
 
+    suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>>
 
-    suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>>
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 
@@ -89,6 +92,7 @@ interface IRemoteDataSource {
     )
 
     suspend fun createOrderInformation(token: String, order: Order)
+
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -169,6 +173,16 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
 
         return flow { emit(Response.Error("Error get data from remote")) }
+    }
+
+    override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
+        val numberOfItem = Optional.present(10)
+        client.query(SearchProductsQuery(itemName, numberOfItem))
+            .execute().data?.search?.edges?.let {
+            return flow { emit(Response.Success(it as T))
+            }
+        }
+        return flow { emit(Response.Error("data not found ")) }
     }
 
     override suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>> {
@@ -356,6 +370,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
+
     override suspend fun createAccountUsingFirebase(
         newCustomer: CustomerCreateInput,
     ) {
@@ -377,6 +392,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     }
 
+
     override suspend fun createOrderInformation(token: String, order: Order) {
         client.mutation(
             CreateAddressMutation(
@@ -391,4 +407,5 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             )
         ).execute()
     }
+
 }
