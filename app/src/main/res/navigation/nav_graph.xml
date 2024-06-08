@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_homeScreen_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_homeScreen_to_searchFragment"
+            app:destination="@id/searchFragment" />
 
     </fragment>
     <fragment
@@ -98,6 +101,15 @@
         tools:layout="@layout/fragment_favourite" >
         <action
             android:id="@+id/action_favouriteFragment_to_productInfoFragment"
+            app:destination="@id/productInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.ryady.view.screens.search.view.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_productInfoFragment"
             app:destination="@id/productInfoFragment" />
     </fragment>
 </navigation>

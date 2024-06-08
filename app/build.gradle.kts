@@ -98,7 +98,7 @@ dependencies {
     // Image Slider
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
-
+    implementation ("com.google.android.material:material:1.12.0")
     // === TESTING ===
     // hamcrest
     testImplementation("org.hamcrest:hamcrest-all:1.3")
