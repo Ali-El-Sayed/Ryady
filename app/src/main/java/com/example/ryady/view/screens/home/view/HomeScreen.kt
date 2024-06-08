@@ -1,10 +1,7 @@
 package com.example.ryady.view.screens.home.view
 
-import android.R.attr.label
-import android.R.attr.text
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -50,7 +47,6 @@ class HomeScreen : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding.discountCarouselRv.onFlingListener = null
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
         inflatingUIJob = lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -74,26 +70,17 @@ class HomeScreen : Fragment() {
 
         binding.addImageSlider.setImageList(productImagesUrl)
         binding.addImageSlider.setItemClickListener(itemClickListener = object : ItemClickListener {
-            override fun doubleClick(position: Int) {
-                val clipboard: ClipboardManager? =
-
-                    getSystemService<ClipboardManager>(requireContext(), ClipboardManager::class.java)
-                val clip = ClipData.newPlainText("label", "copied")
-                clipboard?.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "voucher copied", Toast.LENGTH_SHORT).show()
-            }
-
+            override fun doubleClick(position: Int) {}
             override fun onItemSelected(position: Int) {
                 val clipboard: ClipboardManager? =
-
-                    getSystemService<ClipboardManager>(requireContext(), ClipboardManager::class.java)
+                    getSystemService(requireContext(), ClipboardManager::class.java)
                 val clip = ClipData.newPlainText("label", "copied")
                 clipboard?.setPrimaryClip(clip)
                 Toast.makeText(requireContext(), "voucher copied", Toast.LENGTH_SHORT).show()
             }
         })
         binding.addImageSlider.setSlideAnimation(AnimationTypes.FOREGROUND_TO_BACKGROUND)
-        binding.discountCarouselRv.adapter = CarouselAdapter(mutableListOf(), requireContext())
+        binding.discountCarouselRv.adapter = CarouselAdapter(emptyList(), requireContext())
     }
 
     override fun onCreateView(
