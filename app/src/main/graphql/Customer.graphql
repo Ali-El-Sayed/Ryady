@@ -8,7 +8,7 @@ query GetCustomerData($input: String!) {
         phone
     }
 }
-mutation createAddress(
+mutation CreateAddress(
     $token:String!,
     $firstname:String!,
     $lastName:String!,
