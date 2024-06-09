@@ -14,4 +14,10 @@
         android:title="@string/shopping_cart"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings"
+        app:showAsAction="ifRoom" />
+
 </menu>

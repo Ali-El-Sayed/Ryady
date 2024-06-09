@@ -64,10 +64,11 @@ class HomeScreen : Fragment() {
             requireActivity().move(requireContext(), OrderActivity::class.java)
             true
         }
-
-        binding.hodDealsText.setOnClickListener {
+        binding.topAppBar.menu.getItem(2).setOnMenuItemClickListener {
             findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
+            true
         }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

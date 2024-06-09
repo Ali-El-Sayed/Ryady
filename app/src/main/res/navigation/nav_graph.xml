@@ -26,9 +26,6 @@
             android:id="@+id/action_homeScreen_to_searchFragment"
             app:destination="@id/searchFragment" />
         <action
-            android:id="@+id/action_homeScreen_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
             android:id="@+id/action_homeScreen_to_settingsFragment"
             app:destination="@id/settingsFragment" />
 
@@ -56,25 +53,6 @@
             android:defaultValue="123456"
             app:argType="string" />
     </fragment>
-    <!--    <fragment-->
-    <!--        android:id="@+id/singUpFragment"-->
-    <!--        android:name="com.example.ryady.view.screens.auth.login.view.SingUpFragment"-->
-    <!--        android:label="fragment_sing_up"-->
-    <!--        tools:layout="@layout/fragment_sing_up" />-->
-    <!--    <fragment-->
-    <!--        android:id="@+id/loginFragment"-->
-    <!--        android:name="com.example.ryady.view.screens.auth.login.view.LoginFragment"-->
-    <!--        android:label="fragment_login"-->
-    <!--        tools:layout="@layout/fragment_login">-->
-    <!--        <action-->
-    <!--            android:id="@+id/action_loginFragment_to_singUpFragment"-->
-    <!--            app:destination="@id/singUpFragment" />-->
-    <!--        <action-->
-    <!--            android:id="@+id/action_loginFragment_to_homeScreen"-->
-    <!--            app:destination="@id/homeScreen"-->
-    <!--            app:popUpTo="@id/loginFragment"-->
-    <!--            app:popUpToInclusive="true" />-->
-    <!--    </fragment>-->
     <fragment
         android:id="@+id/categoryScreen"
         android:name="com.example.ryady.view.screens.category.view.CategoryScreen"
@@ -102,28 +80,26 @@
             app:destination="@id/productInfoFragment" />
     </fragment>
     <fragment
-        <
-        <
-        <
-        <
-        <
-        <
-        < HEAD
-            android:id="@+id/searchFragment"
-            android:name="com.example.ryady.view.screens.search.view.SearchFragment"
-            android:label="fragment_search"
-            tools:layout="@layout/fragment_search">
+        android:id="@+id/searchFragment"
+        android:name="com.example.ryady.view.screens.search.view.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_productInfoFragment"
             app:destination="@id/productInfoFragment" />
-    </fragment> ======= android:id="@+id/settingsFragment"
-    android:name="com.example.ryady.view.screens.settings.view.SettingsFragment"
-    android:label="SettingsFragment" > <action
-        android:id="@+id/action_settingsFragment_to_countriesFragment"
-        app:destination="@id/countriesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.ryady.view.screens.settings.view.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_countriesFragment"
+            app:destination="@id/countriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/countriesFragment"
         android:name="com.example.ryady.view.screens.settings.countries.view.CountriesFragment"
         android:label="fragment_countries"
-        tools:layout="@layout/fragment_countries" /> >>>>>>> feature-settings </navigation>
+        tools:layout="@layout/fragment_countries" />
+</navigation>
