@@ -136,7 +136,7 @@ class CartAdapter(
             binding.imageView.load(node.merchandise.onProductVariant?.image?.src) {
                 crossfade(true)
                 crossfade(500)
-                placeholder(R.drawable.placeholder)
+                placeholder(R.drawable.loading_placeholder)
             }
 
             itemView.setOnClickListener { onMerchandiseClick(node.id) }

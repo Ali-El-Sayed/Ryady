@@ -20,12 +20,12 @@ data class Product(
     var publishedAt: String = "",
     var templateSuffix: Any? = null,
     var publishedScope: String = "",
-    var tags: String = "",
+    var tags: List<String> = emptyList(),
     var status: String = "",
     var adminGraphqlApiId: String = "",
     var variants: List<Variant> = emptyList(),
     var images: List<Images> = emptyList(),
-    var vendorImageUrl:String = "",
-    var imageUrl:String = "",
-    var priceCode : String = "$"
+    var vendorImageUrl: String = "",
+    var imageUrl: String = "",
+    var priceCode: String = "$"
 )

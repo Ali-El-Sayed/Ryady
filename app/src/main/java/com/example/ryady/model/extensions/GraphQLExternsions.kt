@@ -98,6 +98,7 @@ fun ShopifyProductByCategoryTypeQuery.Products.toProductList(): ArrayList<Produc
         }
         product.vendor = edge.node.vendor
         product.images = images
+        product.tags = edge.node.tags
         productList.add(product)
     }
     return productList

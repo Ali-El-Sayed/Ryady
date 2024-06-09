@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".view.dialogs.offlineDialog.view.FilterDialogFragment">
+
+    <TextView
+        android:id="@+id/filter_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="Filter"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+    <!-- Products Type Filter -->
+    <HorizontalScrollView
+        android:id="@+id/products_type_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/list_background">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/products_type_chip_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_shoes"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/shoes" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_shirts"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/t_shirts" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_accessories"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/accessories" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_all"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:clickable="true"
+                android:text="@string/all" />
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+    <!-- Human Type Filter -->
+    <HorizontalScrollView
+        android:id="@+id/human_type_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/list_background">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/human_type_chip_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_men"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/men" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_women"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/women" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_kids"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/kids" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/human_chip_all"
+                style="@style/CustomChipChoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:clickable="true"
+                android:text="@string/all" />
+        </com.google.android.material.chip.ChipGroup>
+
+    </HorizontalScrollView>
+
+    <!-- Price min max -->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_min_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Min Price"
+        android:textColorHint="@color/black"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#0023AA"
+        app:cursorColor="@color/black"
+        app:endIconMode="clear_text"
+        app:hintAnimationEnabled="true"
+        app:hintTextColor="@color/black"
+        app:startIconDrawable="@drawable/ic_min_price"
+        app:startIconTint="@color/black">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_min_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_max_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Max Price"
+        android:textColorHint="@color/black"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="#0023AA"
+        app:cursorColor="@color/black"
+        app:endIconMode="clear_text"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextColor="@color/black"
+        app:startIconDrawable="@drawable/ic_max_price"
+        app:startIconTint="@color/black">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_max_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Apply Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_apply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="18dp"
+        android:backgroundTint="@color/secondary"
+        android:text="APPLY" />
+</LinearLayout>

@@ -50,4 +50,11 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="favorite">Favorite</string>
+    <string name="men">MEN</string>
+    <string name="women">WOMEN</string>
+    <string name="kids">KIDS</string>
+    <string name="all">ALL</string>
+    <string name="shoes">SHOES</string>
+    <string name="t_shirts">T-SHIRTS</string>
+    <string name="accessories">ACCESSORIES</string>
 </resources>

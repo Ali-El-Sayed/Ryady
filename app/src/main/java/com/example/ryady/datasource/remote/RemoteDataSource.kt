@@ -17,10 +17,7 @@ import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
-import com.example.payment.PaymentCreationResult
-import com.example.payment.PaymentRequest
-import com.example.payment.PaymentService
-import com.example.payment.RetrofitHelper
+import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
 import com.example.ryady.model.Order
 import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toBrandsList
@@ -34,7 +31,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.ResponseBody
 
 private const val TAG = "RemoteDataSource"
 
@@ -42,11 +38,8 @@ private const val TAG = "RemoteDataSource"
 interface IRemoteDataSource {
 
     suspend fun <T> fetchProducts(): Response<T>
-
-
     suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
     suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>>
-
     suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>>
 
     suspend fun <T> fetchBrands(): Response<T>
@@ -55,7 +48,7 @@ interface IRemoteDataSource {
 
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
 
-     suspend fun <T> createCartWithLines(lines : List<CartLineInput>,customerToken: String,email:String): Response<T>
+    suspend fun <T> createCartWithLines(lines: List<CartLineInput>, customerToken: String, email: String): Response<T>
 
     suspend fun <T> addItemToCart(cartId: String, varientID: String, quantity: Int): Response<T>
     suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
@@ -65,17 +58,6 @@ interface IRemoteDataSource {
 
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
-
-
-    suspend fun makePaymentCall(
-        publicKey: String,
-        clientSecret: String,
-    ): Flow<retrofit2.Response<ResponseBody>>
-
-    suspend fun createPayment(
-        paymentRequest: PaymentRequest
-    ): Flow<retrofit2.Response<PaymentCreationResult>>
-
 
     suspend fun addItemToFavourite(product: ProductByIdQuery.Product)
 
@@ -101,11 +83,6 @@ interface IRemoteDataSource {
 
 @Suppress("UNCHECKED_CAST")
 class RemoteDataSource private constructor(private val client: ApolloClient) : IRemoteDataSource {
-
-    private val retrofitService: PaymentService by lazy {
-        RetrofitHelper.retrofit.create(PaymentService::class.java)
-    }
-
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
     }
@@ -181,9 +158,9 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
         val numberOfItem = Optional.present(10)
-        client.query(SearchProductsQuery(itemName, numberOfItem))
-            .execute().data?.search?.edges?.let {
-            return flow { emit(Response.Success(it as T))
+        client.query(SearchProductsQuery(itemName, numberOfItem)).execute().data?.search?.edges?.let {
+            return flow {
+                emit(Response.Success(it as T))
             }
         }
         return flow { emit(Response.Error("data not found ")) }
@@ -199,11 +176,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
         val response = client.mutation(CustomerCreateMutation(newCustomer)).execute()
-
-
-
         return when {
-
             (((response.data?.customerCreate?.customerUserErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
                     response.data?.customerCreate?.customerUserErrors?.first()?.message ?: "customer error == null"
@@ -217,10 +190,15 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             }
         }
     }
-    override suspend fun <T> createCartWithLines(lines : List<CartLineInput>,customerToken : String,email:String): Response<T> {
-        val response = client.mutation(CreateCartMutation(lines,customerToken,email)).execute()
 
-        return  Response.Success(Pair(first = response.data?.cartCreate?.cart?.id , second = response.data?.cartCreate?.cart?.checkoutUrl) as T)
+    override suspend fun <T> createCartWithLines(lines: List<CartLineInput>, customerToken: String, email: String): Response<T> {
+        val response = client.mutation(CreateCartMutation(lines, customerToken, email)).execute()
+
+        return Response.Success(
+            Pair(
+                first = response.data?.cartCreate?.cart?.id, second = response.data?.cartCreate?.cart?.checkoutUrl
+            ) as T
+        )
 
     }
 
@@ -232,7 +210,6 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 cartid = cartId, varientid = varientID, quantity = quantity
             )
         ).execute()
-
 
         return when {
 
@@ -314,28 +291,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    override suspend fun makePaymentCall(
-        publicKey: String,
-        clientSecret: String,
-    ): Flow<retrofit2.Response<ResponseBody>> = flow {
-        emit(retrofitService.getPaymentPage(publicKey, clientSecret))
-    }
-
-    override suspend fun createPayment(
-        paymentRequest: PaymentRequest
-    ): Flow<retrofit2.Response<PaymentCreationResult>> = flow {
-        emit(retrofitService.createPayment(paymentRequest))
-    }
-
-
     override suspend fun addItemToFavourite(product: ProductByIdQuery.Product) {
         val parentRef = database.getReference("FavouriteCart")
         val email = "mh95568@gmail.com"
         parentRef.child(encodeEmail(email)).child(product.id).setValue(product)
-    }
-
-    private fun encodeEmail(email: String): String {
-        return email.replace(".", ",").replace("@", "_at_")
     }
 
 
@@ -355,10 +314,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                     maxPrice = prod.child("priceRange").child("maxVariantPrice").child("amount").value as String,
                     priceCode = prod.child("priceRange").child("maxVariantPrice").child("currencyCode").value as String,
                     imageUrl = prod.child("images").child("edges").child("0").child("node").child("url").value as String
-
                 )
                 listProduct.add(product)
-
                 Log.i(TAG, "getAllFavouriteItem: ${listProduct.size}")
             }
             productListL(listProduct)
@@ -399,7 +356,6 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
             auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
         }
-
     }
 
 
