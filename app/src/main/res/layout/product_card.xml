@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:elevation="2dp">
 
@@ -23,7 +23,7 @@
             android:layout_height="100dp"
             android:contentDescription="@string/product_image"
             android:scaleType="fitCenter"
-            tools:src="@drawable/placeholder" />
+            tools:src="@drawable/loading_placeholder" />
 
         <TextView
             android:id="@+id/product_name"
@@ -38,32 +38,21 @@
             android:id="@+id/product_brand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:fontFamily="@font/medium"
+            android:textAlignment="center"
             android:textSize="16sp"
             tools:text="ADIDAS" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/product_glass_background"
             android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/min_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                tools:text="244.0" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="2dp"
-                android:text="~" />
-
-            <TextView
-                android:id="@+id/max_price"
+                android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"

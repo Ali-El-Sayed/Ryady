@@ -92,6 +92,7 @@ query ShopifyProductByCategoryType($query: String!){
                 featuredImage {
                     url
                 }
+                tags
             }
         }
     }

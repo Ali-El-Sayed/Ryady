@@ -2,29 +2,24 @@ package com.example.ryady.view.screens.search.view
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.SearchProductsQuery
 import com.example.ryady.databinding.SearchListItemBinding
 
 private const val TAG = "SearchProductItemAdapter"
+
 class SearchProductItemAdapter(
-    private var searchList: List<SearchProductsQuery.Edge>,
-    private val listener: onSearchItemClick
-) :
-    RecyclerView.Adapter<SearchProductItemAdapter.ViewHolder>() {
+    private var searchList: List<SearchProductsQuery.Edge>, private val listener: onSearchItemClick
+) : RecyclerView.Adapter<SearchProductItemAdapter.ViewHolder>() {
     private lateinit var binding: SearchListItemBinding
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): SearchProductItemAdapter.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         binding = SearchListItemBinding.inflate(inflater, parent, false)
@@ -32,7 +27,7 @@ class SearchProductItemAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchProductItemAdapter.ViewHolder, position: Int) {
-        searchList[position].node.onProduct?.let {product->
+        searchList[position].node.onProduct?.let { product ->
             val productImagesUrl: MutableList<SlideModel> = mutableListOf()
             product.images.edges.forEach {
                 productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))
@@ -65,8 +60,7 @@ class SearchProductItemAdapter(
         val productImageSlider: ImageSlider
         val tvPriceAmount: TextView
         val tvPriceCode: TextView
-        val cardItem : CardView
-
+        val cardItem: CardView
 
         init {
             tvTitle = binding.title
@@ -74,8 +68,6 @@ class SearchProductItemAdapter(
             tvPriceAmount = binding.priceAmount
             tvPriceCode = binding.priceCode
             cardItem = binding.cardItem
-
         }
-
     }
 }

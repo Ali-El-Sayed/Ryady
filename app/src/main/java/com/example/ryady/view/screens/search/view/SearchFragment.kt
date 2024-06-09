@@ -1,16 +1,14 @@
 package com.example.ryady.view.screens.search.view
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.SearchProductsQuery
-import com.example.ryady.R
 import com.example.ryady.databinding.FragmentSearchBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -42,7 +40,7 @@ class SearchFragment : Fragment(), onSearchItemClick {
         super.onViewCreated(view, savedInstanceState)
 
         val x: MutableStateFlow<String?> = MutableStateFlow(null)
-        searchProductItemAdapter = SearchProductItemAdapter(listOf(),this)
+        searchProductItemAdapter = SearchProductItemAdapter(listOf(), this)
         binding.rvSearchResults.adapter = searchProductItemAdapter
 
         binding.searchView.editText.doOnTextChanged { text, start, before, count ->
@@ -54,20 +52,12 @@ class SearchFragment : Fragment(), onSearchItemClick {
 
         lifecycleScope.launch(Dispatchers.IO) {
             x.debounce(500).collectLatest {
-
                 it?.let {
-                    RemoteDataSource.getInstance(GraphqlClient.apiService)
-                        .searchForProducts<List<SearchProductsQuery.Edge>>(it)
+                    RemoteDataSource.getInstance(GraphqlClient.apiService).searchForProducts<List<SearchProductsQuery.Edge>>(it)
                         .collectLatest { response ->
                             when (response) {
-                                is Response.Error -> {
-
-                                }
-
-                                is Response.Loading -> {
-
-                                }
-
+                                is Response.Error -> {}
+                                is Response.Loading -> {}
                                 is Response.Success -> {
                                     withContext(Dispatchers.Main) {
                                         searchProductItemAdapter.setList(response.data)
@@ -77,7 +67,6 @@ class SearchFragment : Fragment(), onSearchItemClick {
 
                         }
                 }
-
             }
         }
     }

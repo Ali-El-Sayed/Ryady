@@ -11,14 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.ryady.R
 import com.example.ryady.databinding.FragmentCategoryScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.dialogs.offlineDialog.view.FilterDialogFragment
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
-import com.example.ryady.view.screens.productsByBrand.viewmodel.CategoryType
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
 import kotlinx.coroutines.launch
 
@@ -33,12 +32,10 @@ class CategoryScreen : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            viewModel.getProductsByCategory(CategoryType.ALL)
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 updateUI()
             }
         }
-
     }
 
     override fun onCreateView(
@@ -47,17 +44,10 @@ class CategoryScreen : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
-        binding.chipGroup.setOnCheckedChangeListener { _, checkedId ->
-            val categoryType = when (checkedId) {
-                R.id.chip_shoes -> CategoryType.SHOES
-                R.id.chip_shirts -> CategoryType.T_SHIRTS
-                R.id.chip_accessories -> CategoryType.ACCESSORIES
-                else -> CategoryType.ALL
-            }
-            lifecycleScope.launch {
-                viewModel.getProductsByCategory(categoryType)
-            }
+        binding.fabFilter.setOnClickListener {
+            val offlineDialogFragment = FilterDialogFragment()
+            offlineDialogFragment.isCancelable = false
+            offlineDialogFragment.show(childFragmentManager, "filterDialog")
         }
     }
 
@@ -65,7 +55,7 @@ class CategoryScreen : Fragment() {
         viewModel.productList.collect {
             when (it) {
                 is Response.Loading -> {
-                    binding.loadingBar.visibility = View.VISIBLE
+                    binding.frameLayout.visibility = View.VISIBLE
                 }
 
                 is Response.Success -> {
@@ -77,12 +67,17 @@ class CategoryScreen : Fragment() {
                             )
                         )
                     }
-                    binding.loadingBar.visibility = View.GONE
+                    if (it.data.isEmpty()) binding.imgNotFound.visibility = View.VISIBLE
+                    else binding.imgNotFound.visibility = View.GONE
+
+                    binding.frameLayout.visibility = View.GONE
                 }
 
                 is Response.Error -> {
-                    binding.loadingBar.visibility = View.GONE
+                    binding.imgNotFound.visibility = View.GONE
+                    binding.frameLayout.visibility = View.GONE
 
+                    // handle Error
                 }
             }
         }

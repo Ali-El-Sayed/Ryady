@@ -38,7 +38,7 @@ class BrandsAdapter(
             binding.brandImage.load(brand.imageUrl) {
                 crossfade(true)
                 crossfade(500)
-                placeholder(R.drawable.placeholder)
+                placeholder(R.drawable.loading_placeholder)
             }
             binding.root.setOnClickListener {
                 onBrandClick(brand.id)

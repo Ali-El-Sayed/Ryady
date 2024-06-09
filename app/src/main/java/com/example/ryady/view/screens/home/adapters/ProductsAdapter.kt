@@ -35,8 +35,7 @@ class ProductsAdapter(
     inner class ViewHolder(binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
             binding.currency.text = product.currency
-            binding.maxPrice.text = product.maxPrice
-            binding.minPrice.text = product.minPrice
+            binding.price.text = product.maxPrice
             binding.productName.let {
                 product.title = product.title.replace("\n", "")
                 it.text = product.title
@@ -45,7 +44,7 @@ class ProductsAdapter(
             binding.imageView.load(product.images[0].src) {
                 crossfade(true)
                 crossfade(500)
-                placeholder(R.drawable.placeholder)
+                placeholder(R.drawable.loading_placeholder)
             }
             binding.root.setOnClickListener {
                 onProductClick(product.id)
