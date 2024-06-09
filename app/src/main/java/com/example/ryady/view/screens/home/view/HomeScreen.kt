@@ -63,6 +63,10 @@ class HomeScreen : Fragment() {
             findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
             true
         }
+
+        binding.hodDealsText.setOnClickListener {
+            findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

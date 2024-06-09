@@ -76,6 +76,7 @@ class CartFragment : Fragment() {
 
         val checkoutEventProcessorsd = object : DefaultCheckoutEventProcessor(requireContext()) {
             override fun onCheckoutCanceled() {
+                prelines.clear()
                 nlist.forEach {
                    lateinit var cli : CartLineInput
                     it.merchandise.onProductVariant?.let { it1 -> cli = CartLineInput(merchandiseId = it1.id, quantity = Optional.present(it.quantity)) }

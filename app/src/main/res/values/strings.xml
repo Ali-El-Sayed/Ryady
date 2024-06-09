@@ -50,4 +50,9 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="favorite">Favorite</string>
+    <string name="country">Country</string>
+    <string name="language">Language</string>
+    <string name="currency">Currency</string>
+    <string name="about_us">About us</string>
+    <string name="orders">Orders</string>
 </resources>

@@ -24,6 +24,7 @@ import com.example.ryady.model.Product
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.screens.settings.SettingsService
 import com.example.type.CartLineInput
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
@@ -33,11 +34,14 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.ResponseBody
+import retrofit2.Response as RetrofitResponse
 
 private const val TAG = "RemoteDataSource"
 
 
 interface IRemoteDataSource {
+
+    suspend fun fetchCountries():Flow<RetrofitResponse<HashMap<String, String>>>
 
     suspend fun <T> fetchProducts(): Response<T>
 
@@ -102,6 +106,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         RetrofitHelper.retrofit.create(PaymentService::class.java)
     }
 
+    private val settingsRetrofitService: SettingsService by lazy {
+        RetrofitHelper.retrofit.create(SettingsService::class.java)
+    }
+
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
     }
@@ -114,6 +122,11 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             instance ?: RemoteDataSource(client).also { instance = it }
         }
     }
+
+    override suspend fun fetchCountries(): Flow<RetrofitResponse<HashMap<String, String>>> = flow {
+        emit(settingsRetrofitService.getCountries())
+    }
+
 
     override suspend fun <T> fetchProducts(): Response<T> {
         val response = client.query(ShopifyProductsQuery()).execute()
