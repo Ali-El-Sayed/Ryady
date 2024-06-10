@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.settings
+package com.example.ryady.view.screens.settings.countries
 
 import okhttp3.ResponseBody
 import retrofit2.Response

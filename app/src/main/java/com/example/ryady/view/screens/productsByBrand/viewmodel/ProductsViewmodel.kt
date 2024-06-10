@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.model.Product
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -42,8 +43,13 @@ class ProductsViewmodel(private val remoteDataSource: IRemoteDataSource) : ViewM
             is Response.Success -> {
                 val filteredProducts = (response.data as ArrayList<Product>).filter {
                     val maxPrice = it.maxPrice.toDouble()
+
+                    val maxPriceExchanged = maxPrice/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
+                        TheExchangeRate.choosedCurrency.first)!!)
                     val minPrice = it.minPrice.toDouble()
-                    it.tags.joinToString().contains(humanType.type) && priceRange.contains(Range.create(minPrice, maxPrice))
+                    val minPriceExchanged = minPrice/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
+                        TheExchangeRate.choosedCurrency.first)!!)
+                    it.tags.joinToString().contains(humanType.type) && priceRange.contains(Range.create(minPriceExchanged, maxPriceExchanged))
                 }
                 products.value = Response.Success(filteredProducts)
             }

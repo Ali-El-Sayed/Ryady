@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCountry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -22,6 +23,6 @@ class CountriesViewModel(private val remoteDataSource: IRemoteDataSource)  : Vie
                 }
             }
         }
-
     }
+
 }

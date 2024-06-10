@@ -18,6 +18,7 @@ private val userPhoneKey = stringPreferencesKey("PhoneKey")
 private val countryCodeKey = stringPreferencesKey("CountryCode")
 private val countryNameKey = stringPreferencesKey("CountryName")
 private val currencyCodeKey = stringPreferencesKey("CurrencyCode")
+private val currencyNameKey = stringPreferencesKey("CurrencyName")
 
 
 suspend fun saveUserData(
@@ -63,25 +64,28 @@ suspend fun readCountry(
 ) {
     val countryData: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
-        countryData["country name"] = it[countryNameKey] ?: "no  name Value"
-        countryData["country code"] = it[countryCodeKey] ?: "no email Value"
+        countryData["country name"] = it[countryNameKey] ?: "Egypt"
+        countryData["country code"] = it[countryCodeKey] ?: "eg"
         countryData(countryData)
     }
 }
 suspend fun saveCurrency(
-    context: Context, currencyCode: String
+    context: Context, currencyCode: String, currencyName: String
 ) {
     context.dataStore.edit { settings ->
         settings[currencyCodeKey] = currencyCode
+        settings[currencyNameKey] = currencyName
     }
 }
 suspend fun readCurrency(
     context: Context,
-    countryData: (String) -> Unit
+    currencyData: (MutableMap<String, String>) -> Unit
 ) {
+    val currencyData: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
-        val currencyData: String = it[currencyCodeKey] ?: "no  name Value"
-        countryData(currencyData)
+        currencyData["currency name"] = it[currencyNameKey] ?: "Egyptian Pound"
+        currencyData["currency code"] = it[currencyCodeKey] ?: "EGP"
+        currencyData(currencyData)
     }
 }
 

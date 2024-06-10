@@ -15,8 +15,11 @@ import com.example.RetrieveCartQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.CartListItemBinding
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 const val TAG = "CartAdapter"
 
@@ -100,6 +103,9 @@ class CartAdapter(
                     )
                 }
             }
+            fun Double.roundTo2DecimalPlaces(): Double {
+                return BigDecimal(this).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+            }
 
             fun deleteLambda() {
                 val modifiedText = "%icon%" // you can use resource string here
@@ -131,7 +137,11 @@ class CartAdapter(
             binding.textCount.text = node.quantity.toString()
             binding.textCount.visibility = View.VISIBLE
             binding.animationView.visibility = View.GONE
-            val priceText = "${node.cost.totalAmount.amount} ${node.merchandise.onProductVariant?.price?.currencyCode}"
+                val total = node.cost.totalAmount.amount.toString().toDouble()
+            val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
+                TheExchangeRate.choosedCurrency.first)!!)
+
+            val priceText = "${totalExchanged.roundTo2DecimalPlaces().toString()} ${TheExchangeRate.choosedCurrency.first}"
             binding.price.text = priceText
             binding.imageView.load(node.merchandise.onProductVariant?.image?.src) {
                 crossfade(true)

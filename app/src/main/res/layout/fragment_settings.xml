@@ -24,6 +24,7 @@
 
         <!-- Address Item -->
         <LinearLayout
+            android:id="@+id/address_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -51,6 +52,7 @@
 
         <!-- Orders Item -->
         <LinearLayout
+            android:id="@+id/orders_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -78,6 +80,7 @@
 
         <!-- Currency Item -->
         <LinearLayout
+            android:id="@+id/currency_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -86,12 +89,14 @@
             android:focusable="true">
 
             <ImageView
+                android:id="@+id/currency_image"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_dollar"
                 android:layout_marginEnd="16dp" />
 
             <TextView
+                android:id="@+id/currency_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
@@ -115,12 +120,14 @@
             android:focusable="true">
 
             <ImageView
+                android:id="@+id/country_image"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_flag"
                 android:layout_marginEnd="16dp" />
 
             <TextView
+                android:id="@+id/country_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/country"
@@ -134,6 +141,7 @@
 
         <!-- About Us Item -->
         <LinearLayout
+            android:id="@+id/about_us_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
