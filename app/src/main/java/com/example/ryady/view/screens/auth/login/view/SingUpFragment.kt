@@ -10,19 +10,24 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.apollographql.apollo3.api.Optional
+import com.example.GetCustomerDataQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentSingUpBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCart
+import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
+import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -60,12 +65,57 @@ class SingUpFragment : Fragment() {
         }
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.createdAccount.collect { account ->
-                withContext(Dispatchers.Main) {
+                withContext(Dispatchers.IO) {
                     when (account) {
                         is Response.Loading -> {}
                         is Response.Success -> {
-                            requireActivity().move(requireContext(), MainActivity::class.java)
-                            requireActivity().finish()
+                            viewModel.loginToAccount(
+                                CustomerAccessTokenCreateInput(
+                                    account.data.email.toString(),
+                                    binding.etPassword.text.toString()
+                                )
+                            )
+
+                            viewModel.loginAccountState.collectLatest { token ->
+                                when (token) {
+                                    is Response.Error -> {
+
+                                    }
+
+                                    is Response.Loading -> {
+
+                                    }
+
+                                    is Response.Success -> {
+                                        viewModel.createEmptyCart(
+                                            account.data.email.toString(),
+                                            token.data
+                                        )
+                                        saveUserData(
+                                            requireContext(),
+                                            customer = GetCustomerDataQuery.Customer(
+                                                email = account.data.email,
+                                                firstName = account.data.firstName,
+                                                lastName = account.data.lastName,
+                                                id = account.data.id,
+                                                phone = "",
+                                                displayName = account.data.displayName,
+                                                acceptsMarketing = account.data.acceptsMarketing
+                                            ),
+                                            customerToken = token.data
+                                        )
+
+                                        withContext(Dispatchers.Main) {
+                                            requireActivity().move(
+                                                requireContext(),
+                                                MainActivity::class.java
+                                            )
+                                            requireActivity().finish()
+                                        }
+                                    }
+                                }
+                            }
+
                         }
 
                         is Response.Error -> {
@@ -75,6 +125,27 @@ class SingUpFragment : Fragment() {
                 }
             }
         }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.createCartState.collectLatest {
+                when (it) {
+                    is Response.Error -> {
+
+                    }
+
+                    is Response.Loading -> {
+
+                    }
+
+                    is Response.Success -> {
+                        saveCart(requireContext(), it.data.id, it.data.checkoutUrl.toString())
+                        // save to firebase
+
+                    }
+                }
+            }
+        }
+
     }
 
     private fun removeErrorMessage() {
@@ -130,7 +201,9 @@ class SingUpFragment : Fragment() {
             .setMessage("Please go to your Email and verify your Account after that Click Verified")
             .setBackground(
                 ResourcesCompat.getDrawable(
-                    requireContext().resources, R.drawable.delete_dialog_background, requireContext().theme
+                    requireContext().resources,
+                    R.drawable.delete_dialog_background,
+                    requireContext().theme
                 )
             )
             .setPositiveButton("Verified") { dialog, _ ->
@@ -139,7 +212,11 @@ class SingUpFragment : Fragment() {
                         viewModel.createAccount(customer)
                     } else {
                         showVerificationAlert(customer)
-                        Snackbar.make(requireView(), "Please Verify Your Account and try Again", Snackbar.ANIMATION_MODE_SLIDE)
+                        Snackbar.make(
+                            requireView(),
+                            "Please Verify Your Account and try Again",
+                            Snackbar.ANIMATION_MODE_SLIDE
+                        )
                             .show()
                     }
                 }

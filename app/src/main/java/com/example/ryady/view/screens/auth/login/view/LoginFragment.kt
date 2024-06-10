@@ -72,6 +72,7 @@ class LoginFragment : Fragment() {
                     is Response.Loading -> {}
 
                     is Response.Success -> {
+
                         requireActivity().move(requireContext(), MainActivity::class.java)
                         requireActivity().finish()
                     }
@@ -84,23 +85,7 @@ class LoginFragment : Fragment() {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
         lifecycleScope.launch(Dispatchers.IO) {
-            /*saveUserData(
-                requireContext(),
-                GetCustomerDataQuery.Customer(
-                    id = "132",
-                    email = "mh95568",
-                    firstName = "mohamed",
-                    lastName = "hussein",
-                    phone = "0111",
-                    acceptsMarketing = false,
-                    displayName = "mohamed Hussein"
-                ),
-                CustomerAccessTokenCreateMutation.CustomerAccessTokenCreate(
-                    customerAccessToken = CustomerAccessTokenCreateMutation.CustomerAccessToken(
-                        "ds", ""
-                    ), customerUserErrors = listOf()
-                )
-            )*/
+
             readUserData(requireContext()){
 
                 Log.i(TAG, "onViewCreated: $it")

@@ -7,6 +7,7 @@ import com.example.AddItemsToCartMutation
 import com.example.CartLinesRemoveMutation
 import com.example.CartLinesUpdateMutation
 import com.example.CreateAddressMutation
+import com.example.CreateCartEmptyMutation
 import com.example.CreateCartMutation
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
@@ -45,10 +46,10 @@ private const val TAG = "RemoteDataSource"
 
 interface IRemoteDataSource {
 
-    suspend fun fetchCountries():Flow<RetrofitResponse<HashMap<String, String>>>
+    suspend fun fetchCountries(): Flow<RetrofitResponse<HashMap<String, String>>>
 
-    suspend fun fetchAllCurrencies():Flow<RetrofitResponse<Symbols>>
-    suspend fun fetchExchangeRates():Flow<RetrofitResponse<Currency>>
+    suspend fun fetchAllCurrencies(): Flow<RetrofitResponse<Symbols>>
+    suspend fun fetchExchangeRates(): Flow<RetrofitResponse<Currency>>
 
     suspend fun <T> fetchProducts(): Response<T>
     suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
@@ -61,7 +62,11 @@ interface IRemoteDataSource {
 
     suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T>
 
-    suspend fun <T> createCartWithLines(lines: List<CartLineInput>, customerToken: String, email: String): Response<T>
+    suspend fun <T> createCartWithLines(
+        lines: List<CartLineInput>,
+        customerToken: String,
+        email: String
+    ): Response<T>
 
     suspend fun <T> addItemToCart(cartId: String, varientID: String, quantity: Int): Response<T>
     suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
@@ -91,6 +96,8 @@ interface IRemoteDataSource {
     )
 
     suspend fun createOrderInformation(token: String, order: Order)
+
+    suspend fun <T> createEmptyCart(email: String, token: String) : Flow<Response<T>>
 
 }
 
@@ -166,7 +173,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             )
 
             else -> response.data?.collection?.products?.toProductList().let {
-                it?.get(0)?.vendorImageUrl = (response.data?.collection?.image?.url ?: "").toString()
+                it?.get(0)?.vendorImageUrl =
+                    (response.data?.collection?.image?.url ?: "").toString()
                 return Response.Success(it as T)
             }
         }
@@ -193,7 +201,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
         val numberOfItem = Optional.present(10)
-        client.query(SearchProductsQuery(itemName, numberOfItem)).execute().data?.search?.edges?.let {
+        client.query(SearchProductsQuery(itemName, numberOfItem))
+            .execute().data?.search?.edges?.let {
             return flow {
                 emit(Response.Success(it as T))
             }
@@ -214,7 +223,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         return when {
             (((response.data?.customerCreate?.customerUserErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.customerCreate?.customerUserErrors?.first()?.message ?: "customer error == null"
+                    response.data?.customerCreate?.customerUserErrors?.first()?.message
+                        ?: "customer error == null"
                 )
             }
 
@@ -226,12 +236,17 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    override suspend fun <T> createCartWithLines(lines: List<CartLineInput>, customerToken: String, email: String): Response<T> {
+    override suspend fun <T> createCartWithLines(
+        lines: List<CartLineInput>,
+        customerToken: String,
+        email: String
+    ): Response<T> {
         val response = client.mutation(CreateCartMutation(lines, customerToken, email)).execute()
 
         return Response.Success(
             Pair(
-                first = response.data?.cartCreate?.cart?.id, second = response.data?.cartCreate?.cart?.checkoutUrl
+                first = response.data?.cartCreate?.cart?.id,
+                second = response.data?.cartCreate?.cart?.checkoutUrl
             ) as T
         )
 
@@ -250,7 +265,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             (((response.data?.cartLinesAdd?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesAdd?.userErrors?.first()?.message ?: "add to cart error == null"
+                    response.data?.cartLinesAdd?.userErrors?.first()?.message
+                        ?: "add to cart error == null"
                 )
             }
 
@@ -275,7 +291,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             (((response.data?.cartLinesUpdate?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesUpdate?.userErrors?.first()?.message ?: "add to cart error == null"
+                    response.data?.cartLinesUpdate?.userErrors?.first()?.message
+                        ?: "add to cart error == null"
                 )
             }
 
@@ -287,14 +304,16 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
     override suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T> {
-        val response = client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID)).execute()
+        val response =
+            client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID)).execute()
 
 
         return when {
 
             (((response.data?.cartLinesRemove?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesRemove?.userErrors?.first()?.message ?: "remove from cart error == null"
+                    response.data?.cartLinesRemove?.userErrors?.first()?.message
+                        ?: "remove from cart error == null"
                 )
             }
 
@@ -314,7 +333,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 flow {
                     emit(
                         Response.Error(
-                            response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message ?: "Error NUll"
+                            response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message
+                                ?: "Error NUll"
                         )
                     )
                 }
@@ -326,20 +346,18 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    suspend fun <T> getUserData(token:String) : Flow<Response<T>>{
+    suspend fun <T> getUserData(token: String): Flow<Response<T>> {
         val response = client.query(GetCustomerDataQuery(token)).execute()
         return when {
             (response.errors?.size ?: -1) > 0 -> {
-                 flow { emit(Response.Error(response.errors?.first()?.message ?: "no Errors")) }
+                flow { emit(Response.Error(response.errors?.first()?.message ?: "no Errors")) }
             }
-            else ->{
-                  flow { emit(Response.Success(response.data?.customer as T)) }
+
+            else -> {
+                flow { emit(Response.Success(response.data?.customer as T)) }
             }
         }
     }
-
-
-
 
 
     override suspend fun addItemToFavourite(product: ProductByIdQuery.Product) {
@@ -362,9 +380,12 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 val product = Product(
                     id = prod.child("id").value as String,
                     title = prod.child("title").value as String,
-                    maxPrice = prod.child("priceRange").child("maxVariantPrice").child("amount").value as String,
-                    priceCode = prod.child("priceRange").child("maxVariantPrice").child("currencyCode").value as String,
-                    imageUrl = prod.child("images").child("edges").child("0").child("node").child("url").value as String
+                    maxPrice = prod.child("priceRange").child("maxVariantPrice")
+                        .child("amount").value as String,
+                    priceCode = prod.child("priceRange").child("maxVariantPrice")
+                        .child("currencyCode").value as String,
+                    imageUrl = prod.child("images").child("edges").child("0").child("node")
+                        .child("url").value as String
                 )
                 listProduct.add(product)
                 Log.i(TAG, "getAllFavouriteItem: ${listProduct.size}")
@@ -394,19 +415,20 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     ) {
         val auth = Firebase.auth
 
-        auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
-            auth.currentUser?.sendEmailVerification()
-        }
+        auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password)
+            .addOnSuccessListener {
+                auth.currentUser?.sendEmailVerification()
+            }
     }
 
     override suspend fun checkVerification(
         newCustomer: CustomerCreateInput, isVerified: (isVerified: Boolean) -> Unit
     ) {
         val auth = Firebase.auth
-        Log.i(TAG, "checkVerification: ${newCustomer.email}")
-        auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
-            auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
-        }
+        auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password)
+            .addOnSuccessListener {
+                auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
+            }
     }
 
 
@@ -423,6 +445,17 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 country = order.countryName
             )
         ).execute()
+    }
+
+    override suspend  fun <T>  createEmptyCart(email: String, token: String) :Flow<Response<T>>{
+        val response = client.mutation(CreateCartEmptyMutation(email = email, customerToken = token)).execute()
+
+        return flow { emit(Response.Success(
+            Pair(
+                first = response.data?.cartCreate?.cart?.id,
+                second = response.data?.cartCreate?.cart?.checkoutUrl
+            ) as T
+        )) }
     }
 
 }
