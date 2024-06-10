@@ -14,7 +14,7 @@ import com.example.ryady.databinding.FragmentFavouriteBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
-import com.example.ryady.utils.readUserData
+import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.Favourite.ViewModel.FavouriteViewModel
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +44,7 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                readUserData(requireContext()){
+                readCustomerData(requireContext()){
                     userEmail = it["user email"].toString()
                     viewModel.getAllFavouriteProduct(userEmail)
                 }
@@ -78,9 +78,9 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
         }
     }
 
-    override fun deleteItem(itemId: String) {
+    override fun deleteItem( itemId: String) {
 
-        viewModel.deleteItem(itemId)
+        viewModel.deleteItem(userEmail,itemId)
     }
 
     override fun onItemClick(itemId: String) {

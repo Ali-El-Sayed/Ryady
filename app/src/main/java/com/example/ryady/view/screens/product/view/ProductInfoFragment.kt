@@ -23,6 +23,7 @@ import com.example.ryady.model.extensions.roundTo2DecimalPlaces
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
+import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -39,8 +40,9 @@ class ProductInfoFragment : Fragment() {
     var variantId = ""
     var isFavourite: Boolean = false
     var id: String = ""
-    var cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
-
+    var cartId =
+        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
+    lateinit var email: String
     private val viewModel by lazy {
         val factory =
             ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -61,11 +63,16 @@ class ProductInfoFragment : Fragment() {
         id = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
         Log.i(TAG, "onCreate Id: $id")
         lifecycleScope.launch {
+
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.fetchProductById(id)
-                viewModel.searchForAnItem(itemId = id) {
-                    isFavourite = it
+                readCustomerData(requireContext()) {
+                    email = it["user email"].toString()
+                    viewModel.fetchProductById(id)
+                    viewModel.searchForAnItem(email =  email, itemId = id) {
+                        isFavourite = it
+                    }
                 }
+
             }
         }
     }
@@ -121,10 +128,6 @@ class ProductInfoFragment : Fragment() {
         }
 
 
-
-
-
-
     }
 
 
@@ -161,7 +164,7 @@ class ProductInfoFragment : Fragment() {
             sizeList.add(it.node.title.split(" /")[0])
         }
         binding.gender.text = productInfo.tags[1]
-        if (productInfo.variants.edges.first().node.quantityAvailable ?: 0 <=0){
+        if (productInfo.variants.edges.first().node.quantityAvailable ?: 0 <= 0) {
             binding.addToCart.isClickable = false
             binding.addToCart.text = "Sold Out"
             binding.addToCart.setBackgroundColor(resources.getColor(R.color.Red))
@@ -179,7 +182,7 @@ class ProductInfoFragment : Fragment() {
 
         binding.btnFavourite.setOnClickListener {
             if (isFavourite) {
-                viewModel.deleteItem(id)
+                viewModel.deleteItem(email = email, id = id)
                 Toast.makeText(
                     requireContext(),
                     "Product Removed from Favourites",
@@ -187,7 +190,7 @@ class ProductInfoFragment : Fragment() {
                 ).show()
                 binding.btnFavourite.setIcon(R.drawable.favorite)
             } else {
-                viewModel.addItemToFav(productInfo)
+                viewModel.addItemToFav(email = email,productInfo)
                 Toast.makeText(requireContext(), "Product Added To Favourites", Toast.LENGTH_LONG)
                     .show()
                 binding.btnFavourite.setIcon(R.drawable.favorite_fill)

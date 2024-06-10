@@ -24,7 +24,7 @@ class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMo
         MutableStateFlow(Response.Loading())
     var addItemToCartInfo: StateFlow<Response<Int>> = _addItemToCartInfo
 
-    suspend fun fetchProductById(id: String) {
+     fun fetchProductById(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.fetchProductById(id = id)
                 .collectLatest {
@@ -34,7 +34,7 @@ class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMo
 
     }
 
-    suspend fun addItemToCart(
+     fun addItemToCart(
         cartId: String,
         varientID: String,
         quantity: Int
@@ -54,22 +54,22 @@ class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMo
 
     }
 
-    fun addItemToFav(product: ProductByIdQuery.Product) {
+    fun addItemToFav(email: String,product: ProductByIdQuery.Product) {
         viewModelScope.launch {
 
-            remoteDataSource.addItemToFavourite(product)
+            remoteDataSource.addItemToFavourite(email = email, product = product)
         }
     }
 
-    fun searchForAnItem(itemId: String, isFound: (found: Boolean) -> Unit) {
+    fun searchForAnItem(email: String,itemId: String, isFound: (found: Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            remoteDataSource.searchForAnItem(itemId, isFound)
+            remoteDataSource.searchForAnItem(email = email, itemId = itemId, isFound = isFound)
         }
     }
 
-    fun deleteItem(id: String) {
+    fun deleteItem(email: String,id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            remoteDataSource.deleteItem(id)
+            remoteDataSource.deleteItem(email = email , itemId = id)
         }
     }
 }

@@ -77,16 +77,16 @@ interface IRemoteDataSource {
 
     suspend fun <T> fetchProductsByCategory(category: String): Response<T>
 
-    suspend fun addItemToFavourite(product: ProductByIdQuery.Product)
+    suspend fun addItemToFavourite(email: String,product: ProductByIdQuery.Product)
 
     suspend fun getAllFavouriteItem(
         email: String, productListL: (products: List<Product>) -> Unit
     )
 
-    suspend fun deleteItem(itemId: String)
+    suspend fun deleteItem(email: String,itemId: String)
 
 
-    suspend fun searchForAnItem(itemId: String, isFound: (found: Boolean) -> Unit)
+    suspend fun searchForAnItem(email: String,itemId: String, isFound: (found: Boolean) -> Unit)
     suspend fun createAccountUsingFirebase(
         newCustomer: CustomerCreateInput
     )
@@ -357,9 +357,9 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
 
-    override suspend fun addItemToFavourite(product: ProductByIdQuery.Product) {
+    override suspend fun addItemToFavourite(email: String , product: ProductByIdQuery.Product) {
         val parentRef = database.getReference("FavouriteCart")
-        val email = "mh95568@gmail.com"
+
         parentRef.child(encodeEmail(email)).child(product.id).setValue(product)
     }
 
@@ -392,16 +392,17 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
 
-    override suspend fun deleteItem(itemId: String) {
+    override suspend fun deleteItem(email: String,itemId: String) {
         val parentRef = database.getReference("FavouriteCart")
-        parentRef.child(encodeEmail("mh95568@gmail.com")).child(itemId).removeValue()
+        parentRef.child(encodeEmail(email)).child(itemId).removeValue()
     }
 
     override suspend fun searchForAnItem(
+        email: String,
         itemId: String, isFound: (found: Boolean) -> Unit
     ) {
         val parentRef = database.getReference("FavouriteCart")
-        parentRef.child(encodeEmail("mh95568@gmail.com")).child(itemId).get()
+        parentRef.child(encodeEmail(email)).child(itemId).get()
             .addOnSuccessListener {
                 isFound(it.exists())
             }

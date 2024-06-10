@@ -29,10 +29,10 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
         }
     }
 
-    fun deleteItem(itemId: String) {
+    fun deleteItem(email: String , itemId: String) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            remoteDataSource.deleteItem(itemId)
+            remoteDataSource.deleteItem(email =  email,itemId)
         }
     }
 
