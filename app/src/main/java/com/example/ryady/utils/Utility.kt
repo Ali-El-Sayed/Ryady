@@ -19,6 +19,8 @@ private val countryCodeKey = stringPreferencesKey("CountryCode")
 private val countryNameKey = stringPreferencesKey("CountryName")
 private val currencyCodeKey = stringPreferencesKey("CurrencyCode")
 private val currencyNameKey = stringPreferencesKey("CurrencyName")
+private val cartIdKey = stringPreferencesKey("CartId")
+private val checkoutUrlKey = stringPreferencesKey("CheckoutUrl")
 
 
 suspend fun saveUserData(
@@ -58,17 +60,19 @@ suspend fun saveCountry(
     }
 
 }
+
 suspend fun readCountry(
     context: Context,
     countryData: (MutableMap<String, String>) -> Unit
 ) {
-    val countryData: MutableMap<String, String> = mutableMapOf()
+    val countryDataMap: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
-        countryData["country name"] = it[countryNameKey] ?: "Egypt"
-        countryData["country code"] = it[countryCodeKey] ?: "eg"
-        countryData(countryData)
+        countryDataMap["country name"] = it[countryNameKey] ?: "Egypt"
+        countryDataMap["country code"] = it[countryCodeKey] ?: "eg"
+        countryData(countryDataMap)
     }
 }
+
 suspend fun saveCurrency(
     context: Context, currencyCode: String, currencyName: String
 ) {
@@ -77,18 +81,34 @@ suspend fun saveCurrency(
         settings[currencyNameKey] = currencyName
     }
 }
+
 suspend fun readCurrency(
     context: Context,
     currencyData: (MutableMap<String, String>) -> Unit
 ) {
-    val currencyData: MutableMap<String, String> = mutableMapOf()
+    val currencyDataMap: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
-        currencyData["currency name"] = it[currencyNameKey] ?: "Egyptian Pound"
-        currencyData["currency code"] = it[currencyCodeKey] ?: "EGP"
-        currencyData(currencyData)
+        currencyDataMap["currency name"] = it[currencyNameKey] ?: "Egyptian Pound"
+        currencyDataMap["currency code"] = it[currencyCodeKey] ?: "EGP"
+        currencyData(currencyDataMap)
     }
 }
 
-// cart id
-// check out url
+suspend fun saveCart(context: Context, cardId: String, checkoutUrl: String) {
+    context.dataStore.edit { settings ->
+        settings[cartIdKey] = cardId
+        settings[checkoutUrlKey] = checkoutUrl
+    }
+}
 
+suspend fun readCart(
+    context: Context,
+    cartData: (MutableMap<String, String>) -> Unit
+) {
+    val cartDataMap : MutableMap<String, String> = mutableMapOf()
+    context.dataStore.data.collectLatest {
+        cartDataMap["cart id"] = it[cartIdKey] ?: ""
+        cartDataMap["checkout url"] = it[checkoutUrlKey] ?: ""
+        cartData(cartDataMap)
+    }
+}

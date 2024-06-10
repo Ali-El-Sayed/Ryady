@@ -3,6 +3,7 @@ package com.example.ryady.view.screens.auth.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.CreateCartEmptyMutation
 import com.example.CustomerCreateMutation
 import com.example.GetCustomerDataQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
@@ -31,6 +32,10 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
     private var _customerData : MutableStateFlow<Response<GetCustomerDataQuery.Customer>> =MutableStateFlow(Response.Loading())
     val customerData : StateFlow<Response<GetCustomerDataQuery.Customer>> = _customerData
 
+    private var _createCartState: MutableStateFlow<Response<CreateCartEmptyMutation.Cart>> =
+        MutableStateFlow(Response.Loading())
+    val createCartState: StateFlow<Response<CreateCartEmptyMutation.Cart>> = _createCartState
+
     fun createAccount(newCustomerAccount: CustomerCreateInput) {
         viewModelScope.launch(Dispatchers.IO) {
             val data = remoteDataSource.createCustomer<CustomerCreateMutation.Customer>(newCustomerAccount)
@@ -54,7 +59,6 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
     }
 
     fun loginToAccount(userAccount: CustomerAccessTokenCreateInput) {
-
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.createAccessToken<String>(userAccount).collect {
                 _loginAccountState.value = it
@@ -67,6 +71,14 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
             remoteDataSource.getCustomerData<GetCustomerDataQuery.Customer>(customerToken).collectLatest {
                _customerData.value = it
             }
+        }
+    }
+
+    fun createEmptyCart(email:String , token : String){
+        viewModelScope.launch(Dispatchers.IO) {
+           remoteDataSource.createEmptyCart<CreateCartEmptyMutation.Cart>(email, token).collectLatest {
+               _createCartState.value = it
+           }
         }
     }
 }

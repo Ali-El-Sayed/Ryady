@@ -1,0 +1,20 @@
+mutation CreateCartEmpty($customerToken : String!,$email :String!) {
+    cartCreate(
+        input: {
+            buyerIdentity:{
+                email: $email
+                customerAccessToken: $customerToken
+            }
+        }
+    ) {
+        cart {
+            id
+            checkoutUrl
+            buyerIdentity {
+                deliveryAddressPreferences {
+                    __typename
+                }
+            }
+        }
+    }
+}
