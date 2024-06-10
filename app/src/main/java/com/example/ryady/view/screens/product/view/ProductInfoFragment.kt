@@ -43,7 +43,8 @@ class ProductInfoFragment : Fragment() {
         "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
 
     private val viewModel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory =
+            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[ProductViewModel::class.java]
     }
 
@@ -72,6 +73,11 @@ class ProductInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.description.setCollapsedText("Read More")
+        binding.description.setExpandedText("Read Less")
+        binding.description.setCollapsedTextColor(R.color.secondary)
+        binding.description.setExpandedTextColor(R.color.secondary)
+        binding.description.setTrimLines(2)
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.productInfo.collectLatest {
                 withContext(Dispatchers.Main) {
@@ -99,7 +105,11 @@ class ProductInfoFragment : Fragment() {
                     when (it) {
                         is Response.Error -> Log.i(TAG, "onViewCreated: Error ${it.message}")
                         is Response.Loading -> {}
-                        is Response.Success -> Toast.makeText(activity, "Item Added Successfully", Toast.LENGTH_SHORT).show()
+                        is Response.Success -> Toast.makeText(
+                            activity,
+                            "Item Added Successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -112,22 +122,31 @@ class ProductInfoFragment : Fragment() {
         }
 
 
+
+
+
+
     }
 
 
-
-    private fun updateUi(productInfo : ProductByIdQuery.Product){
-        val productImagesUrl : MutableList<SlideModel> = mutableListOf()
-        productInfo.images.edges.forEach{
+    private fun updateUi(productInfo: ProductByIdQuery.Product) {
+        val productImagesUrl: MutableList<SlideModel> = mutableListOf()
+        productInfo.images.edges.forEach {
             productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))
         }
         binding.brand.text = productInfo.vendor.lowercase().replaceFirstChar {
             it.uppercase()
         }
         binding.title.text = productInfo.title
+
         binding.description.text = productInfo.description
+        binding.description.setTrimLines(2)
+
         val price = productInfo.priceRange.maxVariantPrice.amount.toString().toDouble()
-        val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+        val priceExchanged =
+            price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                TheExchangeRate.choosedCurrency.first
+            )!!)
 
         binding.price.text = priceExchanged.roundTo2DecimalPlaces().toString()
         binding.priceUnit.text = TheExchangeRate.choosedCurrency.first
@@ -142,23 +161,36 @@ class ProductInfoFragment : Fragment() {
         productInfo.variants.edges.forEach {
             sizeList.add(it.node.title.split(" /")[0])
         }
+        binding.gender.text = productInfo.tags[1]
+        if (productInfo.variants.edges.first().node.quantityAvailable ?: 0 <=0){
+            binding.addToCart.isClickable = false
+            binding.addToCart.text = "Sold Out"
+            binding.addToCart.setBackgroundColor(resources.getColor(R.color.Red))
+        }
+        binding.minPrice.text = "start from ${
+            (productInfo.variants.edges.first().node.price.amount.toString().toFloat()) / 5
+        }/per month"
 
         if (isFavourite) {
             binding.btnFavourite.setIcon(R.drawable.favorite_fill)
         } else {
             binding.btnFavourite.setIcon(R.drawable.favorite)
-
         }
         binding.sizeList.adapter = SizeAdapter(sizeList.toList())
 
         binding.btnFavourite.setOnClickListener {
             if (isFavourite) {
                 viewModel.deleteItem(id)
-                Toast.makeText(requireContext(), "Product Removed from Favourites", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Product Removed from Favourites",
+                    Toast.LENGTH_LONG
+                ).show()
                 binding.btnFavourite.setIcon(R.drawable.favorite)
             } else {
                 viewModel.addItemToFav(productInfo)
-                Toast.makeText(requireContext(), "Product Added To Favourites", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Product Added To Favourites", Toast.LENGTH_LONG)
+                    .show()
                 binding.btnFavourite.setIcon(R.drawable.favorite_fill)
             }
 

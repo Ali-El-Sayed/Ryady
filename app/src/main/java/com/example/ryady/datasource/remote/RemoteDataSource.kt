@@ -80,7 +80,7 @@ interface IRemoteDataSource {
     suspend fun addItemToFavourite(product: ProductByIdQuery.Product)
 
     suspend fun getAllFavouriteItem(
-        email: String = "mh95568@gmail.com", productListL: (products: List<Product>) -> Unit
+        email: String, productListL: (products: List<Product>) -> Unit
     )
 
     suspend fun deleteItem(itemId: String)

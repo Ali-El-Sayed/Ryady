@@ -18,10 +18,10 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
     var productList: StateFlow<Response<List<Product>>> = _productList
 
 
-    fun getAllFavouriteProduct() {
+    fun getAllFavouriteProduct(email : String) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            remoteDataSource.getAllFavouriteItem {
+            remoteDataSource.getAllFavouriteItem(email) {
                 _productList.value = Response.Success(it)
             }
         }

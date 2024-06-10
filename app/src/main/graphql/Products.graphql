@@ -64,9 +64,14 @@ query ProductById($id: ID!) {
                     unitPrice {
                         amount
                     }
-
+                    currentlyNotInStock
+                    quantityAvailable
                 }
             }
+            nodes {
+                quantityAvailable
+            }
+
         }
 
     }

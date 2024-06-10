@@ -81,16 +81,13 @@ class LoginFragment : Fragment() {
             }
         }
         binding.tvSignUp.setOnClickListener {
-            Log.i(TAG, "onViewCreated: Click Sing")
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
         lifecycleScope.launch(Dispatchers.IO) {
-
             readUserData(requireContext()){
-
-                Log.i(TAG, "onViewCreated: $it")
             }
         }
+
 
 
 
