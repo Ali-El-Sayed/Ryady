@@ -14,6 +14,7 @@ import com.example.ryady.databinding.FragmentFavouriteBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.readUserData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.Favourite.ViewModel.FavouriteViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,7 @@ private const val TAG = "FavouriteFragment"
 
 class FavouriteFragment : Fragment(), IFavouriteFragment {
     lateinit var binding: FragmentFavouriteBinding
+    lateinit var userEmail:String
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[FavouriteViewModel::class.java]
@@ -39,9 +41,14 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getAllFavouriteProduct()
+                readUserData(requireContext()){
+                    userEmail = it["user email"].toString()
+                    viewModel.getAllFavouriteProduct(userEmail)
+                }
+
             }
         }
     }

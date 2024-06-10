@@ -33,6 +33,7 @@ suspend fun saveUserData(
         settings[userNameKey] = "${customer.firstName} ${customer.lastName}"
         settings[userPhoneKey] = customer.phone ?: "null"
         settings[userTokenKey] = customerToken
+        Log.i("TAG", "saveUserData: Saved User Data")
     }
 }
 

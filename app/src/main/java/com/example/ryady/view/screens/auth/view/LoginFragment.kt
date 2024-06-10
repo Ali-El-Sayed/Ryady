@@ -106,6 +106,12 @@ class LoginFragment : Fragment() {
         binding.tvSignUp.setOnClickListener {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
+
+
+
+
+
+
     }
     private fun removeErrorMessage() {
         binding.tilEmail.isErrorEnabled = false

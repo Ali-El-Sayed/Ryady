@@ -107,6 +107,9 @@ dependencies {
     // data store
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
+    // read more text view
+    implementation ("com.github.colourmoon:readmore-textview:v1.0.2")
+
 //shopify payment
     implementation ("com.shopify:checkout-sheet-kit:3.0.1")
     implementation ("com.google.android.material:material:1.12.0")
