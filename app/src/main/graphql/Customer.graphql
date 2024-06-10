@@ -6,6 +6,8 @@ query GetCustomerData($input: String!) {
         acceptsMarketing
         email
         phone
+        displayName
+
     }
 }
 mutation CreateAddress(

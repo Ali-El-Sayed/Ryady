@@ -9,6 +9,7 @@ import com.example.CartLinesUpdateMutation
 import com.example.CreateAddressMutation
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
+import com.example.GetCustomerDataQuery
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
 import com.example.SearchProductsQuery
@@ -300,6 +301,18 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             else -> {
                 flow { emit(Response.Success(response.data?.customerAccessTokenCreate?.customerAccessToken?.accessToken as T)) }
+            }
+        }
+    }
+
+    suspend fun <T> getUserData(token:String) : Flow<Response<T>>{
+        val response = client.query(GetCustomerDataQuery(token)).execute()
+        return when {
+            (response.errors?.size ?: -1) > 0 -> {
+                 flow { emit(Response.Error(response.errors?.first()?.message ?: "no Errors")) }
+            }
+            else ->{
+                  flow { emit(Response.Success(response.data?.customer as T)) }
             }
         }
     }
