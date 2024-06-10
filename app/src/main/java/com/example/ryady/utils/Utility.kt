@@ -24,17 +24,17 @@ private val currencyNameKey = stringPreferencesKey("CurrencyName")
 suspend fun saveUserData(
     context: Context,
     customer: GetCustomerDataQuery.Customer,
-    customerToken: CustomerAccessTokenCreateMutation.CustomerAccessTokenCreate
+    customerToken: String
 ) {
     context.dataStore.edit { settings ->
         settings[userEmailKey] = customer.email ?: "no email"
         settings[userNameKey] = "${customer.firstName} ${customer.lastName}"
         settings[userPhoneKey] = customer.phone ?: "null"
-        settings[userTokenKey] = customerToken.customerAccessToken?.accessToken.toString()
+        settings[userTokenKey] = customerToken
     }
 }
 
-suspend fun readUserData(
+suspend fun readCustomerData(
     context: Context,
     customerData: (MutableMap<String, String>) -> Unit
 ) {

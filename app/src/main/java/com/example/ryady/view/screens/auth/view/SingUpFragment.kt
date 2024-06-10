@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.auth.login.view
+package com.example.ryady.view.screens.auth.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +17,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
+import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
 import com.example.type.CustomerCreateInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -47,7 +47,7 @@ class SingUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.btnLogin.setOnClickListener {
+        binding.btnSignUp.setOnClickListener {
             if (checkIsEmpty()) {
                 showErrorMessage()
             } else {
@@ -58,6 +58,7 @@ class SingUpFragment : Fragment() {
             }
 
         }
+
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.createdAccount.collect { account ->
                 withContext(Dispatchers.Main) {
@@ -69,7 +70,7 @@ class SingUpFragment : Fragment() {
                         }
 
                         is Response.Error -> {
-                            Toast.makeText(requireContext(), "verfiy", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "verfiy your account", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -137,6 +138,7 @@ class SingUpFragment : Fragment() {
                 viewModel.checkVerification(customer) {
                     if (it) {
                         viewModel.createAccount(customer)
+
                     } else {
                         showVerificationAlert(customer)
                         Snackbar.make(requireView(), "Please Verify Your Account and try Again", Snackbar.ANIMATION_MODE_SLIDE)

@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.auth.login.view
+package com.example.ryady.view.screens.auth.view
 
 import android.os.Bundle
 import android.util.Log
@@ -10,21 +10,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.CustomerAccessTokenCreateMutation
-import com.example.GetCustomerDataQuery
 import com.example.ryady.databinding.FragmentLoginBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
-import com.example.ryady.utils.readUserData
 import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
+import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
 import com.example.type.CustomerAccessTokenCreateInput
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val TAG = "LoginFragment"
 
@@ -53,15 +52,11 @@ class LoginFragment : Fragment() {
                 val email = binding.etEmail.text.toString()
                 val password = binding.etPassword.text.toString()
                 customerInput = CustomerAccessTokenCreateInput(email, password)
-                lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.loginToAccount(customerInput)
-
-                }
+                viewModel.loginToAccount(customerInput)
             }
         }
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.loginAccountState.collect {
-                Log.i(TAG, "onViewCreated: $it")
                 when (it) {
                     is Response.Error -> {
                         Toast.makeText(
@@ -72,45 +67,46 @@ class LoginFragment : Fragment() {
                     is Response.Loading -> {}
 
                     is Response.Success -> {
-                        requireActivity().move(requireContext(), MainActivity::class.java)
-                        requireActivity().finish()
+                        viewModel.getUserCustomerData(it.data)
+                        viewModel.customerData.collectLatest { customerResponse ->
+                            when (customerResponse) {
+                                is Response.Error -> {
+
+                                }
+
+                                is Response.Loading -> {
+
+                                }
+
+                                is Response.Success -> {
+                                    saveUserData(
+                                        context = requireContext(),
+                                        customer = customerResponse.data,
+                                        customerToken = it.data
+                                    )
+                                    // retrieve from firebase
+                                    // save to data store
+                                    withContext(Dispatchers.IO){
+                                        requireActivity().move(
+                                            requireContext(),
+                                            MainActivity::class.java
+                                        )
+                                        requireActivity().finish()
+                                    }
+                                }
+                            }
+                        }
+
+
                     }
                 }
 
             }
         }
         binding.tvSignUp.setOnClickListener {
-            Log.i(TAG, "onViewCreated: Click Sing")
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
-        lifecycleScope.launch(Dispatchers.IO) {
-            /*saveUserData(
-                requireContext(),
-                GetCustomerDataQuery.Customer(
-                    id = "132",
-                    email = "mh95568",
-                    firstName = "mohamed",
-                    lastName = "hussein",
-                    phone = "0111",
-                    acceptsMarketing = false,
-                    displayName = "mohamed Hussein"
-                ),
-                CustomerAccessTokenCreateMutation.CustomerAccessTokenCreate(
-                    customerAccessToken = CustomerAccessTokenCreateMutation.CustomerAccessToken(
-                        "ds", ""
-                    ), customerUserErrors = listOf()
-                )
-            )*/
-            readUserData(requireContext()){
-
-                Log.i(TAG, "onViewCreated: $it")
-            }
-        }
-
-
-
     }
-
     private fun removeErrorMessage() {
         binding.tilEmail.isErrorEnabled = false
         binding.tilPassword.isErrorEnabled = false

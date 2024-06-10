@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.view.screens.Favourite.ViewModel.FavouriteViewModel
-import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
-import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
+import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
+import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
 import com.example.ryady.view.screens.settings.countries.viewmodel.CountriesViewModel
 import com.example.ryady.view.screens.settings.currency.viewmodel.CurrencyViewModel

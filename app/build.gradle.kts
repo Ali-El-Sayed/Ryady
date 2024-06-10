@@ -100,6 +100,9 @@ dependencies {
     // Image Slider
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
+    // read more text view
+    implementation ("com.github.colourmoon:readmore-textview:v1.0.2")
+
 
     // data store
     implementation("androidx.datastore:datastore-preferences:1.1.1")

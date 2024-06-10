@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.auth.login
+package com.example.ryady.view.screens.auth
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

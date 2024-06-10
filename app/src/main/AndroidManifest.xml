@@ -27,7 +27,7 @@
 
         </activity>
         <activity
-            android:name=".view.screens.auth.login.AuthActivity"
+            android:name=".view.screens.auth.AuthActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -42,6 +42,10 @@
             android:exported="true">
 
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
