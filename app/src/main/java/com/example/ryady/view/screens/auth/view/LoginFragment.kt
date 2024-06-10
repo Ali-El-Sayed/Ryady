@@ -23,6 +23,7 @@ import com.example.type.CustomerAccessTokenCreateInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val TAG = "LoginFragment"
 
@@ -51,15 +52,11 @@ class LoginFragment : Fragment() {
                 val email = binding.etEmail.text.toString()
                 val password = binding.etPassword.text.toString()
                 customerInput = CustomerAccessTokenCreateInput(email, password)
-                lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.loginToAccount(customerInput)
-
-                }
+                viewModel.loginToAccount(customerInput)
             }
         }
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.loginAccountState.collect {
-                Log.i(TAG, "onViewCreated: $it")
                 when (it) {
                     is Response.Error -> {
                         Toast.makeText(
@@ -87,11 +84,15 @@ class LoginFragment : Fragment() {
                                         customer = customerResponse.data,
                                         customerToken = it.data
                                     )
-                                    requireActivity().move(
-                                        requireContext(),
-                                        MainActivity::class.java
-                                    )
-                                    requireActivity().finish()
+                                    // retrieve from firebase
+                                    // save to data store
+                                    withContext(Dispatchers.IO){
+                                        requireActivity().move(
+                                            requireContext(),
+                                            MainActivity::class.java
+                                        )
+                                        requireActivity().finish()
+                                    }
                                 }
                             }
                         }
@@ -103,13 +104,9 @@ class LoginFragment : Fragment() {
             }
         }
         binding.tvSignUp.setOnClickListener {
-            Log.i(TAG, "onViewCreated: Click Sing")
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
-
-
     }
-
     private fun removeErrorMessage() {
         binding.tilEmail.isErrorEnabled = false
         binding.tilPassword.isErrorEnabled = false
