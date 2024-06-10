@@ -17,6 +17,7 @@ import com.example.ryady.databinding.FragmentHomeScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
 import com.example.ryady.view.screens.home.adapters.CarouselAdapter
@@ -34,7 +35,8 @@ private const val TAG = "HomeScreen"
 class HomeScreen : Fragment() {
     private val binding by lazy { FragmentHomeScreenBinding.inflate(layoutInflater) }
     private val viewmodel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory =
+            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
     private lateinit var inflatingUIJob: Job
@@ -58,6 +60,9 @@ class HomeScreen : Fragment() {
             findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
             true
         }
+
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +91,11 @@ class HomeScreen : Fragment() {
                         false,
                     )
                     binding.brandsRv.adapter = BrandsAdapter(it?.data ?: emptyList()) { id ->
-                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
+                        findNavController().navigate(
+                            HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(
+                                brandId = id
+                            )
+                        )
                     }
                 }
 
@@ -105,10 +114,16 @@ class HomeScreen : Fragment() {
                 }
 
                 is Response.Success -> {
-                    binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-                    binding.productsRv.adapter = ProductsAdapter(it?.data ?: mutableListOf()) { id ->
-                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
-                    }
+                    binding.productsRv.layoutManager =
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    binding.productsRv.adapter =
+                        ProductsAdapter(it?.data ?: mutableListOf()) { id ->
+                            findNavController().navigate(
+                                HomeScreenDirections.actionHomeScreenToProductInfoFragment(
+                                    productId = id
+                                )
+                            )
+                        }
                 }
 
                 is Response.Error -> {

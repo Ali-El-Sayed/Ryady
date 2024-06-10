@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.screens.auth.login.view.SingUpFragment">
+    tools:context=".view.screens.auth.view.SingUpFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -170,7 +170,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_signUp"
         android:layout_width="320dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"

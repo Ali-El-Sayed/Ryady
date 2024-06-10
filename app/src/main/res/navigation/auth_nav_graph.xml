@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.ryady.view.screens.auth.login.view.LoginFragment"
+        android:name="com.example.ryady.view.screens.auth.view.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/singUpFragment"
-        android:name="com.example.ryady.view.screens.auth.login.view.SingUpFragment"
+        android:name="com.example.ryady.view.screens.auth.view.SingUpFragment"
         android:label="fragment_sing_up"
         tools:layout="@layout/fragment_sing_up" />
 </navigation>

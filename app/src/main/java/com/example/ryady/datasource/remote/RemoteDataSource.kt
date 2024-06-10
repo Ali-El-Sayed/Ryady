@@ -77,7 +77,7 @@ interface IRemoteDataSource {
     suspend fun addItemToFavourite(product: ProductByIdQuery.Product)
 
     suspend fun getAllFavouriteItem(
-        email: String = "mh95568@gmail.com", productListL: (products: List<Product>) -> Unit
+        email: String, productListL: (products: List<Product>) -> Unit
     )
 
     suspend fun deleteItem(itemId: String)
@@ -93,6 +93,8 @@ interface IRemoteDataSource {
     )
 
     suspend fun createOrderInformation(token: String, order: Order)
+
+    suspend fun <T> getCustomerData(token:String) : Flow<Response<T>>
 
 }
 
@@ -305,7 +307,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    suspend fun <T> getUserData(token:String) : Flow<Response<T>>{
+    override suspend fun <T> getCustomerData(token:String) : Flow<Response<T>>{
         val response = client.query(GetCustomerDataQuery(token)).execute()
         return when {
             (response.errors?.size ?: -1) > 0 -> {

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.view.screens.Favourite.ViewModel.FavouriteViewModel
-import com.example.ryady.view.screens.auth.login.viewModel.LoginViewModel
+import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.example.ryady.view.screens.order.viewmodel.OrderViewModel

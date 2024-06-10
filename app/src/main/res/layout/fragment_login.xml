@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#9D4EDD"
-    tools:context=".view.screens.auth.login.view.LoginFragment">
+    tools:context=".view.screens.auth.view.LoginFragment">
 
     <TextView
         android:id="@+id/tv_title"
