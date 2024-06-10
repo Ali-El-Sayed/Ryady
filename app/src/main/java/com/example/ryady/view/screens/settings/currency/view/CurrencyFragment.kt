@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.settings.countries.view
+package com.example.ryady.view.screens.settings.currency.view
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -12,31 +12,33 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentCountriesBinding
-import com.example.ryady.databinding.FragmentSettingsBinding
+import com.example.ryady.databinding.FragmentCurrencyBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.cart.view.CartAdapter
+import com.example.ryady.view.screens.settings.countries.view.CountryAdapter
+import com.example.ryady.view.screens.settings.countries.view.FRAGMENT_COUNTRY
+import com.example.ryady.view.screens.settings.countries.view.FRAGMENT_CURRENCY
 import com.example.ryady.view.screens.settings.countries.viewmodel.CountriesViewModel
-import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
+import com.example.ryady.view.screens.settings.currency.viewmodel.CurrencyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class CountriesFragment : Fragment() {
+class CurrencyFragment : Fragment() {
 
-    lateinit var binding: FragmentCountriesBinding
+    lateinit var binding: FragmentCurrencyBinding
     var prelist = ArrayList<Pair<String,String>>()
     lateinit var itemList : List<Pair<String,String>>
     lateinit var myadapter : CountryAdapter
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
-        ViewModelProvider(this, factory)[CountriesViewModel::class.java]
+        ViewModelProvider(this, factory)[CurrencyViewModel::class.java]
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
     }
 
@@ -44,28 +46,29 @@ class CountriesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCountriesBinding.inflate(inflater, container, false)
+        binding = FragmentCurrencyBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         itemList= prelist
-        binding.countriesRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        myadapter = CountryAdapter(requireContext(), itemList,lifecycleScope,findNavController(), FRAGMENT_COUNTRY)
-        binding.countriesRecycler.adapter = myadapter
+        binding.CurrencyRecycle.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        myadapter = CountryAdapter(requireContext(), itemList,lifecycleScope,findNavController(), FRAGMENT_CURRENCY)
+        binding.CurrencyRecycle.adapter = myadapter
         lifecycleScope.launch {
-            viewModel.getCountries()
+            viewModel.getCurrencies()
         }
 
         lifecycleScope.launch {
-            viewModel.countriesInfo.collectLatest { result ->
+            viewModel.currenciesInfo.collectLatest { result ->
                 when (result) {
                     is Response.Error -> {}
                     is Response.Loading -> {}
                     is Response.Success -> {
                         prelist.clear()
-                        result.data.forEach { (k, v) ->
+                        result.data.currencySymbols?.forEach { (k, v) ->
                             prelist.add(Pair(k,v))
                         }
                         itemList = prelist

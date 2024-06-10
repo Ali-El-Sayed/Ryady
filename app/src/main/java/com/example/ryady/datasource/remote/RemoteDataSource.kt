@@ -18,14 +18,18 @@ import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
-import com.example.payment.RetrofitHelper
+import com.example.ryady.view.screens.settings.countries.RetrofitHelper
 import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
+import com.example.ryady.model.Currency
 import com.example.ryady.model.Order
 import com.example.ryady.model.Product
+import com.example.ryady.model.Symbols
 import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
-import com.example.ryady.view.screens.settings.SettingsService
+import com.example.ryady.view.screens.settings.countries.SettingsService
+import com.example.ryady.view.screens.settings.currency.CurrencyRetrofitHelper
+import com.example.ryady.view.screens.settings.currency.CurrencyService
 import com.example.type.CartLineInput
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
@@ -34,7 +38,6 @@ import com.google.firebase.auth.auth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.ResponseBody
 import retrofit2.Response as RetrofitResponse
 
 private const val TAG = "RemoteDataSource"
@@ -43,6 +46,9 @@ private const val TAG = "RemoteDataSource"
 interface IRemoteDataSource {
 
     suspend fun fetchCountries():Flow<RetrofitResponse<HashMap<String, String>>>
+
+    suspend fun fetchAllCurrencies():Flow<RetrofitResponse<Symbols>>
+    suspend fun fetchExchangeRates():Flow<RetrofitResponse<Currency>>
 
     suspend fun <T> fetchProducts(): Response<T>
     suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>>
@@ -95,6 +101,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         RetrofitHelper.retrofit.create(SettingsService::class.java)
     }
 
+    private val currencyRetrofitService: CurrencyService by lazy {
+        CurrencyRetrofitHelper.retrofit.create(CurrencyService::class.java)
+    }
+
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
     }
@@ -110,6 +120,14 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     override suspend fun fetchCountries(): Flow<RetrofitResponse<HashMap<String, String>>> = flow {
         emit(settingsRetrofitService.getCountries())
+    }
+
+    override suspend fun fetchAllCurrencies(): Flow<retrofit2.Response<Symbols>> = flow {
+        emit(currencyRetrofitService.getAllCurrencies())
+    }
+
+    override suspend fun fetchExchangeRates(): Flow<retrofit2.Response<Currency>> = flow {
+        emit(currencyRetrofitService.getExchangerate())
     }
 
 

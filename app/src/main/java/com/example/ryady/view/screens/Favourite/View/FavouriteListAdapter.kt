@@ -12,6 +12,8 @@ import com.bumptech.glide.Glide
 import com.example.ryady.R
 import com.example.ryady.databinding.FavouriteListItemBinding
 import com.example.ryady.model.Product
+import com.example.ryady.model.extensions.roundTo2DecimalPlaces
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -34,8 +36,12 @@ class FavouriteListAdapter(
     @SuppressLint("NotifyDataSetChanged", "UseCompatLoadingForDrawables")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tvTitle.text = listProduct[position].title
-        holder.tvPrice.text = listProduct[position].maxPrice
-        holder.tvPriceCode.text = listProduct[position].priceCode
+        val price = listProduct[position].maxPrice.toDouble()
+        val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
+            TheExchangeRate.choosedCurrency.first)!!)
+
+        holder.tvPrice.text = priceExchanged.roundTo2DecimalPlaces().toString()
+        holder.tvPriceCode.text = TheExchangeRate.choosedCurrency.first
         Glide.with(binding.root).load(listProduct[position].imageUrl).into(holder.ivProduct)
         holder.btnDelete.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(context)

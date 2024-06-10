@@ -96,10 +96,25 @@
         <action
             android:id="@+id/action_settingsFragment_to_countriesFragment"
             app:destination="@id/countriesFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_currencyFragment"
+            app:destination="@id/currencyFragment" />
     </fragment>
     <fragment
         android:id="@+id/countriesFragment"
         android:name="com.example.ryady.view.screens.settings.countries.view.CountriesFragment"
         android:label="fragment_countries"
         tools:layout="@layout/fragment_countries" />
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.example.ryady.view.screens.settings.aboutus.AboutUsFragment"
+        android:label="AboutUsFragment" />
+    <fragment
+        android:id="@+id/currencyFragment"
+        android:name="com.example.ryady.view.screens.settings.currency.view.CurrencyFragment"
+        android:label="fragment_currency"
+        tools:layout="@layout/fragment_currency" />
 </navigation>

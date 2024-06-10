@@ -19,11 +19,13 @@ import com.example.ProductByIdQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.model.extensions.roundTo2DecimalPlaces
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -124,8 +126,11 @@ class ProductInfoFragment : Fragment() {
         }
         binding.title.text = productInfo.title
         binding.description.text = productInfo.description
-        binding.price.text = productInfo.priceRange.maxVariantPrice.amount.toString()
-        binding.priceUnit.text = productInfo.priceRange.maxVariantPrice.currencyCode.toString()
+        val price = productInfo.priceRange.maxVariantPrice.amount.toString().toDouble()
+        val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+
+        binding.price.text = priceExchanged.roundTo2DecimalPlaces().toString()
+        binding.priceUnit.text = TheExchangeRate.choosedCurrency.first
 
         binding.imageSlider.setImageList(productImagesUrl)
 

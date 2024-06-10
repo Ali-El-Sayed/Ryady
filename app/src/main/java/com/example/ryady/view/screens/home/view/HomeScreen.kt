@@ -3,6 +3,7 @@ package com.example.ryady.view.screens.home.view
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
+import com.example.ryady.R
 import com.example.ryady.databinding.FragmentHomeScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -30,9 +32,12 @@ import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
 import com.example.ryady.view.screens.order.OrderActivity
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.google.android.material.carousel.CarouselSnapHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -48,12 +53,28 @@ class HomeScreen : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //// initializing the rates
+
+
+        Log.d(TAG, "onCreate: i am here")
+
+        ///////////////////////
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
         inflatingUIJob = lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch(Dispatchers.Main) { fetchProducts() }
+                //  launch(Dispatchers.Main) { fetchProducts() }
                 launch(Dispatchers.Main) { fetchBrands() }
+
+
+                TheExchangeRate.currencyInfo.collectLatest {
+                    if (it == 1) {
+
+                            launch(Dispatchers.Main) { fetchProducts() }
+                    }
+                }
             }
+
+          
         }
 
         binding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
@@ -74,9 +95,10 @@ class HomeScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val productImagesUrl: MutableList<SlideModel> = mutableListOf()
-        productImagesUrl.add(SlideModel(imageUrl = "https://cdn.al-ain.com/lg/images/2023/10/31/133-005843-spiro-spates-egyptian-drink-social-media_700x400.jpg"))
-        productImagesUrl.add(SlideModel(imageUrl = "https://ik.imagekit.io/tijarahub/images/thumbnails/240/134/logos/14/elaraby-01.png.webp"))
-        productImagesUrl.add(SlideModel(imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcRw7FKcF1XewWl87j2s57SFWNrl8uzPCwWp8ol1YUJVyoslvh1i3yQ19Rpkcc_SPCVfM&usqp=CAU"))
+        productImagesUrl.add(SlideModel(imagePath = R.drawable.ad1))
+        productImagesUrl.add(SlideModel(imagePath = R.drawable.ad2))
+        productImagesUrl.add(SlideModel(imagePath = R.drawable.ad3))
+        productImagesUrl.add(SlideModel(imagePath = R.drawable.ad4))
 
         binding.addImageSlider.setImageList(productImagesUrl)
         binding.addImageSlider.setItemClickListener(itemClickListener = object : ItemClickListener {

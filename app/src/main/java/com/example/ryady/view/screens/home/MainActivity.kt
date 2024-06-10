@@ -12,8 +12,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.ryady.R
 import com.example.ryady.databinding.ActivityMainBinding
+import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.network.GraphqlClient
 import com.example.ryady.utils.NetworkMonitor
 import com.example.ryady.view.dialogs.offlineDialog.view.OfflineDialogFragment
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -25,6 +28,8 @@ class MainActivity : AppCompatActivity(), OfflineDialogFragment.OfflineDialogLis
     private lateinit var isConnectedJob: Job
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        TheExchangeRate.initialize(applicationContext,
+            RemoteDataSource.getInstance(client = GraphqlClient.apiService),lifecycleScope)
         enableEdgeToEdge()
         // Disable night mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

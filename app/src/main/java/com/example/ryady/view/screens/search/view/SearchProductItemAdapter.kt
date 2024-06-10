@@ -10,6 +10,8 @@ import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.SearchProductsQuery
 import com.example.ryady.databinding.SearchListItemBinding
+import com.example.ryady.model.extensions.roundTo2DecimalPlaces
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 
 private const val TAG = "SearchProductItemAdapter"
 
@@ -34,8 +36,13 @@ class SearchProductItemAdapter(
             }
             holder.productImageSlider.setImageList(productImagesUrl)
             holder.tvTitle.text = product.title
-            holder.tvPriceAmount.text = product.variants.edges.first().node.price.amount.toString()
-            holder.tvPriceCode.text = product.variants.edges.first().node.price.currencyCode.toString()
+
+            val price = product.variants.edges.first().node.price.amount.toString().toDouble()
+            val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+
+
+            holder.tvPriceAmount.text = priceExchanged.roundTo2DecimalPlaces().toString()
+            holder.tvPriceCode.text = TheExchangeRate.choosedCurrency.first
         }
 
         holder.cardItem.setOnClickListener {

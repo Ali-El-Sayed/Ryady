@@ -19,6 +19,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.type.CartLineInput
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -56,7 +57,9 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        fun Double.roundTo2DecimalPlaces(): Double {
+            return BigDecimal(this).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+        }
         binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         cartAdapter = CartAdapter(
             nodes = nlist,
@@ -86,13 +89,20 @@ class CartFragment : Fragment() {
 
                         buyer = result.data.buyerIdentity
                         total = result.data.cost.totalAmount.amount.toString().toDouble()
+                        val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
                         binding.totalPrice.text =
-                            result.data.cost.totalAmount.amount.toString() + " " + result.data.cost.totalAmount.currencyCode.toString()
-                        binding.subtotalPrice.text = result.data.cost.checkoutChargeAmount.amount.toString()
-                        binding.tax.text = BigDecimal(
+                     //       result.data.cost.totalAmount.amount.toString() + " " + result.data.cost.totalAmount.currencyCode.toString()
+                            totalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
+
+                        val subtotal = result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
+                        val subtotalExchanged = subtotal/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+
+                        binding.subtotalPrice.text = subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
+                    /*    binding.tax.text = BigDecimal(
                             result.data.cost.totalAmount.amount.toString()
                                 .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
-                        ).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()
+                        ).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()  */
+                        binding.tax.text = (totalExchanged-subtotalExchanged).roundTo2DecimalPlaces().toString()
                         cartAdapter.updateList(nlist)
                     }
                 }

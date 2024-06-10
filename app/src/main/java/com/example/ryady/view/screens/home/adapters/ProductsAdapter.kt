@@ -7,6 +7,9 @@ import coil.load
 import com.example.ryady.R
 import com.example.ryady.databinding.ProductCardBinding
 import com.example.ryady.model.Product
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 private const val TAG = "ProductsAdapter"
 
@@ -25,6 +28,9 @@ class ProductsAdapter(
 
     override fun getItemCount(): Int = products.size
 
+    fun Double.roundTo2DecimalPlaces(): Double {
+        return BigDecimal(this).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+    }
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int,
@@ -34,8 +40,11 @@ class ProductsAdapter(
 
     inner class ViewHolder(binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
-            binding.currency.text = product.currency
-            binding.price.text = product.maxPrice
+            binding.currency.text = TheExchangeRate.choosedCurrency.first
+            val total = product.maxPrice.toString().toDouble()
+            val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+
+            binding.price.text = totalExchanged.roundTo2DecimalPlaces().toString()
             binding.productName.let {
                 product.title = product.title.replace("\n", "")
                 it.text = product.title
