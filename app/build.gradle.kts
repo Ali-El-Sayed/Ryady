@@ -100,6 +100,10 @@ dependencies {
     // Image Slider
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
+
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
 //shopify payment
     implementation ("com.shopify:checkout-sheet-kit:3.0.1")
     implementation ("com.google.android.material:material:1.12.0")

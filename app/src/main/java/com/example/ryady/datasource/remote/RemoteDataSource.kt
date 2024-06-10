@@ -10,6 +10,7 @@ import com.example.CreateAddressMutation
 import com.example.CreateCartMutation
 import com.example.CustomerAccessTokenCreateMutation
 import com.example.CustomerCreateMutation
+import com.example.GetCustomerDataQuery
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
 import com.example.SearchProductsQuery
@@ -17,6 +18,7 @@ import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
+import com.example.payment.RetrofitHelper
 import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
 import com.example.ryady.model.Order
 import com.example.ryady.model.Product
@@ -305,6 +307,22 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             }
         }
     }
+
+    suspend fun <T> getUserData(token:String) : Flow<Response<T>>{
+        val response = client.query(GetCustomerDataQuery(token)).execute()
+        return when {
+            (response.errors?.size ?: -1) > 0 -> {
+                 flow { emit(Response.Error(response.errors?.first()?.message ?: "no Errors")) }
+            }
+            else ->{
+                  flow { emit(Response.Success(response.data?.customer as T)) }
+            }
+        }
+    }
+
+
+
+
 
     override suspend fun addItemToFavourite(product: ProductByIdQuery.Product) {
         val parentRef = database.getReference("FavouriteCart")

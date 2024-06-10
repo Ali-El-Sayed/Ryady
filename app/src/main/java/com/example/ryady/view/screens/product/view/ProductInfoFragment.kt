@@ -135,7 +135,7 @@ class ProductInfoFragment : Fragment() {
         binding.sizeList.layoutManager = layoutManager
         val sizeList: MutableList<String> = mutableListOf()
         productInfo.variants.edges.forEach {
-            sizeList.add(it.node.title.split("/")[0])
+            sizeList.add(it.node.title.split(" /")[0])
         }
 
         if (isFavourite) {
