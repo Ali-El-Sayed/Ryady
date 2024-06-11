@@ -3,11 +3,13 @@ package com.example.ryady.view.screens.cart.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.CreateCartEmptyMutation
 import com.example.RetrieveCartQuery
 import com.example.payment.State
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.model.Order
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCart
 import com.example.type.CartLineInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "CartViewModel"
 
 class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
+    var email = ""
     private var _cartInfo: MutableStateFlow<Response<RetrieveCartQuery.Cart>> = MutableStateFlow(
         Response.Loading()
     )
@@ -28,12 +31,14 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
     var updateCartItemInfo: StateFlow<Response<Int>> = _updateCartItemInfo
     private var _cartCreate: MutableStateFlow<Response<Pair<String, String>>> = MutableStateFlow(Response.Loading())
     var cartCreate: StateFlow<Response<Pair<String, String>>> = _cartCreate
+    private var _createCartState: MutableStateFlow<Response<Pair<String, String>>> =
+        MutableStateFlow(Response.Loading())
+    val createCartState: StateFlow<Response<Pair<String, String>>> = _createCartState
+
     var currentOrder: Order = Order()
-    var checkoutUrl =
-        "https://mad44-android-sv-1.myshopify.com/cart/c/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
-    var cartId =
-        "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
-    private val userToken = "f4093054bf8cf9c70e84961dd8a27ed3"
+    var checkoutUrl = ""
+    var cartId =""
+     var userToken = ""
     suspend fun createOrderInformation() {
         viewModelScope.launch {
             remoteDataSource.createOrderInformation(
@@ -78,6 +83,7 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
                     is Response.Error -> {}
                     is Response.Loading -> _cartInfo.value = Response.Loading()
                     is Response.Success -> {
+                        it.data.buyerIdentity.customer?.firstName
                         checkoutUrl = it.data.checkoutUrl.toString()
                         Log.d(TAG, "fetchCartById: ${checkoutUrl}")
                         _cartInfo.value = it
@@ -96,6 +102,7 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
                 is Response.Success -> {
                     cartId = response.data.first
                     checkoutUrl = response.data.second
+
                     Log.d(TAG, "createCartWithLines: $cartId")
                     Log.d(TAG, "createCartWithLines: $checkoutUrl")
                     _cartCreate.value = Response.Success(response.data)
@@ -104,6 +111,24 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
         }
 
+    }
+    fun createEmptyCart(email:String , token : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = remoteDataSource.createEmptyCart<Pair<String, String>>(email = email, token = token)
+            when (response) {
+                is Response.Error -> {}
+                is Response.Loading -> {}
+                is Response.Success -> {
+                    cartId = response.data.first
+                    checkoutUrl = response.data.second
+
+                    Log.d(TAG, "createCartWithLines: $cartId")
+                    Log.d(TAG, "createCartWithLines: $checkoutUrl")
+                    _createCartState.value = Response.Success(response.data)
+                }
+            }
+
+        }
     }
 
 }

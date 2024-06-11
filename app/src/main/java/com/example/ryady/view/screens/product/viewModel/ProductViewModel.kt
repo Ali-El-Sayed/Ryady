@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "ProductViewModel"
 
 class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
-
+var cartId = ""
 
     private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> =
         MutableStateFlow(Response.Loading())

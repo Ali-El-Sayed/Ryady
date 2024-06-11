@@ -14,6 +14,8 @@ import com.example.GetCustomerDataQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentSingUpBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
+import com.example.ryady.model.CustomerCartData
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.saveCart
@@ -26,6 +28,7 @@ import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,6 +42,7 @@ class SingUpFragment : Fragment() {
             layoutInflater
         )
     }
+    private var email = ""
     private val viewModel: LoginViewModel by lazy {
         val factory =
             ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -70,6 +74,7 @@ class SingUpFragment : Fragment() {
                     when (account) {
                         is Response.Loading -> {}
                         is Response.Success -> {
+                            email = account.data.email ?: ""
                             viewModel.loginToAccount(
                                 CustomerAccessTokenCreateInput(
                                     account.data.email.toString(),
@@ -139,8 +144,23 @@ class SingUpFragment : Fragment() {
                     }
 
                     is Response.Success -> {
-                        saveCart(requireContext(), it.data.id, it.data.checkoutUrl.toString())
+                        saveCart(requireContext(), it.data.first, it.data.second)
                         // save to firebase
+                        val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                        val customerRef = database.getReference("CustomerCart")
+                        val customerCartData = CustomerCartData(it.data.first, it.data.second)
+
+// Encode the email
+                        val encodedEmail = encodeEmail(email)
+
+// Save the data to the database
+                        customerRef.child(encodedEmail).setValue(customerCartData)
+                            .addOnSuccessListener {
+                                println("Data saved successfully")
+                            }
+                            .addOnFailureListener {
+                                println("Error saving data: ${it.message}")
+                            }
 
                     }
                 }

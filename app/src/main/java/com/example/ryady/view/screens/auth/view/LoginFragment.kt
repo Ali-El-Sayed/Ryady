@@ -12,14 +12,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.ryady.databinding.FragmentLoginBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
+import com.example.ryady.model.CustomerCartData
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCart
 import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
 import com.example.type.CustomerAccessTokenCreateInput
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -43,6 +50,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         binding.btnLogin.setOnClickListener {
             if (validateUserInputs()) {
@@ -86,6 +94,33 @@ class LoginFragment : Fragment() {
                                     )
                                     // retrieve from firebase
                                     // save to data store
+
+                                    val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                                    val customerRef = database.getReference("CustomerCart")
+                                    customerRef.child( encodeEmail(customerResponse.data.email ?: "")).addListenerForSingleValueEvent(object :
+                                        ValueEventListener {
+                                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                val customerCartData = dataSnapshot.getValue(
+                                                    CustomerCartData::class.java)
+                                                lifecycleScope.launch {
+                                                    saveCart(
+                                                        requireContext(),
+                                                        customerCartData?.cartId ?: "",
+                                                        customerCartData?.checkoutUrl ?: ""
+                                                    )
+                                                }
+                                                println("Cart ID: ${customerCartData?.cartId}")
+                                                println("Checkout URL: ${customerCartData?.checkoutUrl}")
+                                            } else {
+                                                println("No data found for the email:")
+                                            }
+                                        }
+
+                                        override fun onCancelled(databaseError: DatabaseError) {
+                                            println("Error reading data: ${databaseError.message}")
+                                        }
+                                    })
                                     withContext(Dispatchers.IO){
                                         requireActivity().move(
                                             requireContext(),

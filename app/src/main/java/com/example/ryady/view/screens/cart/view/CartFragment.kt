@@ -17,12 +17,18 @@ import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.readCart
+import com.example.ryady.utils.readCustomerData
+import com.example.ryady.utils.saveCart
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.type.CartLineInput
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -44,11 +50,26 @@ class CartFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+           // repeatOnLifecycle(Lifecycle.State.STARTED) {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.fetchCartById()
+            readCart(requireContext()) { map ->
+                viewModel.cartId = map["cart id"] ?: "no cart"
+                viewModel.checkoutUrl = map["checkout url"] ?: "no check check"
+                Log.d(TAG, "onCreate: ${viewModel.cartId} , ${viewModel.checkoutUrl}")
             }
         }
+
+        lifecycleScope.launch {
+                    readCustomerData(requireContext()) { map ->
+                        viewModel.userToken = map["user token"] ?: ""
+                        viewModel.email = map["user email"] ?: ""
+                    }
+                }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            viewModel.fetchCartById()
+        }
+
     }
 
     override fun onCreateView(
@@ -66,7 +87,6 @@ class CartFragment : Fragment() {
             viewModel = viewModel,
             passedScope = lifecycleScope,
             context = requireContext(),
-            cartId = viewModel.cartId
         ) {
             // the onclick procedure
         }
@@ -123,6 +143,7 @@ class CartFragment : Fragment() {
                     is Response.Error -> {}
                     is Response.Loading -> {}
                     is Response.Success -> {
+                        saveCart(requireContext(), viewModel.cartId, viewModel.checkoutUrl)
                         viewModel.fetchCartById()
                     }
                 }

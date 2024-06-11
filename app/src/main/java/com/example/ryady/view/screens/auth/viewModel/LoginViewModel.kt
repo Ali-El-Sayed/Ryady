@@ -32,9 +32,9 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
     private var _customerData : MutableStateFlow<Response<GetCustomerDataQuery.Customer>> =MutableStateFlow(Response.Loading())
     val customerData : StateFlow<Response<GetCustomerDataQuery.Customer>> = _customerData
 
-    private var _createCartState: MutableStateFlow<Response<CreateCartEmptyMutation.Cart>> =
+    private var _createCartState: MutableStateFlow<Response<Pair<String, String>>> =
         MutableStateFlow(Response.Loading())
-    val createCartState: StateFlow<Response<CreateCartEmptyMutation.Cart>> = _createCartState
+    val createCartState: StateFlow<Response<Pair<String, String>>> = _createCartState
 
     fun createAccount(newCustomerAccount: CustomerCreateInput) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -76,9 +76,15 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
 
     fun createEmptyCart(email:String , token : String){
         viewModelScope.launch(Dispatchers.IO) {
-           remoteDataSource.createEmptyCart<CreateCartEmptyMutation.Cart>(email, token).collectLatest {
-               _createCartState.value = it
-           }
+            val response = remoteDataSource.createEmptyCart<Pair<String, String>>(email = email, token = token)
+            when (response) {
+                is Response.Error -> {}
+                is Response.Loading -> {}
+                is Response.Success -> {
+                    _createCartState.value = Response.Success(response.data)
+                }
+            }
+
         }
     }
 }

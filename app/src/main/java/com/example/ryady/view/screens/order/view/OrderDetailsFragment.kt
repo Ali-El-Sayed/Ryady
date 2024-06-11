@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable.Factory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,15 +32,20 @@ import com.example.RetrieveCartQuery
 import com.example.ryady.R
 import com.example.ryady.databinding.FragmentOrderDetailsBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.datasource.remote.util.RemoteDSUtils
+import com.example.ryady.model.CustomerCartData
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCart
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
+import com.example.ryady.view.screens.home.view.HomeScreen
 import com.example.type.CartLineInput
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.database.FirebaseDatabase
 import com.shopify.checkoutsheetkit.CheckoutException
 import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
 import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
@@ -55,6 +61,7 @@ import java.util.Locale
 
 class OrderDetailsFragment() : Fragment() {
     private val REQUEST_LOCATION_PERMISSION = 1
+    private var oneTimer = 0
     private var address: Address? = null
     private val TAG = "OrderDetailsFragment"
     private val binding by lazy { FragmentOrderDetailsBinding.inflate(layoutInflater) }
@@ -71,29 +78,46 @@ class OrderDetailsFragment() : Fragment() {
     }
 
     /*+++++++++++++++Cart Details++++++++++++++++*/
-    var email: String = "alielsayed99@gmail.com"
-    var customerToken: String = "f4093054bf8cf9c70e84961dd8a27ed3"
     var prelines = ArrayList<CartLineInput>()
     lateinit var lines: List<CartLineInput>
     private var nlist: ArrayList<RetrieveCartQuery.Node> = ArrayList()
     private val checkoutEventProcessors by lazy {
         object : DefaultCheckoutEventProcessor(requireActivity()) {
             override fun onCheckoutCanceled() {
-                prelines.clear()
-                nlist.forEach {
-                    lateinit var cartLineInput: CartLineInput
-                    it.merchandise.onProductVariant?.let { it1 ->
-                        cartLineInput = CartLineInput(
-                            merchandiseId = it1.id, quantity = Optional.present(it.quantity)
+                if (oneTimer == 1) {
+                    oneTimer=0
+                   // findNavController().popBackStack(HomeScreen)
+                } else {
+                    prelines.clear()
+                    nlist.forEach {
+                        Log.d(TAG, "onCheckoutCanceled: how many items do i have")
+                        lateinit var cartLineInput: CartLineInput
+                        it.merchandise.onProductVariant?.let { it1 ->
+                            cartLineInput = CartLineInput(
+                                merchandiseId = it1.id, quantity = Optional.present(it.quantity)
+                            )
+                        }
+                        prelines.add(cartLineInput)
+                    }
+                    lines = prelines
+                    Log.d(TAG, "onCheckoutToken: ${viewModel.userToken} , ${viewModel.email}")
+                    lifecycleScope.launch {
+                        viewModel.createCartWithLines(
+                            lines,
+                            customerToken = viewModel.userToken,
+                            email = viewModel.email
                         )
                     }
-                    prelines.add(cartLineInput)
                 }
-                lines = prelines
-                lifecycleScope.launch { viewModel.createCartWithLines(lines, customerToken, email) }
             }
 
-            override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {}
+            override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
+                oneTimer = 1
+                lifecycleScope.launch {
+                    viewModel.createEmptyCart(viewModel.email,viewModel.userToken)
+                }
+
+            }
 
             override fun onCheckoutFailed(error: CheckoutException) {}
         }
@@ -102,7 +126,9 @@ class OrderDetailsFragment() : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        lifecycleScope.launch {
+            viewModel.fetchCartById()
+        }
         lifecycleScope.launch {
             viewModel.cartInfo.collectLatest { result ->
                 when (result) {
@@ -124,6 +150,37 @@ class OrderDetailsFragment() : Fragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch {
+            viewModel.createCartState.collectLatest {response ->
+                when(response){
+                    is Response.Error -> {}
+                    is Response.Loading -> {}
+                    is Response.Success -> {
+                        viewModel.cartId = response.data.first
+                        viewModel.checkoutUrl = response.data.second
+                        saveCart(requireContext(),viewModel.cartId,viewModel.checkoutUrl)
+                        // save to firebase
+                        val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                        val customerRef = database.getReference("CustomerCart")
+                        val customerCartData = CustomerCartData(viewModel.cartId, viewModel.checkoutUrl)
+
+// Encode the email
+                        val encodedEmail = RemoteDSUtils.encodeEmail(viewModel.email)
+
+// Save the data to the database
+                        customerRef.child(encodedEmail).setValue(customerCartData)
+                            .addOnSuccessListener {
+                                println("Data saved successfully")
+                            }
+                            .addOnFailureListener {
+                                println("Error saving data: ${it.message}")
+                            }
+                    }
+                }
+
+            }
+        }
+
         // Get Current Location
         binding.tvGetCurrentLocation.setOnClickListener {
             if (isGPSEnabled(requireActivity())) getFreshLocation()
@@ -155,6 +212,7 @@ class OrderDetailsFragment() : Fragment() {
                 viewModel.currentOrder.countryName = address?.countryName ?: ""
                 viewModel.createOrderInformation()
             }
+            Log.d(TAG, "onViewCreated: ${viewModel.checkoutUrl}")
             ShopifyCheckoutSheetKit.present(
                 viewModel.checkoutUrl, requireActivity(), checkoutEventProcessors
             )
