@@ -86,7 +86,7 @@ class OrderDetailsFragment() : Fragment() {
             override fun onCheckoutCanceled() {
                 if (oneTimer == 1) {
                     oneTimer=0
-                   // findNavController().popBackStack(HomeScreen)
+                    requireActivity().finish()
                 } else {
                     prelines.clear()
                     nlist.forEach {
