@@ -103,12 +103,19 @@ class LoginFragment : Fragment() {
                                             if (dataSnapshot.exists()) {
                                                 val customerCartData = dataSnapshot.getValue(
                                                     CustomerCartData::class.java)
-                                                lifecycleScope.launch {
+                                                lifecycleScope.launch(Dispatchers.IO) {
                                                     saveCart(
                                                         requireContext(),
                                                         customerCartData?.cartId ?: "",
                                                         customerCartData?.checkoutUrl ?: ""
                                                     )
+                                                    withContext(Dispatchers.IO){
+                                                        requireActivity().move(
+                                                            requireContext(),
+                                                            MainActivity::class.java
+                                                        )
+                                                        requireActivity().finish()
+                                                    }
                                                 }
                                                 println("Cart ID: ${customerCartData?.cartId}")
                                                 println("Checkout URL: ${customerCartData?.checkoutUrl}")
@@ -121,13 +128,7 @@ class LoginFragment : Fragment() {
                                             println("Error reading data: ${databaseError.message}")
                                         }
                                     })
-                                    withContext(Dispatchers.IO){
-                                        requireActivity().move(
-                                            requireContext(),
-                                            MainActivity::class.java
-                                        )
-                                        requireActivity().finish()
-                                    }
+
                                 }
                             }
                         }
