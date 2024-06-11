@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.collectLatest
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
 private val userNameKey = stringPreferencesKey("userName")
+private val firstNameKey = stringPreferencesKey("firstName")
+private val lastNameKey = stringPreferencesKey("lastName")
 private val userEmailKey = stringPreferencesKey("EmailKey")
 private val userTokenKey = stringPreferencesKey("TokenKey")
 private val userPhoneKey = stringPreferencesKey("PhoneKey")
@@ -31,6 +33,8 @@ suspend fun saveUserData(
     context.dataStore.edit { settings ->
         settings[userEmailKey] = customer.email ?: "no email"
         settings[userNameKey] = "${customer.firstName} ${customer.lastName}"
+        settings[firstNameKey] = customer.firstName ?: "no first name"
+        settings[lastNameKey] = customer.lastName ?: "no last name"
         settings[userPhoneKey] = customer.phone ?: "null"
         settings[userTokenKey] = customerToken
     }
@@ -43,6 +47,8 @@ suspend fun readCustomerData(
     val userData: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
         userData["user name"] = it[userNameKey] ?: "no  name Value"
+        userData["first name"] = it[firstNameKey] ?: "no  name Value"
+        userData["last name"] = it[lastNameKey] ?: "no  name Value"
         userData["user email"] = it[userEmailKey] ?: "no email Value"
         userData["user token"] = it[userTokenKey] ?: "no token  Value"
         userData["user phone"] = it[userPhoneKey] ?: "no phone Value"

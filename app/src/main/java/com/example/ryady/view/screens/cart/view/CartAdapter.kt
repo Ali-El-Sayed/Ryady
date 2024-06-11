@@ -28,7 +28,6 @@ class CartAdapter(
     private val viewModel: CartViewModel,
     private val passedScope: CoroutineScope,
     private val context: Context,
-    private val cartId: String,
     private val onMerchandiseClick: (id: String) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
@@ -64,7 +63,7 @@ class CartAdapter(
                 curr++
                 passedScope.launch {
                     viewModel.updateCartLine(
-                        cartId,
+                        viewModel.cartId,
                         lineID = node.id,
                         quantity = curr
                     )
@@ -80,7 +79,7 @@ class CartAdapter(
                     binding.animationView.visibility = View.VISIBLE
                     passedScope.launch {
                         viewModel.updateCartLine(
-                            cartId,
+                            viewModel.cartId,
                             lineID = node.id,
                             quantity = curr
                         )
@@ -88,7 +87,7 @@ class CartAdapter(
                 } else {
                     passedScope.launch {
                         viewModel.deleteCartLine(
-                            cartId,
+                            viewModel.cartId,
                             lineID = node.id
                         )
                     }
@@ -98,7 +97,7 @@ class CartAdapter(
             binding.deleteLayout.setOnClickListener {
                 passedScope.launch {
                     viewModel.deleteCartLine(
-                        cartId,
+                        viewModel.cartId,
                         lineID = node.id
                     )
                 }

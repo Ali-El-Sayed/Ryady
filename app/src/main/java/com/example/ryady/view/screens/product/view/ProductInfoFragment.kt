@@ -23,6 +23,7 @@ import com.example.ryady.model.extensions.roundTo2DecimalPlaces
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
+import com.example.ryady.utils.readCart
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -39,7 +40,6 @@ class ProductInfoFragment : Fragment() {
     var variantId = ""
     var isFavourite: Boolean = false
     var id: String = ""
-    var cartId = "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUhaVzRRUFkzVjAxMUFGNVgyVzA2MTRSQQ?key=41856e5a617ea92e991f5b9cb4dd0dd6"
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -56,6 +56,11 @@ class ProductInfoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            readCart(requireContext()){map ->
+                viewModel.cartId = map["cart id"] ?: ""
+            }
+        }
 
         id = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
         Log.i(TAG, "onCreate Id: $id")
@@ -106,7 +111,7 @@ class ProductInfoFragment : Fragment() {
 
         binding.addToCart.setOnClickListener {
             lifecycleScope.launch {
-                viewModel.addItemToCart(cartId, varientID = variantId, quantity = 1)
+                viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
             }
         }
 

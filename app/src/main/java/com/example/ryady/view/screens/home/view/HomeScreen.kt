@@ -25,6 +25,7 @@ import com.example.ryady.databinding.FragmentHomeScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
@@ -53,17 +54,15 @@ class HomeScreen : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //// initializing the rates
 
-
-        Log.d(TAG, "onCreate: i am here")
-
-        ///////////////////////
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
         inflatingUIJob = lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 //  launch(Dispatchers.Main) { fetchProducts() }
                 launch(Dispatchers.Main) { fetchBrands() }
+                launch(Dispatchers.Main) { readCustomerData(requireContext()){map ->
+                    binding.topAppBar.subtitle = map["user name"]?.capitalize() ?: ""
+                } }
 
 
                 TheExchangeRate.currencyInfo.collectLatest {

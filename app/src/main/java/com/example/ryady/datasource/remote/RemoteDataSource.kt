@@ -98,7 +98,7 @@ interface IRemoteDataSource {
     suspend fun createOrderInformation(token: String, order: Order)
 
     suspend fun <T> getCustomerData(token: String): Flow<Response<T>>
-    suspend fun <T> createEmptyCart(email: String, token: String): Flow<Response<T>>
+    suspend fun <T> createEmptyCart(email: String, token: String): Response<T>
 
 
 }
@@ -433,7 +433,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     override suspend fun createOrderInformation(token: String, order: Order) {
         client.mutation(
             CreateAddressMutation(
-                token = "f4093054bf8cf9c70e84961dd8a27ed3",
+                token = token,
                 address = order.shippingAddress,
                 firstname = order.customerFirstName,
                 lastName = order.customerLastName,
@@ -445,21 +445,15 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         ).execute()
     }
 
-    override suspend fun <T> createEmptyCart(email: String, token: String): Flow<Response<T>> {
-        val response =
-            client.mutation(CreateCartEmptyMutation(email = email, customerToken = token))
-                .execute()
+    override suspend fun <T> createEmptyCart(email: String, token: String): Response<T> {
+        val response = client.mutation(CreateCartEmptyMutation(email = email, customerToken = token)).execute()
 
-        return flow {
-            emit(
-                Response.Success(
-                    Pair(
-                        first = response.data?.cartCreate?.cart?.id,
-                        second = response.data?.cartCreate?.cart?.checkoutUrl
-                    ) as T
-                )
-            )
-        }
+        return Response.Success(
+            Pair(
+                first = response.data?.cartCreate?.cart?.id,
+                second = response.data?.cartCreate?.cart?.checkoutUrl
+            ) as T
+        )
     }
 
 }
