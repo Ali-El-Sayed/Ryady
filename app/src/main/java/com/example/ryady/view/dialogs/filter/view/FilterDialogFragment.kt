@@ -1,4 +1,4 @@
-package com.example.ryady.view.dialogs.offlineDialog.view
+package com.example.ryady.view.dialogs.filter.view
 
 import android.os.Bundle
 import android.text.Editable.Factory

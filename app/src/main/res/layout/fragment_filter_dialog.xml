@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context=".view.dialogs.offlineDialog.view.FilterDialogFragment">
+    tools:context=".view.dialogs.filter.view.FilterDialogFragment">
 
     <TextView
         android:id="@+id/filter_title"
@@ -66,6 +66,11 @@
         </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp" />
     <!-- Human Type Filter -->
     <HorizontalScrollView
         android:id="@+id/human_type_container"
@@ -117,6 +122,10 @@
 
     </HorizontalScrollView>
 
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp" />
     <!-- Price min max -->
 
     <com.google.android.material.textfield.TextInputLayout
@@ -145,6 +154,7 @@
             android:maxLines="1" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_max_price"

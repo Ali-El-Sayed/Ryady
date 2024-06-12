@@ -8,16 +8,17 @@
         android:title="@string/home"
         app:showAsAction="always"
         app:tooltipText="@string/home" />
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/categoryScreen"
         android:icon="@drawable/ic_category"
         android:title="@string/category"
         app:showAsAction="always"
         app:tooltipText="@string/category" />
-    <item
-        android:id="@+id/favouriteFragment"
-        android:icon="@drawable/ic_favorite"
-        android:title="@string/favorite"
-        app:showAsAction="always"
-        app:tooltipText="@string/category" />
+
 </menu>

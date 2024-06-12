@@ -15,7 +15,7 @@ import com.example.ryady.databinding.FragmentCategoryScreenBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
-import com.example.ryady.view.dialogs.offlineDialog.view.FilterDialogFragment
+import com.example.ryady.view.dialogs.filter.view.FilterDialogFragment
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel

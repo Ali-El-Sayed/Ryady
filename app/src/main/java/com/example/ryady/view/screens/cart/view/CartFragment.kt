@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.RetrieveCartQuery
@@ -26,9 +24,7 @@ import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.type.CartLineInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -42,7 +38,6 @@ class CartFragment : Fragment() {
     private var total: Double = 0.0
     private var taxes: Int = 0
     private lateinit var cartAdapter: CartAdapter
-
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(requireActivity(), factory)[CartViewModel::class.java]
@@ -50,7 +45,7 @@ class CartFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-           // repeatOnLifecycle(Lifecycle.State.STARTED) {
+        // repeatOnLifecycle(Lifecycle.State.STARTED) {
         lifecycleScope.launch {
             readCart(requireContext()) { map ->
                 viewModel.cartId = map["cart id"] ?: "no cart"
@@ -60,16 +55,15 @@ class CartFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-                    readCustomerData(requireContext()) { map ->
-                        viewModel.userToken = map["user token"] ?: ""
-                        viewModel.email = map["user email"] ?: ""
-                    }
-                }
+            readCustomerData(requireContext()) { map ->
+                viewModel.userToken = map["user token"] ?: ""
+                viewModel.email = map["user email"] ?: ""
+            }
+        }
 
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.fetchCartById()
         }
-
     }
 
     override fun onCreateView(
@@ -109,20 +103,27 @@ class CartFragment : Fragment() {
 
                         buyer = result.data.buyerIdentity
                         total = result.data.cost.totalAmount.amount.toString().toDouble()
-                        val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+                        val totalExchanged =
+                            total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                                TheExchangeRate.choosedCurrency.first
+                            )!!)
                         binding.totalPrice.text =
-                     //       result.data.cost.totalAmount.amount.toString() + " " + result.data.cost.totalAmount.currencyCode.toString()
+                                //       result.data.cost.totalAmount.amount.toString() + " " + result.data.cost.totalAmount.currencyCode.toString()
                             totalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
 
                         val subtotal = result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
-                        val subtotalExchanged = subtotal/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+                        val subtotalExchanged =
+                            subtotal / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                                TheExchangeRate.choosedCurrency.first
+                            )!!)
 
-                        binding.subtotalPrice.text = subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
-                    /*    binding.tax.text = BigDecimal(
-                            result.data.cost.totalAmount.amount.toString()
-                                .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
-                        ).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()  */
-                        binding.tax.text = (totalExchanged-subtotalExchanged).roundTo2DecimalPlaces().toString()
+                        binding.subtotalPrice.text =
+                            subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
+                        /*    binding.tax.text = BigDecimal(
+                                result.data.cost.totalAmount.amount.toString()
+                                    .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
+                            ).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()  */
+                        binding.tax.text = (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces().toString()
                         cartAdapter.updateList(nlist)
                     }
                 }

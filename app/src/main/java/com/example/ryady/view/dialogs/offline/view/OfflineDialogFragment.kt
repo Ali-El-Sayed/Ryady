@@ -1,6 +1,8 @@
-package com.example.ryady.view.dialogs.offlineDialog.view
+package com.example.ryady.view.dialogs.offline.view
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,9 +32,9 @@ class OfflineDialogFragment : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
         binding.retryButton.setOnClickListener {
             listener.onRetry()
-//            dismiss()
         }
         binding.exitButton.setOnClickListener { listener.onExit() }
         return binding.root

@@ -3,7 +3,6 @@ package com.example.ryady.view.screens.home.view
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +25,7 @@ import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCustomerData
+import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
@@ -37,9 +37,9 @@ import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.google.android.material.carousel.CarouselSnapHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val TAG = "HomeScreen"
@@ -51,6 +51,7 @@ class HomeScreen : Fragment() {
         ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
     private lateinit var inflatingUIJob: Job
+    private var userToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,37 +59,44 @@ class HomeScreen : Fragment() {
         CarouselSnapHelper().attachToRecyclerView(binding.discountCarouselRv)
         inflatingUIJob = lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                //  launch(Dispatchers.Main) { fetchProducts() }
-                launch(Dispatchers.Main) { fetchBrands() }
-                launch(Dispatchers.Main) { readCustomerData(requireContext()){map ->
-                    binding.topAppBar.subtitle = map["user name"]?.capitalize() ?: ""
-                } }
-
-
+                launch { fetchBrands() }
+                launch(Dispatchers.Main) {
+                    readCustomerData(requireContext()) { map ->
+//                        userToken = map["user token"] ?: ""
+                        binding.topAppBar.subtitle = map["user name"]?.capitalize() ?: "Guest"
+                    }
+                }
                 TheExchangeRate.currencyInfo.collectLatest {
                     if (it == 1) {
-
-                            launch(Dispatchers.Main) { fetchProducts() }
+                        launch(Dispatchers.Main) { fetchProducts() }
                     }
                 }
             }
+        }
+        binding.topAppBar.setOnMenuItemClickListener {
+            if (userToken.isNotEmpty()) when (it.itemId) {
+                R.id.favouriteFragment -> {
+                    findNavController().navigate(HomeScreenDirections.actionHomeScreenToFavouriteFragment())
+                    true
+                }
 
-          
-        }
+                R.id.shopping_cart -> {
+                    requireActivity().move(requireContext(), OrderActivity::class.java)
+                    true
+                }
 
-        binding.topAppBar.menu.getItem(0).setOnMenuItemClickListener {
-            findNavController().navigate(HomeScreenDirections.actionHomeScreenToSearchFragment())
-            true
-        }
-        binding.topAppBar.menu.getItem(1).setOnMenuItemClickListener {
-            requireActivity().move(requireContext(), OrderActivity::class.java)
-            true
-        }
-        binding.topAppBar.menu.getItem(2).setOnMenuItemClickListener {
-            findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
-            true
-        }
+                R.id.settings -> {
+                    findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
+                    true
+                }
 
+                else -> true
+            }
+            else {
+                showRegisterDialog()
+                true
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,6 +127,7 @@ class HomeScreen : Fragment() {
         savedInstanceState: Bundle?,
     ): View = binding.root
 
+
     private suspend fun fetchBrands() {
         viewmodel.brandList.collect {
             when (it) {
@@ -127,13 +136,15 @@ class HomeScreen : Fragment() {
                 }
 
                 is Response.Success -> {
-                    binding.brandsRv.layoutManager = LinearLayoutManager(
-                        requireContext(),
-                        LinearLayoutManager.HORIZONTAL,
-                        false,
-                    )
-                    binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
-                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
+                    withContext(Dispatchers.Main) {
+                        binding.brandsRv.layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false,
+                        )
+                        binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
+                            findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
+                        }
                     }
                 }
 
@@ -142,6 +153,14 @@ class HomeScreen : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showRegisterDialog() {
+        val unRegisterDialogFragment = UnRegisterDialogFragment()
+        unRegisterDialogFragment.isCancelable = false
+        unRegisterDialogFragment.show(
+            parentFragmentManager, "unRegisterDialog"
+        )
     }
 
     private suspend fun fetchProducts() {

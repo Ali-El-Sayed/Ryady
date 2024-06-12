@@ -37,7 +37,6 @@
     <string name="another_phone">Another Phone\n</string>
     <string name="cash_on_delivery">Cash On Delivery</string>
     <string name="credit_card">Credit Card</string>
-    <string name="cancel">Cancel</string>
     <string name="next">Next</string>
     <string name="customer_info">Customer Info</string>
     <string name="order_info">Order Info</string>
@@ -63,4 +62,6 @@
     <string name="shoes">SHOES</string>
     <string name="t_shirts">T-SHIRTS</string>
     <string name="accessories">ACCESSORIES</string>
+    <string name="cancel">Canel</string>
+    <string name="go_to_register">Go to Register</string>
 </resources>

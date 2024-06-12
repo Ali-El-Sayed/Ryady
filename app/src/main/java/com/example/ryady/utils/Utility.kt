@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.CustomerAccessTokenCreateMutation
 import com.example.GetCustomerDataQuery
 import kotlinx.coroutines.flow.collectLatest
 
@@ -26,9 +25,7 @@ private val checkoutUrlKey = stringPreferencesKey("CheckoutUrl")
 
 
 suspend fun saveUserData(
-    context: Context,
-    customer: GetCustomerDataQuery.Customer,
-    customerToken: String
+    context: Context, customer: GetCustomerDataQuery.Customer, customerToken: String
 ) {
     context.dataStore.edit { settings ->
         settings[userEmailKey] = customer.email ?: "no email"
@@ -42,8 +39,7 @@ suspend fun saveUserData(
 }
 
 suspend fun readCustomerData(
-    context: Context,
-    customerData: (MutableMap<String, String>) -> Unit
+    context: Context, customerData: (MutableMap<String, String>) -> Unit
 ) {
     val userData: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
@@ -57,7 +53,6 @@ suspend fun readCustomerData(
     }
 }
 
-
 suspend fun saveCountry(
     context: Context, countryCode: String, countryName: String
 ) {
@@ -69,8 +64,7 @@ suspend fun saveCountry(
 }
 
 suspend fun readCountry(
-    context: Context,
-    countryData: (MutableMap<String, String>) -> Unit
+    context: Context, countryData: (MutableMap<String, String>) -> Unit
 ) {
     val countryDataMap: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
@@ -90,8 +84,7 @@ suspend fun saveCurrency(
 }
 
 suspend fun readCurrency(
-    context: Context,
-    currencyData: (MutableMap<String, String>) -> Unit
+    context: Context, currencyData: (MutableMap<String, String>) -> Unit
 ) {
     val currencyDataMap: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
@@ -109,10 +102,9 @@ suspend fun saveCart(context: Context, cardId: String, checkoutUrl: String) {
 }
 
 suspend fun readCart(
-    context: Context,
-    cartData: (MutableMap<String, String>) -> Unit
+    context: Context, cartData: (MutableMap<String, String>) -> Unit
 ) {
-    val cartDataMap : MutableMap<String, String> = mutableMapOf()
+    val cartDataMap: MutableMap<String, String> = mutableMapOf()
     context.dataStore.data.collectLatest {
         cartDataMap["cart id"] = it[cartIdKey] ?: ""
         cartDataMap["checkout url"] = it[checkoutUrlKey] ?: ""

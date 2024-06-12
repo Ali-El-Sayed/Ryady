@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeScreen_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_homeScreen_to_favouriteFragment"
+            app:destination="@id/favouriteFragment" />
 
     </fragment>
     <fragment
@@ -111,7 +114,8 @@
     <fragment
         android:id="@+id/aboutUsFragment"
         android:name="com.example.ryady.view.screens.settings.aboutus.AboutUsFragment"
-        android:label="AboutUsFragment" />
+        android:label="AboutUsFragment"
+        tools:layout="@layout/fragment_about_us" />
     <fragment
         android:id="@+id/currencyFragment"
         android:name="com.example.ryady.view.screens.settings.currency.view.CurrencyFragment"
