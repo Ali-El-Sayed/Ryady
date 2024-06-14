@@ -48,7 +48,9 @@ class SearchFragment : Fragment(), onSearchItemClick {
                 x.value = text.toString()
             }
         }
-
+        binding.searchView.post {
+            binding.searchView.show()
+        }
 
         lifecycleScope.launch(Dispatchers.IO) {
             x.debounce(500).collectLatest {

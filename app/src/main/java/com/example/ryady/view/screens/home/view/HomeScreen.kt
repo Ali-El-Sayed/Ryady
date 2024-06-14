@@ -62,7 +62,7 @@ class HomeScreen : Fragment() {
                 launch { fetchBrands() }
                 launch(Dispatchers.Main) {
                     readCustomerData(requireContext()) { map ->
-//                        userToken = map["user token"] ?: ""
+                        userToken = map["user token"] ?: ""
                         binding.topAppBar.subtitle = map["user name"]?.capitalize() ?: "Guest"
                     }
                 }
