@@ -1,9 +1,7 @@
 package com.example.ryady.view.screens.auth.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.CreateCartEmptyMutation
 import com.example.CustomerCreateMutation
 import com.example.GetCustomerDataQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
@@ -45,6 +43,7 @@ class LoginViewModel(private val remoteDataSource: IRemoteDataSource) : ViewMode
 
     fun createAccountFirebase(userAccount: CustomerCreateInput) {
         viewModelScope.launch(Dispatchers.IO) {
+
             remoteDataSource.createAccountUsingFirebase(userAccount)
         }
     }
