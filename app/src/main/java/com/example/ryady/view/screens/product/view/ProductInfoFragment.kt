@@ -23,8 +23,8 @@ import com.example.ryady.model.extensions.roundTo2DecimalPlaces
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
-import com.example.ryady.utils.readCustomerData
 import com.example.ryady.utils.readCart
+import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -43,6 +43,7 @@ class ProductInfoFragment : Fragment() {
     var isFavourite: Boolean = false
     var id: String = ""
     lateinit var email: String
+    lateinit var token: String
 
     private val viewModel by lazy {
         val factory =
@@ -61,7 +62,7 @@ class ProductInfoFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            readCart(requireContext()){map ->
+            readCart(requireContext()) { map ->
                 viewModel.cartId = map["cart id"] ?: ""
             }
         }
@@ -73,8 +74,9 @@ class ProductInfoFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 readCustomerData(requireContext()) {
                     email = it["user email"].toString()
+                    token = it["user token"] ?: ""
                     viewModel.fetchProductById(id)
-                    viewModel.searchForAnItem(email =  email, itemId = id) {
+                    viewModel.searchForAnItem(email = email, itemId = id) {
                         isFavourite = it
                     }
                 }
@@ -96,7 +98,8 @@ class ProductInfoFragment : Fragment() {
                     when (it) {
                         is Response.Error -> {
                             binding.animation.visibility = View.GONE
-                            Snackbar.make(binding.root,it.message,Snackbar.ANIMATION_MODE_SLIDE).show()
+                            Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE)
+                                .show()
                         }
 
                         is Response.Loading -> {
@@ -129,8 +132,16 @@ class ProductInfoFragment : Fragment() {
         }
 
         binding.addToCart.setOnClickListener {
-            lifecycleScope.launch {
-                viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
+            if (token.isNotEmpty() || token.isNotBlank()) {
+                lifecycleScope.launch {
+                    viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please login first to add item to cart",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -171,9 +182,19 @@ class ProductInfoFragment : Fragment() {
         binding.gender.text = productInfo.tags[1]
         if ((productInfo.variants.edges.first().node.quantityAvailable ?: 0) <= 0) {
             binding.addToCart.text = "Sold Out"
-            binding.addToCart.setTextColor(resources.getColor(R.color.white,requireContext().theme))
-            binding.addToCart.setBackgroundColor(resources.getColor(R.color.Gray,requireContext().theme))
-            binding.addToCart.isEnabled=false
+            binding.addToCart.setTextColor(
+                resources.getColor(
+                    R.color.white,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.setBackgroundColor(
+                resources.getColor(
+                    R.color.Gray,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.isEnabled = false
         }
 
 
@@ -185,21 +206,34 @@ class ProductInfoFragment : Fragment() {
         binding.sizeList.adapter = SizeAdapter(sizeList.toList())
 
         binding.btnFavourite.setOnClickListener {
-            if (isFavourite) {
-                viewModel.deleteItem(email = email, id = id)
+            if (token.isNotEmpty() || token.isNotBlank()) {
+                if (isFavourite) {
+                    viewModel.deleteItem(email = email, id = id)
+                    Toast.makeText(
+                        requireContext(),
+                        "Product Removed from Favourites",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    binding.btnFavourite.setIcon(R.drawable.favorite)
+                    isFavourite = !isFavourite
+                } else {
+                    viewModel.addItemToFav(email = email, productInfo)
+                    Toast.makeText(
+                        requireContext(),
+                        "Product Added To Favourites",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                    binding.btnFavourite.setIcon(R.drawable.favorite_fill)
+                    isFavourite = !isFavourite
+                }
+            } else {
                 Toast.makeText(
                     requireContext(),
-                    "Product Removed from Favourites",
+                    "Please login first to add item to favourite",
                     Toast.LENGTH_LONG
                 ).show()
-                binding.btnFavourite.setIcon(R.drawable.favorite)
-                isFavourite = !isFavourite
-            } else {
-                viewModel.addItemToFav(email = email,productInfo)
-                Toast.makeText(requireContext(), "Product Added To Favourites", Toast.LENGTH_LONG)
-                    .show()
-                binding.btnFavourite.setIcon(R.drawable.favorite_fill)
-                isFavourite = !isFavourite
+
             }
 
         }
