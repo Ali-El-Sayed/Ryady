@@ -63,4 +63,11 @@
     <string name="shoes">SHOES</string>
     <string name="t_shirts">T-SHIRTS</string>
     <string name="accessories">ACCESSORIES</string>
+    <string name="skip">Skip</string>
+    <string name="password">password</string>
+    <string name="email">Email</string>
+    <string name="login_sub_welcome_title">welcome back! Please login to access your account.</string>
+    <string name="welcome_title">Hi, Welcome Back!👋</string>
+    <string name="signup">Signup</string>
+    <string name="logout">Logout</string>
 </resources>

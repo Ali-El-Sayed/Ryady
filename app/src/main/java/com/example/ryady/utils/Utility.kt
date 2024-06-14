@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.CustomerAccessTokenCreateMutation
 import com.example.GetCustomerDataQuery
 import kotlinx.coroutines.flow.collectLatest
 
@@ -51,7 +50,7 @@ suspend fun readCustomerData(
         userData["first name"] = it[firstNameKey] ?: "no  name Value"
         userData["last name"] = it[lastNameKey] ?: "no  name Value"
         userData["user email"] = it[userEmailKey] ?: "no email Value"
-        userData["user token"] = it[userTokenKey] ?: "no token  Value"
+        userData["user token"] = it[userTokenKey] ?: ""
         userData["user phone"] = it[userPhoneKey] ?: "no phone Value"
         customerData(userData)
     }
