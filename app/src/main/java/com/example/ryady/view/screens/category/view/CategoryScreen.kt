@@ -52,7 +52,7 @@ class CategoryScreen : Fragment() {
     }
 
     private suspend fun updateUI() {
-        viewModel.productList.collect {
+        viewModel.productsByCategoryList.collect {
             when (it) {
                 is Response.Loading -> {
                     binding.frameLayout.visibility = View.VISIBLE
@@ -67,16 +67,13 @@ class CategoryScreen : Fragment() {
                             )
                         )
                     }
-                    if (it.data.isEmpty()) binding.imgNotFound.visibility = View.VISIBLE
-                    else binding.imgNotFound.visibility = View.GONE
-
+                    binding.imgNotFound.visibility = if (it.data.isEmpty()) View.VISIBLE else View.GONE
                     binding.frameLayout.visibility = View.GONE
                 }
 
                 is Response.Error -> {
                     binding.imgNotFound.visibility = View.GONE
                     binding.frameLayout.visibility = View.GONE
-
                     // handle Error
                 }
             }

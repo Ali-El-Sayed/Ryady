@@ -13,12 +13,28 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="70dp"
-        android:text="Hi, Welcome Back!👋"
+        android:text="@string/welcome_title"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_gust"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/transparent"
+            android:text="@string/skip"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/regular"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
 
     <TextView
         android:id="@+id/tv_subTitle"
@@ -26,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
         android:layout_marginTop="10dp"
-        android:text="wlecome back! Please login to access your account."
+        android:text="@string/login_sub_welcome_title"
         android:textAlignment="center"
 
         android:textColor="#CACACA"
@@ -49,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="80dp"
-        android:hint="Email"
+        android:hint="@string/email"
         app:boxCornerRadiusBottomEnd="20dp"
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
@@ -82,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:hint="password"
+        android:hint="@string/password"
         app:boxCornerRadiusBottomEnd="20dp"
         app:boxCornerRadiusBottomStart="20dp"
         app:boxCornerRadiusTopEnd="20dp"
@@ -142,15 +158,31 @@
         android:id="@+id/tv_sign_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="36dp"
-        android:text="signup"
         android:clickable="true"
+        android:text="@string/signup"
         android:textColor="#0B41E1"
         android:textSize="20sp"
-        android:layout_marginStart="20dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_label_signup"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/product_glass_background"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

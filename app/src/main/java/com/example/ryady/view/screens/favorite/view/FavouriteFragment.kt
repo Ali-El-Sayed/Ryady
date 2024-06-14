@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.Favourite.View
+package com.example.ryady.view.screens.favorite.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,7 +16,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.Favourite.ViewModel.FavouriteViewModel
+import com.example.ryady.view.screens.favorite.ViewModel.FavouriteViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ private const val TAG = "FavouriteFragment"
 
 class FavouriteFragment : Fragment(), IFavouriteFragment {
     lateinit var binding: FragmentFavouriteBinding
-    lateinit var userEmail:String
+    lateinit var userEmail: String
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[FavouriteViewModel::class.java]
@@ -44,7 +44,7 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                readCustomerData(requireContext()){
+                readCustomerData(requireContext()) {
                     userEmail = it["user email"].toString()
                     viewModel.getAllFavouriteProduct(userEmail)
                 }
@@ -59,15 +59,8 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
             viewModel.productList.collectLatest {
                 withContext(Dispatchers.Main) {
                     when (it) {
-                        is Response.Error -> {
-
-                        }
-
-                        is Response.Loading -> {
-
-
-                        }
-
+                        is Response.Error -> {}
+                        is Response.Loading -> {}
                         is Response.Success -> {
                             binding.rvFavouriteList.adapter =
                                 FavouriteListAdapter(it.data.toMutableList(), this@FavouriteFragment, requireContext())
@@ -78,9 +71,8 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
         }
     }
 
-    override fun deleteItem( itemId: String) {
-
-        viewModel.deleteItem(userEmail,itemId)
+    override fun deleteItem(itemId: String) {
+        viewModel.deleteItem(userEmail, itemId)
     }
 
     override fun onItemClick(itemId: String) {

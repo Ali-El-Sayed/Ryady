@@ -8,20 +8,25 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.apollographql.apollo3.api.Optional
 import com.example.RetrieveCartQuery
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
+import com.example.ryady.datasource.remote.util.RemoteDSUtils
+import com.example.ryady.model.CustomerCartData
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCart
-import com.example.ryady.utils.readCustomerData
 import com.example.ryady.utils.saveCart
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.type.CartLineInput
+import com.google.firebase.database.FirebaseDatabase
+import com.shopify.checkoutsheetkit.CheckoutException
+import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
+import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
+import com.shopify.checkoutsheetkit.lifecycleevents.CheckoutCompletedEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,31 +36,79 @@ import java.math.RoundingMode
 class CartFragment : Fragment() {
 
     private val binding: FragmentCartBinding by lazy { FragmentCartBinding.inflate(layoutInflater) }
-
+    private var oneTimer = 0
     lateinit var lines: List<CartLineInput>
-    private var nlist: ArrayList<RetrieveCartQuery.Node> = ArrayList()
+    private var nList: ArrayList<RetrieveCartQuery.Node> = ArrayList()
     lateinit var buyer: RetrieveCartQuery.BuyerIdentity
     private var total: Double = 0.0
     private var taxes: Int = 0
     private lateinit var cartAdapter: CartAdapter
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
-        ViewModelProvider(requireActivity(), factory)[CartViewModel::class.java]
+        ViewModelProvider(this, factory)[CartViewModel::class.java]
+    }
+    var preLines = ArrayList<CartLineInput>()
+    private val checkoutEventProcessors by lazy {
+        object : DefaultCheckoutEventProcessor(requireActivity()) {
+            override fun onCheckoutCanceled() {
+                if (oneTimer == 1) {
+                    oneTimer = 0
+                    requireActivity().finish()
+                } else {
+                    preLines.clear()
+                    nList.forEach {
+                        Log.d(TAG, "onCheckoutCanceled: how many items do i have")
+                        lateinit var cartLineInput: CartLineInput
+                        it.merchandise.onProductVariant?.let { it1 ->
+                            cartLineInput = CartLineInput(
+                                merchandiseId = it1.id, quantity = Optional.present(it.quantity)
+                            )
+                        }
+                        preLines.add(cartLineInput)
+                    }
+                    lines = preLines
+                    Log.d(TAG, "onCheckoutToken: ${viewModel.userToken} , ${viewModel.email}")
+                    lifecycleScope.launch {
+                        viewModel.createCartWithLines(
+                            lines, customerToken = viewModel.userToken, email = viewModel.email
+                        )
+                    }
+                }
+            }
+
+            override fun onCheckoutCompleted(checkoutCompletedEvent: CheckoutCompletedEvent) {
+                oneTimer = 1
+                lifecycleScope.launch {
+                    viewModel.createEmptyCart(viewModel.email, viewModel.userToken)
+                }
+
+            }
+
+            override fun onCheckoutFailed(error: CheckoutException) {}
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // repeatOnLifecycle(Lifecycle.State.STARTED) {
+        lifecycleScope.launch {
+            viewModel.fetchCartById()
+        }
+        lifecycleScope.launch {
+            viewModel.cartInfo.collectLatest { result ->
+                when (result) {
+                    is Response.Error -> {}
+                    is Response.Loading -> {}
+                    is Response.Success -> {
+                        nList.clear()
+                        result.data.lines.edges.forEach { nList.add(it.node) }
+                    }
+                }
+            }
+        }
         lifecycleScope.launch {
             readCart(requireContext()) { map ->
                 viewModel.cartId = map["cart id"] ?: "no cart"
                 viewModel.checkoutUrl = map["checkout url"] ?: "no check check"
-                Log.d(TAG, "onCreate: ${viewModel.cartId} , ${viewModel.checkoutUrl}")
-            }
-        }
-
-        lifecycleScope.launch {
-            readCustomerData(requireContext()) { map ->
                 viewModel.userToken = map["user token"] ?: ""
                 viewModel.email = map["user email"] ?: ""
             }
@@ -75,9 +128,8 @@ class CartFragment : Fragment() {
         fun Double.roundTo2DecimalPlaces(): Double {
             return BigDecimal(this).setScale(2, RoundingMode.HALF_EVEN).toDouble()
         }
-        binding.cartRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         cartAdapter = CartAdapter(
-            nodes = nlist,
+            nodes = nList,
             viewModel = viewModel,
             passedScope = lifecycleScope,
             context = requireContext(),
@@ -93,9 +145,9 @@ class CartFragment : Fragment() {
                     is Response.Loading -> {}
                     is Response.Success -> {
                         Log.d(TAG, "retriving cart went fine")
-                        nlist.clear()
+                        nList.clear()
                         result.data.lines.edges.forEach {
-                            nlist.add(it.node)
+                            nList.add(it.node)
                         }
                         viewModel.checkoutUrl = result.data.checkoutUrl.toString()
                         taxes = ((result.data.cost.totalAmount.amount.toString()
@@ -108,7 +160,6 @@ class CartFragment : Fragment() {
                                 TheExchangeRate.choosedCurrency.first
                             )!!)
                         binding.totalPrice.text =
-                                //       result.data.cost.totalAmount.amount.toString() + " " + result.data.cost.totalAmount.currencyCode.toString()
                             totalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
 
                         val subtotal = result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
@@ -119,12 +170,8 @@ class CartFragment : Fragment() {
 
                         binding.subtotalPrice.text =
                             subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.choosedCurrency.first
-                        /*    binding.tax.text = BigDecimal(
-                                result.data.cost.totalAmount.amount.toString()
-                                    .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
-                            ).setScale(2, RoundingMode.HALF_EVEN).toDouble().toString()  */
                         binding.tax.text = (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces().toString()
-                        cartAdapter.updateList(nlist)
+                        cartAdapter.updateList(nList)
                     }
                 }
             }
@@ -149,10 +196,42 @@ class CartFragment : Fragment() {
                     }
                 }
             }
+            lifecycleScope.launch {
+                viewModel.createCartState.collectLatest { response ->
+                    when (response) {
+                        is Response.Error -> {}
+                        is Response.Loading -> {}
+                        is Response.Success -> {
+                            viewModel.cartId = response.data.first
+                            viewModel.checkoutUrl = response.data.second
+                            saveCart(requireContext(), viewModel.cartId, viewModel.checkoutUrl)
+                            // save to firebase
+                            val database =
+                                FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                            val customerRef = database.getReference("CustomerCart")
+                            val customerCartData = CustomerCartData(viewModel.cartId, viewModel.checkoutUrl)
+
+                            // Encode the email
+                            val encodedEmail = RemoteDSUtils.encodeEmail(viewModel.email)
+
+                            // Save the data to the database
+                            customerRef.child(encodedEmail).setValue(customerCartData).addOnSuccessListener {
+                                println("Data saved successfully")
+                            }.addOnFailureListener {
+                                println("Error saving data: ${it.message}")
+                            }
+                        }
+                    }
+
+                }
+            }
+
         }
 
         binding.button.setOnClickListener {
-            findNavController().navigate(CartFragmentDirections.actionCartFragment2ToCustomerDataFragment())
+            ShopifyCheckoutSheetKit.present(
+                viewModel.checkoutUrl, requireActivity(), checkoutEventProcessors
+            )
         }
     }
 

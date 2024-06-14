@@ -1,10 +1,12 @@
 package com.example.ryady.model.extensions
 
+import com.example.CustomerAddressQuery
 import com.example.ShopifyBrandsByIdQuery
 import com.example.ShopifyBrandsQuery
 import com.example.ShopifyProductByCategoryTypeQuery
 import com.example.ShopifyProductsQuery
 import com.example.ryady.Images
+import com.example.ryady.model.Address
 import com.example.ryady.model.Brand
 import com.example.ryady.model.Product
 
@@ -102,4 +104,23 @@ fun ShopifyProductByCategoryTypeQuery.Products.toProductList(): ArrayList<Produc
         productList.add(product)
     }
     return productList
+}
+
+fun CustomerAddressQuery.Addresses.toAddressList(): ArrayList<Address> {
+    val addressList: ArrayList<Address> = ArrayList()
+    this.edges.forEach { address ->
+        addressList.add(
+            Address(
+                id = address.node.id,
+                firstName = address.node.firstName ?: "",
+                lastName = address.node.lastName ?: "",
+                country = address.node.country ?: "",
+                city = address.node.city ?: "",
+                zip = address.node.zip ?: "",
+                address = address.node.address1 ?: "",
+                phone = address.node.phone ?: "",
+            )
+        )
+    }
+    return addressList
 }

@@ -16,13 +16,12 @@ private const val TAG = "ProductsAdapter"
 class ProductsAdapter(
     private val products: List<Product> = mutableListOf(), private val onProductClick: (id: String) -> Unit
 ) : RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
-    private lateinit var binding: ProductCardBinding
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): ViewHolder {
-        binding = ProductCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ProductCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -31,6 +30,7 @@ class ProductsAdapter(
     fun Double.roundTo2DecimalPlaces(): Double {
         return BigDecimal(this).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
+
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int,
@@ -38,11 +38,12 @@ class ProductsAdapter(
         holder.bind(products[position])
     }
 
-    inner class ViewHolder(binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
             binding.currency.text = TheExchangeRate.choosedCurrency.first
             val total = product.maxPrice.toString().toDouble()
-            val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+            val totalExchanged =
+                total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
 
             binding.price.text = totalExchanged.roundTo2DecimalPlaces().toString()
             binding.productName.let {

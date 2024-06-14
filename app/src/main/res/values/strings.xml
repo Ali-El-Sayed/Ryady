@@ -62,6 +62,19 @@
     <string name="shoes">SHOES</string>
     <string name="t_shirts">T-SHIRTS</string>
     <string name="accessories">ACCESSORIES</string>
-    <string name="cancel">Canel</string>
+    <string name="cancel">Cancel</string>
     <string name="go_to_register">Go to Register</string>
+    <string name="n_a">N/A</string>
+    <string name="new_address">New Address</string>
+    <string name="save">Save</string>
+    <string name="city">City</string>
+    <string name="postal_code">Postal code</string>
+    <string name="skip">Skip</string>
+    <string name="password">password</string>
+    <string name="email">Email</string>
+    <string name="login_sub_welcome_title">welcome back! Please login to access your account.</string>
+    <string name="welcome_title">Hi, Welcome Back!👋</string>
+    <string name="signup">Signup</string>
+    <string name="logout">Logout</string>
+
 </resources>

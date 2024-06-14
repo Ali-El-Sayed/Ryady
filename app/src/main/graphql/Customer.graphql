@@ -38,3 +38,66 @@ mutation CreateAddress(
         }
     }
 }
+query CustomerAddress($token:String!) {
+    customer(customerAccessToken: $token) {
+        addresses(first: 10) {
+            edges {
+                node {
+                    address1
+                    city
+                    country
+                    firstName
+                    lastName
+                    phone
+                    zip
+                    id
+                }
+            }
+        }
+    }
+}
+mutation CustomerAddressDelete(
+    $id:ID!
+    $token:String!
+) {
+    customerAddressDelete(
+        id:$id
+        customerAccessToken: $token
+    ) {
+        deletedCustomerAddressId
+        customerUserErrors {
+            code
+            field
+            message
+        }
+    }
+}
+
+mutation createAddress(
+    $token:String!
+    $address:String!
+    $city:String!
+    $country:String!
+    $firstName:String!
+    $lastName:String!
+    $phone:String!
+    $zip:String!
+) {
+    customerAddressCreate(
+        address: {
+            address1: $address
+            city: $city
+            country: $country
+            firstName: $firstName
+            phone: $phone
+            lastName: $lastName
+            zip: $zip
+        }
+        customerAccessToken: $token
+    ) {
+        userErrors {
+            field
+            message
+        }
+    }
+}

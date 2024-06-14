@@ -17,9 +17,11 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
-import com.example.ryady.view.screens.home.view.HomeScreenDirections
 import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmodel
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class ProductsByBrandFragment : Fragment() {
@@ -31,17 +33,22 @@ class ProductsByBrandFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         arguments?.getString("brandId")?.let {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     viewModel.getProductsByBrandId(it)
-                    updateUI()
+                    withContext(Dispatchers.Main) {
+                        updateUI()
+                    }
                 }
             }
-        } ?: {
-            // Show Dialog Error and Close Fragment
         }
+
     }
 
     override fun onCreateView(
@@ -58,12 +65,14 @@ class ProductsByBrandFragment : Fragment() {
 
                 is Response.Success -> {
                     binding.productsRv.layoutManager = GridLayoutManager(requireContext(), 2)
-                    binding.productsRv.adapter = ProductsAdapter(it.data){ id ->
-
-                        findNavController().navigate(ProductsByBrandFragmentDirections.actionProductsByBrandFragmentToProductInfoFragment(productId = id))
-                    }
+                    binding.productsRv.adapter = AlphaInAnimationAdapter(ProductsAdapter(it.data) { id ->
+                        findNavController().navigate(
+                            ProductsByBrandFragmentDirections.actionProductsByBrandFragmentToProductInfoFragment(
+                                productId = id
+                            )
+                        )
+                    })
                     binding.topAppBar.title = it.data[0].vendor
-                    binding.topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
                 }
 
                 is Response.Error -> {

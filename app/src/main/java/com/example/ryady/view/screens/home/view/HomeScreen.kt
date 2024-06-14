@@ -28,13 +28,14 @@ import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
+import com.example.ryady.view.screens.cart.OrderActivity
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
 import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
 import com.example.ryady.view.screens.home.viewmodel.HomeViewModel
-import com.example.ryady.view.screens.order.OrderActivity
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.google.android.material.carousel.CarouselSnapHelper
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -142,9 +143,9 @@ class HomeScreen : Fragment() {
                             LinearLayoutManager.HORIZONTAL,
                             false,
                         )
-                        binding.brandsRv.adapter = BrandsAdapter(it.data) { id ->
+                        binding.brandsRv.adapter = ScaleInAnimationAdapter(BrandsAdapter(it.data) { id ->
                             findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
-                        }
+                        })
                     }
                 }
 

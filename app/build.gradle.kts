@@ -57,7 +57,7 @@ dependencies {
     //FireBase
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-database:20.0.5")
+    implementation("com.google.firebase:firebase-database:20.0.5")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
@@ -72,10 +72,10 @@ dependencies {
     // Gson
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     // Glide
-    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.auth.ktx)
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     // Settings Preference
     implementation("androidx.preference:preference-ktx:1.2.0")
     // Navigation Components
@@ -101,18 +101,20 @@ dependencies {
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
     // read more text view
-    implementation ("com.github.colourmoon:readmore-textview:v1.0.2")
+    implementation("com.github.colourmoon:readmore-textview:v1.0.2")
 
 
     // data store
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // read more text view
-    implementation ("com.github.colourmoon:readmore-textview:v1.0.2")
+    implementation("com.github.colourmoon:readmore-textview:v1.0.2")
 
-//shopify payment
-    implementation ("com.shopify:checkout-sheet-kit:3.0.1")
-    implementation ("com.google.android.material:material:1.12.0")
+    //shopify payment
+    implementation("com.shopify:checkout-sheet-kit:3.0.1")
+    implementation("com.google.android.material:material:1.12.0")
+    // Animators
+    implementation("jp.wasabeef:recyclerview-animators:4.0.2")
 
     // === TESTING ===
     // hamcrest

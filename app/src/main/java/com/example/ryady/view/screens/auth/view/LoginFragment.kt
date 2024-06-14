@@ -1,7 +1,6 @@
 package com.example.ryady.view.screens.auth.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,12 +31,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val TAG = "LoginFragment"
 
 class LoginFragment : Fragment() {
 
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
-    lateinit var customerInput: CustomerAccessTokenCreateInput
+    private lateinit var customerInput: CustomerAccessTokenCreateInput
     private val viewModel: LoginViewModel by lazy {
         val factory =
             ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -56,6 +54,7 @@ class LoginFragment : Fragment() {
             if (validateUserInputs()) {
                 showErrorMessage()
             } else {
+                binding.frameLayout.visibility = View.VISIBLE
                 removeErrorMessage()
                 val email = binding.etEmail.text.toString()
                 val password = binding.etPassword.text.toString()
@@ -70,6 +69,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(
                             requireContext(), "Email Or Password not correct", Toast.LENGTH_LONG
                         ).show()
+                        binding.frameLayout.visibility = View.GONE
                     }
 
                     is Response.Loading -> {}
@@ -79,7 +79,13 @@ class LoginFragment : Fragment() {
                         viewModel.customerData.collectLatest { customerResponse ->
                             when (customerResponse) {
                                 is Response.Error -> {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        customerResponse.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
 
+                                    binding.frameLayout.visibility = View.GONE
                                 }
 
                                 is Response.Loading -> {
@@ -92,24 +98,29 @@ class LoginFragment : Fragment() {
                                         customer = customerResponse.data,
                                         customerToken = it.data
                                     )
-                                    // retrieve from firebase
-                                    // save to data store
 
-                                    val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                                    val database =
+                                        FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
                                     val customerRef = database.getReference("CustomerCart")
-                                    customerRef.child( encodeEmail(customerResponse.data.email ?: "")).addListenerForSingleValueEvent(object :
+                                    // i think there is an error here
+                                    customerRef.child(
+                                        encodeEmail(
+                                            customerResponse.data.email ?: ""
+                                        )
+                                    ).addListenerForSingleValueEvent(object :
                                         ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 val customerCartData = dataSnapshot.getValue(
-                                                    CustomerCartData::class.java)
+                                                    CustomerCartData::class.java
+                                                )
                                                 lifecycleScope.launch(Dispatchers.IO) {
                                                     saveCart(
                                                         requireContext(),
                                                         customerCartData?.cartId ?: "",
                                                         customerCartData?.checkoutUrl ?: ""
                                                     )
-                                                    withContext(Dispatchers.IO){
+                                                    withContext(Dispatchers.IO) {
                                                         requireActivity().move(
                                                             requireContext(),
                                                             MainActivity::class.java
@@ -142,13 +153,17 @@ class LoginFragment : Fragment() {
         binding.tvSignUp.setOnClickListener {
             findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToSingUpFragment())
         }
-
-
-
-
+        binding.btnGust.setOnClickListener {
+            requireActivity().move(
+                requireContext(),
+                MainActivity::class.java
+            )
+            requireActivity().finish()
+        }
 
 
     }
+
     private fun removeErrorMessage() {
         binding.tilEmail.isErrorEnabled = false
         binding.tilPassword.isErrorEnabled = false

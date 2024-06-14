@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.Favourite.View
+package com.example.ryady.view.screens.favorite.view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -37,8 +37,9 @@ class FavouriteListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tvTitle.text = listProduct[position].title
         val price = listProduct[position].maxPrice.toDouble()
-        val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
-            TheExchangeRate.choosedCurrency.first)!!)
+        val priceExchanged = price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+            TheExchangeRate.choosedCurrency.first
+        )!!)
 
         holder.tvPrice.text = priceExchanged.roundTo2DecimalPlaces().toString()
         holder.tvPriceCode.text = TheExchangeRate.choosedCurrency.first

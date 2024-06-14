@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.order
+package com.example.ryady.view.screens.cart
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate

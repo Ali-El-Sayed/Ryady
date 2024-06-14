@@ -75,7 +75,7 @@
     </fragment>
     <fragment
         android:id="@+id/favouriteFragment"
-        android:name="com.example.ryady.view.screens.Favourite.View.FavouriteFragment"
+        android:name="com.example.ryady.view.screens.favorite.view.FavouriteFragment"
         android:label="fragment_favourite"
         tools:layout="@layout/fragment_favourite">
         <action
@@ -105,6 +105,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_currencyFragment"
             app:destination="@id/currencyFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
     </fragment>
     <fragment
         android:id="@+id/countriesFragment"
@@ -121,4 +124,18 @@
         android:name="com.example.ryady.view.screens.settings.currency.view.CurrencyFragment"
         android:label="fragment_currency"
         tools:layout="@layout/fragment_currency" />
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.example.ryady.view.screens.settings.address.view.AddressFragment"
+        android:label="fragment_address"
+        tools:layout="@layout/fragment_address">
+        <action
+            android:id="@+id/action_addressFragment_to_customerDataFragment2"
+            app:destination="@id/customerDataFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/customerDataFragment2"
+        android:name="com.example.ryady.view.screens.settings.address.view.AddNewAddressFragment"
+        android:label="fragment_customer_data"
+        tools:layout="@layout/fragment_add_new_address" />
 </navigation>
