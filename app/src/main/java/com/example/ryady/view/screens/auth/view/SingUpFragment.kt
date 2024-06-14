@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -62,6 +61,7 @@ class SingUpFragment : Fragment() {
             } else {
                 removeErrorMessage()
                 createCustomerData()
+                binding.frameLayout.visibility = View.VISIBLE
                 viewModel.createAccountFirebase(customer)
                 showVerificationAlert(customer)
             }
@@ -85,7 +85,11 @@ class SingUpFragment : Fragment() {
                             viewModel.loginAccountState.collectLatest { token ->
                                 when (token) {
                                     is Response.Error -> {
-
+                                        Snackbar.make(
+                                            binding.root,
+                                            "error get token from server",
+                                            Snackbar.ANIMATION_MODE_SLIDE
+                                        ).show()
                                     }
 
                                     is Response.Loading -> {
@@ -125,7 +129,11 @@ class SingUpFragment : Fragment() {
                         }
 
                         is Response.Error -> {
-                            Toast.makeText(requireContext(), "verfiy your account", Toast.LENGTH_SHORT).show()
+                            withContext(Dispatchers.Main) {
+
+                                Snackbar.make(binding.root,"Please Verify Your Account ",Snackbar.ANIMATION_MODE_SLIDE).show()
+
+                            }
                         }
                     }
                 }
@@ -136,7 +144,8 @@ class SingUpFragment : Fragment() {
             viewModel.createCartState.collectLatest {
                 when (it) {
                     is Response.Error -> {
-
+                        Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE)
+                            .show()
                     }
 
                     is Response.Loading -> {
@@ -145,23 +154,12 @@ class SingUpFragment : Fragment() {
 
                     is Response.Success -> {
                         saveCart(requireContext(), it.data.first, it.data.second)
-                        // save to firebase
-                        val database = FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+                        val database =
+                            FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
                         val customerRef = database.getReference("CustomerCart")
                         val customerCartData = CustomerCartData(it.data.first, it.data.second)
-
-// Encode the email
                         val encodedEmail = encodeEmail(email)
-
-// Save the data to the database
                         customerRef.child(encodedEmail).setValue(customerCartData)
-                            .addOnSuccessListener {
-                                println("Data saved successfully")
-                            }
-                            .addOnFailureListener {
-                                println("Error saving data: ${it.message}")
-                            }
-
                     }
                 }
             }
@@ -217,6 +215,7 @@ class SingUpFragment : Fragment() {
 
 
     private fun showVerificationAlert(customer: CustomerCreateInput) {
+        binding.frameLayout.visibility = View.GONE
         val builder = MaterialAlertDialogBuilder(requireContext())
         builder.setTitle("Verify Account")
             .setMessage("Please go to your Email and verify your Account after that Click Verified")
@@ -227,19 +226,18 @@ class SingUpFragment : Fragment() {
                     requireContext().theme
                 )
             )
-            .setPositiveButton("Verified") { dialog, _ ->
+            .setPositiveButton("Verified") { _, _ ->
                 viewModel.checkVerification(customer) {
+                    binding.frameLayout.visibility = View.VISIBLE
                     if (it) {
                         viewModel.createAccount(customer)
-
                     } else {
                         showVerificationAlert(customer)
                         Snackbar.make(
                             requireView(),
                             "Please Verify Your Account and try Again",
                             Snackbar.ANIMATION_MODE_SLIDE
-                        )
-                            .show()
+                        ).show()
                     }
                 }
 

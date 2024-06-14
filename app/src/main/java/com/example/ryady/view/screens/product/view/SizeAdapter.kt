@@ -2,15 +2,14 @@ package com.example.ryady.product.view
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ryady.databinding.FragmentLoginBinding
 import com.example.ryady.databinding.SizeItemBinding
+import com.example.ryady.view.screens.product.view.IProductInfo
 
-class SizeAdapter(val sizeList : List<String>) : RecyclerView.Adapter<SizeAdapter.ViewHolder>() {
+class SizeAdapter(private val sizeList : List<String> , private val listener : IProductInfo) : RecyclerView.Adapter<SizeAdapter.ViewHolder>() {
 
     private lateinit var binding: SizeItemBinding
     private var selectedSize : Int = 0
@@ -33,6 +32,7 @@ class SizeAdapter(val sizeList : List<String>) : RecyclerView.Adapter<SizeAdapte
             holder.tvSize.setTextColor(Color.BLACK)
         }
         holder.itemView.setOnClickListener {
+            listener.onItemSizeClick(holder.adapterPosition)
             notifyItemChanged(selectedSize)
             selectedSize = holder.adapterPosition
             notifyItemChanged(selectedSize)

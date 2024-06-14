@@ -18,6 +18,9 @@ import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.utils.readCountry
 import com.example.ryady.utils.readCurrency
+import com.example.ryady.utils.saveCart
+import com.example.ryady.utils.saveCountry
+import com.example.ryady.utils.saveCurrency
 import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
@@ -100,6 +103,10 @@ class SettingsFragment : Fragment() {
                     ),
                     customerToken = ""
                 )
+                saveCountry(requireContext() ,"eg","Egypt")
+                saveCurrency(requireContext(),"EGP","Egyptian Pound")
+                saveCart(requireContext(),"","")
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Logout", Toast.LENGTH_LONG).show()
                     requireActivity().finish()

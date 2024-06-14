@@ -36,14 +36,16 @@ import kotlinx.coroutines.withContext
 
 private const val TAG = "ProductInfoFragment"
 
-class ProductInfoFragment : Fragment() {
+class ProductInfoFragment : Fragment() , IProductInfo {
 
     lateinit var binding: FragmentProductInfoBinding
-    var variantId = ""
-    var isFavourite: Boolean = false
+    private var variantId = ""
+    private var isFavourite: Boolean = false
+    private lateinit var variant: ProductByIdQuery.Variants
     var id: String = ""
     lateinit var email: String
     lateinit var token: String
+
 
     private val viewModel by lazy {
         val factory =
@@ -108,7 +110,7 @@ class ProductInfoFragment : Fragment() {
 
                         is Response.Success -> {
 
-                            variantId = it.data.variants.edges.first().node.id
+
                             updateUi(it.data)
                         }
                     }
@@ -148,6 +150,8 @@ class ProductInfoFragment : Fragment() {
 
 
     private fun updateUi(productInfo: ProductByIdQuery.Product) {
+        variantId = productInfo.variants.edges.first().node.id
+        variant = productInfo.variants
         val productImagesUrl: MutableList<SlideModel> = mutableListOf()
         productInfo.images.edges.forEach {
             productImagesUrl.add(SlideModel(imageUrl = it.node.url.toString()))
@@ -180,22 +184,8 @@ class ProductInfoFragment : Fragment() {
             sizeList.add(it.node.title.split(" /")[0])
         }
         binding.gender.text = productInfo.tags[1]
-        if ((productInfo.variants.edges.first().node.quantityAvailable ?: 0) <= 0) {
-            binding.addToCart.text = "Sold Out"
-            binding.addToCart.setTextColor(
-                resources.getColor(
-                    R.color.white,
-                    requireContext().theme
-                )
-            )
-            binding.addToCart.setBackgroundColor(
-                resources.getColor(
-                    R.color.Gray,
-                    requireContext().theme
-                )
-            )
-            binding.addToCart.isEnabled = false
-        }
+        checkEmptyInStock(0)
+
 
 
         if (isFavourite) {
@@ -203,7 +193,7 @@ class ProductInfoFragment : Fragment() {
         } else {
             binding.btnFavourite.setIcon(R.drawable.favorite)
         }
-        binding.sizeList.adapter = SizeAdapter(sizeList.toList())
+        binding.sizeList.adapter = SizeAdapter(sizeList.toList(),this)
 
         binding.btnFavourite.setOnClickListener {
             if (token.isNotEmpty() || token.isNotBlank()) {
@@ -240,5 +230,44 @@ class ProductInfoFragment : Fragment() {
         binding.animation.visibility = View.GONE
 
 
+    }
+
+    override fun onItemSizeClick(itemIndex: Int) {
+        variantId = variant.edges[itemIndex].node.id
+        checkEmptyInStock(itemIndex)
+    }
+
+    private fun checkEmptyInStock(variantIndex:Int){
+        if ((variant.edges[variantIndex].node.quantityAvailable ?: 0) <= 0) {
+            binding.addToCart.text = "Sold Out"
+            binding.addToCart.setTextColor(
+                resources.getColor(
+                    R.color.white,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.setBackgroundColor(
+                resources.getColor(
+                    R.color.Gray,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.isEnabled = false
+        }else{
+            binding.addToCart.text = "Add to Cart"
+            binding.addToCart.setTextColor(
+                resources.getColor(
+                    R.color.white,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.setBackgroundColor(
+                resources.getColor(
+                    R.color.secondary,
+                    requireContext().theme
+                )
+            )
+            binding.addToCart.isEnabled = true
+        }
     }
 }
