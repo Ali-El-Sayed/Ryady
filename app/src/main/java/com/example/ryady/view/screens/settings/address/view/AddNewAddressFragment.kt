@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable.Factory
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,11 +92,9 @@ class AddNewAddressFragment : Fragment() {
             // phone number
             viewModel.address.phone = binding.etCustomerPhone.text.toString()
             viewModel.address.address = binding.etCustomerLocation.text.toString()
-            viewModel.address.country = address?.countryName ?: ""
-            viewModel.address.zip = address?.postalCode ?: ""
-            viewModel.address.city = address?.adminArea ?: ""
-
-            Log.d(TAG, "onCreate: $address")
+            viewModel.address.country = binding.etCountry.text.toString()
+            viewModel.address.zip = binding.etPostalCode.text.toString()
+            viewModel.address.city = binding.etCustomerCity.text.toString()
 
             lifecycleScope.launch { viewModel.saveAddress() }
             true

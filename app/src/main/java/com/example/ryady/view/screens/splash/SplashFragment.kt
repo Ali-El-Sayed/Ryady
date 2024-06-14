@@ -1,8 +1,6 @@
 package com.example.ryady.view.screens.splash
 
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,46 +13,49 @@ import com.example.ryady.databinding.FragmentSplashBinding
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.extensions.move
 import com.example.ryady.view.screens.home.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val TAG = "SplashFragment"
+
 class SplashFragment : Fragment() {
 
 
-    lateinit var binding: FragmentSplashBinding
-    lateinit var userToken : String
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentSplashBinding.inflate(inflater, container, false)
-        return binding.root
+    private val binding: FragmentSplashBinding by lazy {
+        FragmentSplashBinding.inflate(layoutInflater)
     }
+    private lateinit var userToken: String
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch(Dispatchers.IO) {
+            readCustomerData(requireActivity()) {
+                userToken = it["user token"] ?: ""
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View = binding.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.title.animation = AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_animation)
+        binding.subTitle.animation = AnimationUtils.loadAnimation(requireContext(), R.anim.bottom_animation)
 
-        binding.title.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.bottom_animation)
-        binding.subTitle.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.bottom_animation)
         lifecycleScope.launch {
-            readCustomerData(requireContext()){
-                userToken = it["user token"] ?:""
-            }
-        }
-        val handler = Handler()
-        handler.postDelayed({
-            Log.i(TAG, "onViewCreated: $userToken")
-            if (userToken.isNotEmpty()){
+            delay(5500)
+
+            if (userToken.isNotEmpty()) {
                 requireActivity().move(
-                    requireContext(),
-                    MainActivity::class.java
+                    requireContext(), MainActivity::class.java
                 )
                 requireActivity().finish()
-            }else{
-
-            findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
+            } else {
+                findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
             }
-        }, 5500)
+        }
     }
 
 }

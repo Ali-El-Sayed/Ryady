@@ -64,7 +64,8 @@ class HomeScreen : Fragment() {
                 launch(Dispatchers.Main) {
                     readCustomerData(requireContext()) { map ->
                         userToken = map["user token"] ?: ""
-                        binding.topAppBar.subtitle = map["user name"]?.capitalize() ?: "Guest"
+                        val userName = map["user name"] ?: "Guest"
+                        binding.topAppBar.subtitle = if (userToken.isEmpty()) "Guest" else userName.capitalize()
                     }
                 }
                 TheExchangeRate.currencyInfo.collectLatest {

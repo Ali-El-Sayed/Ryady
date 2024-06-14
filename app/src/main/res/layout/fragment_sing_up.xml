@@ -11,181 +11,177 @@
         android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/tv_Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="Complete Your account"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:layout_marginTop="20dp"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/sub_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Finish Setting up your account Now"
-        android:textAlignment="center"
-        android:textColor="#676767"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_Title" />
-
-
-    <ImageView
-        app:layout_constraintTop_toBottomOf="@id/sub_title"
-        android:id="@+id/iv_signup"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
-        android:src="@drawable/signup_logo"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_first_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="30dp"
-        android:hint="First Name"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#0023AA"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        android:textColorHint="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/iv_signup"
-        app:startIconDrawable="@drawable/ic_person"
-        app:startIconTint="@color/black"
-        app:hintTextColor="@color/black"
-        app:cursorColor="@color/black"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_first_name"
+        <TextView
+            android:id="@+id/tv_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:maxLines="1" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:text="Complete Your account"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_last_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="30dp"
-        android:hint="Last Name"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:cursorColor="@color/black"
-
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:boxStrokeColor="#0023AA"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        android:textColorHint="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/til_first_name"
-        app:startIconDrawable="@drawable/ic_person"
-        app:startIconTint="@color/black"
-        app:hintTextColor="@color/black"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_last_name"
+        <TextView
+            android:id="@+id/sub_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:maxLines="1" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Finish Setting up your account Now"
+            android:textAlignment="center"
+            android:textColor="#676767"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_Title" />
 
-    </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        app:cursorColor="@color/black"
-        android:hint="Email"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:hintAnimationEnabled="true"
-        app:hintEnabled="true"
-        app:layout_constraintTop_toBottomOf="@id/til_last_name"
-        app:startIconDrawable="@drawable/ic_mail"
-        android:textColorHint="@color/black"
-        app:hintTextColor="@color/black"
-        app:startIconTint="@color/black"
-        app:boxStrokeColor="#0023AA"
-        >
+        <ImageView
+            android:id="@+id/iv_signup"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/signup_logo"
+            app:layout_constraintTop_toBottomOf="@id/sub_title" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_email"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:maxLines="1" />
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:hint="First Name"
+            android:textColorHint="@color/black"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxStrokeColor="#0023AA"
+            app:cursorColor="@color/black"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/iv_signup"
+            app:startIconDrawable="@drawable/ic_person"
+            app:startIconTint="@color/black">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:hint="Password"
-        app:boxCornerRadiusBottomEnd="20dp"
-        app:boxCornerRadiusBottomStart="20dp"
-        app:boxCornerRadiusTopEnd="20dp"
-        app:boxCornerRadiusTopStart="20dp"
-        app:hintEnabled="true"
-        app:hintTextColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/til_email"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/black"
-        app:boxStrokeColor="#0023AA"
-        app:cursorColor="@color/black"
-        app:startIconDrawable="@drawable/ic_lock"
-        app:startIconTint="@color/black">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_password"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:hint="Last Name"
+            android:textColorHint="@color/black"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxStrokeColor="#0023AA"
+            app:cursorColor="@color/black"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/til_first_name"
+            app:startIconDrawable="@drawable/ic_person"
+            app:startIconTint="@color/black">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_signUp"
-        android:layout_width="320dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#9D4EDD"
-        android:text="@string/sing_up"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:icon="@drawable/ic_mail"
-        app:iconGravity="textStart"
-        app:iconSize="30dp"
-        app:iconTint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_password" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:hint="Email"
+            android:textColorHint="@color/black"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxStrokeColor="#0023AA"
+            app:cursorColor="@color/black"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/til_last_name"
+            app:startIconDrawable="@drawable/ic_mail"
+            app:startIconTint="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:hint="Password"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxStrokeColor="#0023AA"
+            app:cursorColor="@color/black"
+            app:hintEnabled="true"
+            app:hintTextColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/til_email"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/black"
+            app:startIconDrawable="@drawable/ic_lock"
+            app:startIconTint="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_signUp"
+            android:layout_width="320dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#9D4EDD"
+            android:text="@string/sing_up"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:icon="@drawable/ic_mail"
+            app:iconGravity="textStart"
+            app:iconSize="30dp"
+            app:iconTint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_password" />
 
         <FrameLayout
             android:id="@+id/frameLayout"
@@ -201,5 +197,5 @@
                 android:layout_gravity="center" />
         </FrameLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
