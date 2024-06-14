@@ -1,5 +1,6 @@
 package com.example.ryady.view.screens.settings.address.view.adapter
 
+import android.animation.LayoutTransition
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,18 +31,19 @@ class AddressListAdapter : ListAdapter<Address, AddressListAdapter.ViewHolder>(A
 
     inner class ViewHolder(private val binding: AddressCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(address: Address) {
+            binding.hiddenView.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+
             binding.arrowButton.setOnClickListener {
                 if (binding.hiddenView.visibility == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(binding.baseCardview, getCustomTransition())
                     binding.hiddenView.visibility = View.GONE
                     binding.arrowButton.setImageResource(R.drawable.ic_arrow_down)
                     binding.addressText.clearFocus()
                 } else {
-                    TransitionManager.beginDelayedTransition(binding.baseCardview, getCustomTransition())
                     binding.hiddenView.visibility = View.VISIBLE
                     binding.arrowButton.setImageResource(R.drawable.ic_arrow_up)
                     binding.addressText.requestFocus()
                 }
+                TransitionManager.beginDelayedTransition(binding.mainLayout, getCustomTransition())
             }
             address.let {
                 if (it.address.isNotEmpty()) binding.addressText.text = it.address

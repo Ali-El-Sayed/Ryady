@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.screens.settings.orders.view.OrderDetailsDialog">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/order_id"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:backgroundTint="#0F9C9C"
+        tools:text="#1234567890" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/close_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:background="@color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/close_btn"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/total_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_divider"
+        android:layout_margin="20dp"
+        android:text="@string/total_number"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/items_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_divider"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="10 Items" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/total_number"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/total_price"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/total_number"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="6dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="200000 EGP" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/bottom_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/total_price"
+        android:layout_marginTop="10dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/order_items_list"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_below="@id/bottom_divider"
+        android:padding="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/order_details_item_card" />
+
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/order_items_list" />
+
+    <!--  Loading Bar  -->
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/product_glass_background"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <!--  Not Found  -->
+    <ImageView
+        android:id="@+id/img_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="40dp"
+        android:src="@drawable/ic_not_found"
+        android:visibility="gone" />
+</RelativeLayout>

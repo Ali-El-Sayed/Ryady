@@ -14,6 +14,7 @@ import com.example.CustomerAddressDeleteMutation
 import com.example.CustomerAddressQuery
 import com.example.CustomerCreateMutation
 import com.example.GetCustomerDataQuery
+import com.example.OrdersByCustomerTokenQuery
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
 import com.example.SearchProductsQuery
@@ -29,6 +30,7 @@ import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
 import com.example.ryady.model.extensions.toAddressList
 import com.example.ryady.model.extensions.toBrandsList
+import com.example.ryady.model.extensions.toOrderList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
 import com.example.ryady.view.screens.settings.countries.RetrofitHelper
@@ -105,6 +107,8 @@ interface IRemoteDataSource {
     suspend fun deleteAddress(token: String, addressId: String)
 
     suspend fun <T> createUserAddress(token: String, address: Address): Response<T>
+
+    suspend fun <T> fetchOrders(userToken: String): Response<T>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -480,9 +484,20 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             )
 
             else -> Response.Success(true as T)
-
         }
 
     }
 
+    override suspend fun <T> fetchOrders(userToken: String): Response<T> {
+        val response = client.query(OrdersByCustomerTokenQuery(token = userToken)).execute()
+        return when {
+            response.hasErrors() -> Response.Error(
+                response.errors?.first()?.message ?: "Data Not Found"
+            )
+
+            else -> Response.Success(response.data?.customer?.orders?.toOrderList() as T)
+        }
+    }
 }
+
+

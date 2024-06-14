@@ -1,0 +1,47 @@
+query OrdersByCustomerToken($token:String!) {
+    customer(customerAccessToken: $token) {
+        numberOfOrders
+        orders(first: 100) {
+            edges {
+                node {
+                    id
+                    name
+                    email
+                    processedAt
+                    orderNumber
+                    totalPrice {
+                        amount
+                        currencyCode
+                    }
+                    billingAddress {
+                        firstName
+                        lastName
+                        address1
+                        city
+                        phone
+                    }
+                    lineItems(first: 10) {
+                        edges {
+                            node {
+                                title
+                                quantity
+                                variant {
+                                    image {
+                                        url
+                                    }
+                                    product {
+                                        vendor
+                                    }
+                                }
+                                originalTotalPrice {
+                                    amount
+                                    currencyCode
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -64,6 +64,9 @@ class SettingsFragment : Fragment() {
         binding.addressSection.setOnClickListener {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAddressFragment())
         }
+        binding.ordersSection.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToOrdersFragment())
+        }
         var item: Pair<String, String>
 
         lifecycleScope.launch {
@@ -97,8 +100,8 @@ class SettingsFragment : Fragment() {
                     ),
                     customerToken = ""
                 )
-                withContext(Dispatchers.Main){
-                    Toast.makeText(requireContext(),"Logout",Toast.LENGTH_LONG).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Logout", Toast.LENGTH_LONG).show()
                     requireActivity().finish()
                 }
 
