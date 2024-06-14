@@ -108,6 +108,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_addressFragment"
             app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
     </fragment>
     <fragment
         android:id="@+id/countriesFragment"
@@ -138,4 +141,9 @@
         android:name="com.example.ryady.view.screens.settings.address.view.AddNewAddressFragment"
         android:label="fragment_customer_data"
         tools:layout="@layout/fragment_add_new_address" />
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.example.ryady.view.screens.settings.orders.view.OrdersFragment"
+        android:label="OrdersFragment"
+        tools:layout="@layout/fragment_orders" />
 </navigation>

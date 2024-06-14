@@ -76,5 +76,8 @@
     <string name="welcome_title">Hi, Welcome Back!👋</string>
     <string name="signup">Signup</string>
     <string name="logout">Logout</string>
+    <string name="client">Client</string>
+    <string name="total_number">Total Number</string>
+    <string name="total_price">Total Price</string>
 
 </resources>
