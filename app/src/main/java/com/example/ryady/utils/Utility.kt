@@ -47,7 +47,7 @@ suspend fun readCustomerData(
         userData["first name"] = it[firstNameKey] ?: "no  name Value"
         userData["last name"] = it[lastNameKey] ?: "no  name Value"
         userData["user email"] = it[userEmailKey] ?: "no email Value"
-        userData["user token"] = it[userTokenKey] ?: "no token  Value"
+        userData["user token"] = it[userTokenKey] ?: ""
         userData["user phone"] = it[userPhoneKey] ?: "no phone Value"
         customerData(userData)
     }

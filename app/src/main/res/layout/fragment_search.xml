@@ -8,19 +8,17 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/searchBar"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
-            android:hint="Name of Product" />
-    </FrameLayout>
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name of Product" />
+        </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView
@@ -29,16 +27,24 @@
         android:layout_height="match_parent"
         android:hint="Name of Product"
         app:layout_anchor="@id/searchBar">
-
-         <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSearchResults"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="50dp"
-             tools:listitem="@layout/search_list_item"
-             app:spanCount="2"
-             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-             android:orientation="vertical"/>
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/search_list_item" />
+
+        <ImageView
+            android:id="@+id/img_not_found"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="40dp"
+            android:src="@drawable/ic_not_found"
+            android:visibility="gone" />
     </com.google.android.material.search.SearchView>
 
 

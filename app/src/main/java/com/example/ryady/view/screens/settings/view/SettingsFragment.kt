@@ -5,20 +5,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.GetCustomerDataQuery
 import com.example.ryady.databinding.FragmentSettingsBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
 import com.example.ryady.utils.readCountry
 import com.example.ryady.utils.readCurrency
+import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SettingsFragment : Fragment() {
 
@@ -80,6 +85,23 @@ class SettingsFragment : Fragment() {
         lifecycleScope.launch {
             readCurrency(requireContext()) { map ->
                 binding.currencyText.text = map.get("currency name")
+            }
+        }
+        binding.logoutSection.setOnClickListener {
+            lifecycleScope.launch {
+                saveUserData(
+                    requireContext(),
+                    customer = GetCustomerDataQuery.Customer(
+                        email = "", firstName = "", lastName = "", id = "", phone = "",
+                        displayName = "", acceptsMarketing = false
+                    ),
+                    customerToken = ""
+                )
+                withContext(Dispatchers.Main){
+                    Toast.makeText(requireContext(),"Logout",Toast.LENGTH_LONG).show()
+                    requireActivity().finish()
+                }
+
             }
         }
 
