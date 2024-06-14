@@ -7,18 +7,9 @@
 
     <fragment
         android:id="@+id/customerDataFragment"
-        android:name="com.example.ryady.view.screens.order.view.CustomerDataFragment"
+        android:name="com.example.ryady.view.screens.settings.address.view.AddNewAddressFragment"
         android:label="fragment_customer_data"
-        tools:layout="@layout/fragment_customer_data">
-        <action
-            android:id="@+id/action_customerDataFragment_to_orderDetailsFragment"
-            app:destination="@id/orderDetailsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/orderDetailsFragment"
-        android:name="com.example.ryady.view.screens.order.view.OrderDetailsFragment"
-        android:label="OrderDetailsFragment"
-        tools:layout="@layout/fragment_order_details" />
+        tools:layout="@layout/fragment_add_new_address" />
     <fragment
         android:id="@+id/cartFragment2"
         android:name="com.example.ryady.view.screens.cart.view.CartFragment"

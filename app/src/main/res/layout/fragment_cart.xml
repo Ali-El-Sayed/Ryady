@@ -11,10 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/cart_list_item" />
 
     <Button
         android:id="@+id/button"
@@ -48,8 +50,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:text="@string/tax"
-        android:textSize="20sp"
         android:textColor="@color/grey_font"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintStart_toStartOf="parent" />

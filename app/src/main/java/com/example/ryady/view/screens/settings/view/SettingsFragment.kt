@@ -1,30 +1,23 @@
 package com.example.ryady.view.screens.settings.view
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.ryady.R
-import com.example.ryady.databinding.FragmentProductInfoBinding
 import com.example.ryady.databinding.FragmentSettingsBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
-import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCountry
 import com.example.ryady.utils.readCurrency
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.home.view.HomeScreenDirections
-import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment() {
@@ -62,6 +55,9 @@ class SettingsFragment : Fragment() {
         }
         binding.aboutUsSection.setOnClickListener {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAboutUsFragment())
+        }
+        binding.addressSection.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToAddressFragment())
         }
         var item: Pair<String, String>
 

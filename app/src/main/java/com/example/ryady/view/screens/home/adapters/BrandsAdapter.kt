@@ -14,13 +14,12 @@ class BrandsAdapter(
     private val brands: List<Brand> = mutableListOf(), private val onBrandClick: (id: String) -> Unit
 ) :
     RecyclerView.Adapter<BrandsAdapter.ViewHolder>() {
-    private lateinit var binding: BrandCardBinding
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): ViewHolder {
-        binding = BrandCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = BrandCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -33,7 +32,7 @@ class BrandsAdapter(
 
     override fun getItemCount(): Int = brands.size
 
-    inner class ViewHolder(binding: BrandCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: BrandCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(brand: Brand) {
             binding.brandImage.load(brand.imageUrl) {
                 crossfade(true)

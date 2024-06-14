@@ -64,4 +64,9 @@
     <string name="accessories">ACCESSORIES</string>
     <string name="cancel">Canel</string>
     <string name="go_to_register">Go to Register</string>
+    <string name="n_a">N/A</string>
+    <string name="new_address">New Address</string>
+    <string name="save">Save</string>
+    <string name="city">City</string>
+    <string name="postal_code">Postal code</string>
 </resources>

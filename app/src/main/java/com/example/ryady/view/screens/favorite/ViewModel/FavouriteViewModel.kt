@@ -1,9 +1,8 @@
-package com.example.ryady.view.screens.Favourite.ViewModel
+package com.example.ryady.view.screens.favorite.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ryady.datasource.remote.IRemoteDataSource
-import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.model.Product
 import com.example.ryady.network.model.Response
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,7 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
     var productList: StateFlow<Response<List<Product>>> = _productList
 
 
-    fun getAllFavouriteProduct(email : String) {
+    fun getAllFavouriteProduct(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
 
 
@@ -29,10 +28,10 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
         }
     }
 
-    fun deleteItem(email: String , itemId: String) {
+    fun deleteItem(email: String, itemId: String) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            remoteDataSource.deleteItem(email =  email,itemId)
+            remoteDataSource.deleteItem(email = email, itemId)
         }
     }
 
