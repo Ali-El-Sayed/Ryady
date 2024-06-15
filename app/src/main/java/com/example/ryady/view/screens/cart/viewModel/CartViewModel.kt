@@ -3,13 +3,11 @@ package com.example.ryady.view.screens.cart.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.CreateCartEmptyMutation
 import com.example.RetrieveCartQuery
 import com.example.payment.State
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.model.Order
 import com.example.ryady.network.model.Response
-import com.example.ryady.utils.saveCart
 import com.example.type.CartLineInput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,15 +35,8 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
     var currentOrder: Order = Order()
     var checkoutUrl = ""
-    var cartId =""
-     var userToken = ""
-    suspend fun createOrderInformation() {
-        viewModelScope.launch {
-            remoteDataSource.createOrderInformation(
-                userToken, currentOrder
-            )
-        }
-    }
+    var cartId = ""
+    var userToken = ""
 
     suspend fun updateCartLine(
         cartId: String, lineID: String, quantity: Int
@@ -112,7 +103,8 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
         }
 
     }
-    fun createEmptyCart(email:String , token : String){
+
+    fun createEmptyCart(email: String, token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = remoteDataSource.createEmptyCart<Pair<String, String>>(email = email, token = token)
             when (response) {

@@ -20,9 +20,9 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.factory.ViewModelFactory
+import com.example.ryady.view.screens.settings.address.utils.SwipeToDeleteCallback
 import com.example.ryady.view.screens.settings.address.view.adapter.AddressListAdapter
 import com.example.ryady.view.screens.settings.address.viewModel.AddressViewModel
-import com.example.ryady.view.screens.utils.SwipeToDeleteCallback
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import jp.wasabeef.recyclerview.animators.LandingAnimator
 import kotlinx.coroutines.Dispatchers
