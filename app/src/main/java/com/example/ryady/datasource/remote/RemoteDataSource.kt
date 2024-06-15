@@ -25,7 +25,6 @@ import com.example.ShopifyProductsQuery
 import com.example.ryady.datasource.remote.util.RemoteDSUtils.encodeEmail
 import com.example.ryady.model.Address
 import com.example.ryady.model.Currency
-import com.example.ryady.model.Order
 import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
 import com.example.ryady.model.extensions.toAddressList
@@ -98,7 +97,6 @@ interface IRemoteDataSource {
         newCustomer: CustomerCreateInput, isVerified: (isVerified: Boolean) -> Unit
     )
 
-    suspend fun createOrderInformation(token: String, order: Order)
 
     suspend fun <T> getCustomerData(token: String): Flow<Response<T>>
     suspend fun <T> createEmptyCart(email: String, token: String): Response<T>
@@ -213,10 +211,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         val numberOfItem = Optional.present(10)
         client.query(SearchProductsQuery(itemName, numberOfItem))
             .execute().data?.search?.edges?.let {
-            return flow {
-                emit(Response.Success(it as T))
+                return flow {
+                    emit(Response.Success(it as T))
+                }
             }
-        }
         return flow { emit(Response.Error("data not found ")) }
     }
 
@@ -433,7 +431,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 auth.currentUser?.sendEmailVerification()
             }.addOnFailureListener {
 
-        }
+            }
     }
 
     override suspend fun checkVerification(
@@ -445,22 +443,6 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             .addOnSuccessListener {
                 auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
             }
-    }
-
-
-    override suspend fun createOrderInformation(token: String, order: Order) {
-        client.mutation(
-            CreateAddressMutation(
-                token = token,
-                address = order.shippingAddress,
-                firstName = order.customerFirstName,
-                lastName = order.customerLastName,
-                phone = order.customerPhoneNumbers,
-                city = order.city,
-                zip = order.postalCode,
-                country = order.countryName
-            )
-        ).execute()
     }
 
     override suspend fun <T> createEmptyCart(email: String, token: String): Response<T> {

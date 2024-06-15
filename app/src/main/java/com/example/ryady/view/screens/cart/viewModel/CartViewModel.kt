@@ -41,15 +41,8 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
     var currentOrder: Order = Order()
     var checkoutUrl = ""
-    var cartId =""
-     var userToken = ""
-    suspend fun createOrderInformation() {
-        viewModelScope.launch {
-            remoteDataSource.createOrderInformation(
-                userToken, currentOrder
-            )
-        }
-    }
+    var cartId = ""
+    var userToken = ""
 
     suspend fun updateCartLine(
         cartId: String, lineID: String, quantity: Int
@@ -82,7 +75,6 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
 
     suspend fun fetchCartById() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("Ghoneim", "fetchCartById: $cartId")
             remoteDataSource.fetchCartById(id = cartId).collectLatest {
                 when (it) {
                     is Response.Error -> {}
@@ -101,8 +93,7 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
         viewModelScope.launch(Dispatchers.IO) {
             val response = remoteDataSource.createCartWithLines<Pair<String, String>>(lines, customerToken, email)
             when (response) {
-                is Response.Error -> {
-                    Log.d("Ghoneim", "createCartWithLines: ${response.message}")}
+                is Response.Error -> {}
                 is Response.Loading -> {}
                 is Response.Success -> {
                     cartId = response.data.first

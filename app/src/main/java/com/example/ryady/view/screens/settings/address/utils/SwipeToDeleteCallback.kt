@@ -1,4 +1,4 @@
-package com.example.ryady.view.screens.utils
+package com.example.ryady.view.screens.settings.address.utils
 
 import android.content.Context
 import android.graphics.Canvas
