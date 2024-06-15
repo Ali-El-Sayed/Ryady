@@ -251,13 +251,23 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     ): Response<T> {
         val response = client.mutation(CreateCartMutation(lines, customerToken, email)).execute()
 
-        return Response.Success(
-            Pair(
-                first = response.data?.cartCreate?.cart?.id,
-                second = response.data?.cartCreate?.cart?.checkoutUrl
-            ) as T
-        )
+        return when {
+            (((response.data?.cartCreate?.userErrors?.size ?: -1) > 0)) -> {
+                Response.Error(
+                    response.data?.cartCreate?.userErrors?.first()?.message
+                        ?: "customer error == null"
+                )
+            }
 
+            else -> {
+                Response.Success(
+                    Pair(
+                        first = response.data?.cartCreate?.cart?.id,
+                        second = response.data?.cartCreate?.cart?.checkoutUrl
+                    ) as T
+                )
+            }
+        }
     }
 
     override suspend fun <T> addItemToCart(
@@ -456,13 +466,23 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     override suspend fun <T> createEmptyCart(email: String, token: String): Response<T> {
         val response =
             client.mutation(CreateCartEmptyMutation(email = email, customerToken = token)).execute()
+        return when {
+            (((response.data?.cartCreate?.userErrors?.size ?: -1) > 0)) -> {
+                Response.Error(
+                    response.data?.cartCreate?.userErrors?.first()?.message
+                        ?: "customer error == null"
+                )
+            }
 
-        return Response.Success(
-            Pair(
-                first = response.data?.cartCreate?.cart?.id,
-                second = response.data?.cartCreate?.cart?.checkoutUrl
-            ) as T
-        )
+            else -> {
+                Response.Success(
+                    Pair(
+                        first = response.data?.cartCreate?.cart?.id,
+                        second = response.data?.cartCreate?.cart?.checkoutUrl
+                    ) as T
+                )
+            }
+        }
     }
 
     override suspend fun <T> fetchAddresses(token: String): Response<T> {

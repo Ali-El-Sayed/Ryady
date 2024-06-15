@@ -114,6 +114,8 @@ dependencies {
     implementation("com.shopify:checkout-sheet-kit:3.0.1")
     implementation("com.google.android.material:material:1.12.0")
     // Animators
+
+
     implementation("jp.wasabeef:recyclerview-animators:4.0.2")
 
     // === TESTING ===

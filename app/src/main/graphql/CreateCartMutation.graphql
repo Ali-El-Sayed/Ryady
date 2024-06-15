@@ -53,5 +53,8 @@ mutation CreateCart($lines : [CartLineInput!]!,$customerToken : String!,$email :
         }
       }
     }
+    userErrors {
+      message
+    }
   }
 }

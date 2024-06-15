@@ -16,5 +16,8 @@ mutation CreateCartEmpty($customerToken : String!,$email :String!) {
                 }
             }
         }
+        userErrors {
+            message
+        }
     }
 }

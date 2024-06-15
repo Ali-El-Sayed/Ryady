@@ -51,6 +51,7 @@ class HomeScreen : Fragment() {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
+
     private lateinit var inflatingUIJob: Job
     private var userToken = ""
 
