@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,7 +23,9 @@ import com.example.ryady.view.screens.settings.countries.view.FRAGMENT_COUNTRY
 import com.example.ryady.view.screens.settings.countries.view.FRAGMENT_CURRENCY
 import com.example.ryady.view.screens.settings.countries.viewmodel.CountriesViewModel
 import com.example.ryady.view.screens.settings.currency.viewmodel.CurrencyViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 class CurrencyFragment : Fragment() {
@@ -53,13 +56,38 @@ class CurrencyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val x: MutableStateFlow<String?> = MutableStateFlow(null)
         itemList= prelist
-        binding.CurrencyRecycle.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.rvSearchResults.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         myadapter = CountryAdapter(requireContext(), itemList,lifecycleScope,findNavController(), FRAGMENT_CURRENCY)
-        binding.CurrencyRecycle.adapter = myadapter
+        binding.rvSearchResults.adapter = myadapter
         lifecycleScope.launch {
             viewModel.getCurrencies()
         }
+        binding.searchView.editText.doOnTextChanged { text, start, before, count ->
+            text?.let {
+                x.value = text.toString()
+            }
+        }
+
+        binding.searchView.post {
+            binding.searchView.show()
+        }
+
+        lifecycleScope.launch {
+            x.debounce(500).collectLatest {
+                it?.let {
+                    var templist :ArrayList<Pair<String,String>> = ArrayList()
+                    itemList.forEach { pair ->
+                        if (pair.second.contains(it,true)){
+                            templist.add(pair)
+                        }
+                    }
+                    myadapter.updateList(templist)
+                }
+            }
+        }
+
 
         lifecycleScope.launch {
             viewModel.currenciesInfo.collectLatest { result ->

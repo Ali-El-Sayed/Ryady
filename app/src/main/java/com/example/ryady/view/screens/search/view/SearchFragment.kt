@@ -53,6 +53,10 @@ class SearchFragment : Fragment(), onSearchItemClick {
                 x.value = text.toString()
             }
         }
+        binding.searchView.post {
+            binding.searchView.show()
+        }
+
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.searchProduct.collectLatest { response ->
                 when (response) {
