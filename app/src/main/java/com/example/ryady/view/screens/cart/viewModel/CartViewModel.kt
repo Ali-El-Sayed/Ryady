@@ -1,14 +1,20 @@
 package com.example.ryady.view.screens.cart.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.CreateCartEmptyMutation
 import com.example.RetrieveCartQuery
 import com.example.payment.State
 import com.example.ryady.datasource.remote.IRemoteDataSource
+import com.example.ryady.datasource.remote.util.RemoteDSUtils
+import com.example.ryady.model.CustomerCartData
 import com.example.ryady.model.Order
 import com.example.ryady.network.model.Response
+import com.example.ryady.utils.saveCart
 import com.example.type.CartLineInput
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,7 +80,6 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
                     is Response.Error -> {}
                     is Response.Loading -> _cartInfo.value = Response.Loading()
                     is Response.Success -> {
-                        it.data.buyerIdentity.customer?.firstName
                         checkoutUrl = it.data.checkoutUrl.toString()
                         Log.d(TAG, "fetchCartById: ${checkoutUrl}")
                         _cartInfo.value = it
@@ -93,7 +98,6 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
                 is Response.Success -> {
                     cartId = response.data.first
                     checkoutUrl = response.data.second
-
                     Log.d(TAG, "createCartWithLines: $cartId")
                     Log.d(TAG, "createCartWithLines: $checkoutUrl")
                     _cartCreate.value = Response.Success(response.data)
@@ -103,17 +107,18 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
         }
 
     }
-
-    fun createEmptyCart(email: String, token: String) {
+    fun createEmptyCart(email:String , token : String,context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val response = remoteDataSource.createEmptyCart<Pair<String, String>>(email = email, token = token)
             when (response) {
-                is Response.Error -> {}
+                is Response.Error -> {
+                    Log.d("Ghoneim", "createEmptyCart: ${response.message}")
+                }
                 is Response.Loading -> {}
                 is Response.Success -> {
                     cartId = response.data.first
                     checkoutUrl = response.data.second
-
+                    saveCart(context)
                     Log.d(TAG, "createCartWithLines: $cartId")
                     Log.d(TAG, "createCartWithLines: $checkoutUrl")
                     _createCartState.value = Response.Success(response.data)
@@ -121,6 +126,27 @@ class CartViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel
             }
 
         }
+    }
+
+    suspend fun saveCart(context: Context){
+        saveCart(context, cartId, checkoutUrl)
+        // save to firebase
+        val database =
+            FirebaseDatabase.getInstance("https://ryady-bf500-default-rtdb.europe-west1.firebasedatabase.app/")
+        val customerRef = database.getReference("CustomerCart")
+        val customerCartData =
+            CustomerCartData(cartId, checkoutUrl)
+
+        // Encode the email
+        val encodedEmail = RemoteDSUtils.encodeEmail(email)
+
+        // Save the data to the database
+        customerRef.child(encodedEmail).setValue(customerCartData)
+            .addOnSuccessListener {
+                Log.d("Ghoneim", "onViewCreated: firebase save sucess")
+            }.addOnFailureListener {
+                Log.d("Ghoneim", "onViewCreated: firebase save faliure ${it.message}")
+            }
     }
 
 }
