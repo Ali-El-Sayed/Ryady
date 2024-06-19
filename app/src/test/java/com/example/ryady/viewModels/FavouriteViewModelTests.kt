@@ -1,9 +1,10 @@
-package com.example.ryady.productInfo
+package com.example.ryady.viewModels
 
 import com.example.ProductByIdQuery
 import com.example.ryady.fakeRepo.FakeRemoteDataSource
+import com.example.ryady.model.Product
 import com.example.ryady.network.model.Response
-import com.example.ryady.view.screens.product.viewModel.ProductViewModel
+import com.example.ryady.view.screens.favorite.ViewModel.FavouriteViewModel
 import com.example.type.CurrencyCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -11,36 +12,42 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert
+import org.hamcrest.CoreMatchers.nullValue
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-private const val TAG = "ProductInfo"
+class FavouriteViewModelTests {
 
-class ProductInfo {
-
-    private lateinit var viewModel: ProductViewModel
+    private lateinit var viewModel: FavouriteViewModel
     private lateinit var remote: FakeRemoteDataSource
 
     @Before
     fun setUp() {
         remote = FakeRemoteDataSource()
-        viewModel = ProductViewModel(remote)
+        viewModel = FavouriteViewModel(remote)
     }
 
     @Test
-    fun testGetItemSuccessfullyById() = runBlocking {
+    fun testGetAllFavouriteProductByEmail() = runBlocking (Dispatchers.Unconfined){
+        // given email and add item to fake list
+        val email = "mh95568@gmail.com"
+        remote.fireBaseFavouriteList[email] = mutableListOf()
+        remote.fireBaseFavouriteList[email]?.addAll(
+            arrayListOf(
+                Product(),
+                Product(),
+                Product(),
+                Product()
+            )
+        )
 
-        // given id to get product details For specific item
-        val id: String = "123"
-
-        // when we give id to method we get data fro product that match this id
-        viewModel.fetchProductById(id)
+        // when we call it return list of favourite product
+        viewModel.getAllFavouriteProduct("mh95568@gmail.com")
         delay(100)
 
-        // then return data successfully
-        viewModel.productInfo.take(1).collectLatest { result ->
+        viewModel.productList.take(1).collectLatest {result->
             when (result) {
                 is Response.Error -> {
 
@@ -51,18 +58,17 @@ class ProductInfo {
                 }
 
                 is Response.Success -> {
-                    MatcherAssert.assertThat(result.data.id, `is`("123"))
-                    MatcherAssert.assertThat(result.data.title, `is`("title123"))
-                    MatcherAssert.assertThat(result.data.description, `is`("description123"))
-                    assertEquals(123, result.data.totalInventory)
+                    assertEquals(4,result.data.size)
                 }
             }
         }
 
+
     }
 
     @Test
-    fun testAdd() = runBlocking(Dispatchers.Unconfined) {
+    fun testDeleteItemFromFavouriteByEmailAndItemId() = runBlocking (Dispatchers.Unconfined){
+
         // given id to get product details For specific item
         val email = "mh95568@gmail.com"
         val item1 = ProductByIdQuery.Product(
@@ -109,13 +115,22 @@ class ProductInfo {
             vendor = "vendor$567",
             variants = ProductByIdQuery.Variants(edges = listOf(), nodes = listOf())
         )
+        remote.addItemToFavourite(email , item1)
+        remote.addItemToFavourite(email , item2)
 
-        // when we give email(key) and item(value) to method we add value to list of product that match key
-        viewModel.addItemToFav(email,item1)
-        viewModel.addItemToFav(email,item2)
+
+        // when we give email(key) and itemId(123) to method delete item that delete item from list of favourite
+        viewModel.deleteItem(email, item1.id)
         delay(300)
-        println(remote)
+        val result = remote.favouriteList[email]
+
+        //then check map not have the item after deleted
+        assertThat(result?.find { it.id == item1.id } , `is`(nullValue()))
+
 
 
     }
+
+
+
 }

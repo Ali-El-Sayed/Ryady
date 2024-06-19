@@ -19,10 +19,7 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
 
     fun getAllFavouriteProduct(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
-
-
             remoteDataSource.getAllFavouriteItem(email) {
-
                 _productList.value = Response.Success(it)
             }
         }
