@@ -171,7 +171,7 @@
             android:layout_width="320dp"
             android:layout_height="60dp"
             android:layout_marginTop="20dp"
-            android:backgroundTint="#9D4EDD"
+            android:backgroundTint="@color/secondary"
             android:text="@string/sing_up"
             android:textAlignment="center"
             android:textColor="@color/white"

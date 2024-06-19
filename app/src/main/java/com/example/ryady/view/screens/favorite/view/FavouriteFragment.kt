@@ -32,6 +32,7 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
         ViewModelProvider(this, factory)[FavouriteViewModel::class.java]
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -78,6 +79,5 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
     override fun onItemClick(itemId: String) {
         findNavController().navigate(FavouriteFragmentDirections.actionFavouriteFragmentToProductInfoFragment(itemId))
     }
-
 
 }

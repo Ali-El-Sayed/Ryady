@@ -79,5 +79,9 @@
     <string name="client">Client</string>
     <string name="total_number">Total Number</string>
     <string name="total_price">Total Price</string>
+    <string name="verification_message">Please go to your Email and verify your Account after that Click Verified</string>
+    <string name="verified">Verified</string>
+    <string name="delete_confirmation">Delete Confirmation</string>
+    <string name="delete_message">Are you sure to delete this Product</string>
 
 </resources>
