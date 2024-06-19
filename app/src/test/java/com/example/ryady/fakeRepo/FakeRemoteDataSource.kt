@@ -18,7 +18,8 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeRemoteDataSource : IRemoteDataSource {
 
-    val favouriteList : MutableMap<String,MutableList<ProductByIdQuery.Product>> = mutableMapOf()
+    val favouriteList: MutableMap<String, MutableList<ProductByIdQuery.Product>> = mutableMapOf()
+    val fireBaseFavouriteList: MutableMap<String, MutableList<Product>> = mutableMapOf()
     override suspend fun fetchCountries(): Flow<retrofit2.Response<HashMap<String, String>>> {
         TODO("Not yet implemented")
     }
@@ -31,11 +32,11 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchProducts(): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchProducts(): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchProductById(id: String): Flow<com.example.ryady.network.model.Response<ProductByIdQuery.Product>> {
+    override suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>> {
         return flowOf(
             Response.Success(
                 ProductByIdQuery.Product(
@@ -48,7 +49,11 @@ class FakeRemoteDataSource : IRemoteDataSource {
                         ProductByIdQuery.MaxVariantPrice(
                             id,
                             CurrencyCode.EGP
-                        ), minVariantPrice = ProductByIdQuery.MinVariantPrice(amount = id, currencyCode = CurrencyCode.EGP)
+                        ),
+                        minVariantPrice = ProductByIdQuery.MinVariantPrice(
+                            amount = id,
+                            currencyCode = CurrencyCode.EGP
+                        )
                     ),
 
                     tags = listOf(),
@@ -60,23 +65,23 @@ class FakeRemoteDataSource : IRemoteDataSource {
         )
     }
 
-    override suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<com.example.ryady.network.model.Response<T>> {
+    override suspend fun <T> createAccessToken(customer: CustomerAccessTokenCreateInput): Flow<Response<T>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun fetchCartById(id: String): Flow<com.example.ryady.network.model.Response<RetrieveCartQuery.Cart>> {
+    override suspend fun fetchCartById(id: String): Flow<Response<RetrieveCartQuery.Cart>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchBrands(): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchBrands(): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchProductsByBrandId(id: String): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchProductsByBrandId(id: String): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
         TODO("Not yet implemented")
     }
 
@@ -84,7 +89,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
         lines: List<CartLineInput>,
         customerToken: String,
         email: String
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
@@ -92,7 +97,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
         cartId: String,
         varientID: String,
         quantity: Int
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
@@ -100,40 +105,45 @@ class FakeRemoteDataSource : IRemoteDataSource {
         cartId: String,
         lineID: String,
         quantity: Int
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> deleteCartLine(
         cartId: String,
         lineID: String
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> searchForProducts(itemName: String): Flow<com.example.ryady.network.model.Response<T>> {
+    override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchProductsByCategory(category: String): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun addItemToFavourite(email: String, product: ProductByIdQuery.Product) {
-        println("called")
-        favouriteList[email] = mutableListOf(product)
 
+        if (favouriteList[email] == null) {
+            favouriteList[email] = mutableListOf(product)
+        } else {
+            favouriteList[email]?.add(product)
+        }
     }
 
     override suspend fun getAllFavouriteItem(
         email: String,
         productListL: (products: List<Product>) -> Unit
     ) {
-        TODO("Not yet implemented")
+        productListL(fireBaseFavouriteList[email]?.toList() ?: listOf())
     }
 
     override suspend fun deleteItem(email: String, itemId: String) {
-        TODO("Not yet implemented")
+        favouriteList[email]?.removeIf {
+            it.id == itemId
+        }
     }
 
     override suspend fun searchForAnItem(
@@ -141,7 +151,13 @@ class FakeRemoteDataSource : IRemoteDataSource {
         itemId: String,
         isFound: (found: Boolean) -> Unit
     ) {
-        TODO("Not yet implemented")
+        favouriteList[email]?.forEach { product ->
+            if (product.id == itemId) {
+                isFound(true)
+                return
+            }
+        }
+        isFound(false)
     }
 
     override suspend fun createAccountUsingFirebase(newCustomer: CustomerCreateInput) {
@@ -155,22 +171,20 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createOrderInformation(token: String, order: Order) {
-        TODO("Not yet implemented")
-    }
+   
 
-    override suspend fun <T> getCustomerData(token: String): Flow<com.example.ryady.network.model.Response<T>> {
+    override suspend fun <T> getCustomerData(token: String): Flow<Response<T>> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> createEmptyCart(
         email: String,
         token: String
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchAddresses(token: String): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchAddresses(token: String): Response<T> {
         TODO("Not yet implemented")
     }
 
@@ -181,11 +195,11 @@ class FakeRemoteDataSource : IRemoteDataSource {
     override suspend fun <T> createUserAddress(
         token: String,
         address: Address
-    ): com.example.ryady.network.model.Response<T> {
+    ): Response<T> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchOrders(userToken: String): com.example.ryady.network.model.Response<T> {
+    override suspend fun <T> fetchOrders(userToken: String): Response<T> {
         TODO("Not yet implemented")
     }
 }
