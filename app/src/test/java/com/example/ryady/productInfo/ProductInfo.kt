@@ -21,12 +21,12 @@ private const val TAG = "ProductInfo"
 class ProductInfo {
 
     private lateinit var viewModel: ProductViewModel
-    private lateinit var remote: FakeRemoteDataSource
+    private lateinit var fakeRemote: FakeRemoteDataSource
 
     @Before
     fun setUp() {
-        remote = FakeRemoteDataSource()
-        viewModel = ProductViewModel(remote)
+        fakeRemote = FakeRemoteDataSource()
+        viewModel = ProductViewModel(fakeRemote)
     }
 
     @Test
@@ -87,34 +87,13 @@ class ProductInfo {
             vendor = "vendor$123",
             variants = ProductByIdQuery.Variants(edges = listOf(), nodes = listOf())
         )
-        val item2 = ProductByIdQuery.Product(
-            id = "567",
-            title = "title$567",
-            description = "description$567",
-            images = ProductByIdQuery.Images(listOf()),
-            descriptionHtml = "descriptionHtml$567",
-            priceRange = ProductByIdQuery.PriceRange(
-                ProductByIdQuery.MaxVariantPrice(
-                    567,
-                    CurrencyCode.EGP
-                ),
-                minVariantPrice = ProductByIdQuery.MinVariantPrice(
-                    amount = 567,
-                    currencyCode = CurrencyCode.EGP
-                )
-            ),
-
-            tags = listOf(),
-            totalInventory = 567,
-            vendor = "vendor$567",
-            variants = ProductByIdQuery.Variants(edges = listOf(), nodes = listOf())
-        )
 
         // when we give email(key) and item(value) to method we add value to list of product that match key
         viewModel.addItemToFav(email,item1)
-        viewModel.addItemToFav(email,item2)
-        delay(300)
-        println(remote)
+        delay(200)
+
+        // then we check if data added to Map with key value pair and found item added
+        assertEquals(1 , fakeRemote.favouriteList.size)
 
 
     }

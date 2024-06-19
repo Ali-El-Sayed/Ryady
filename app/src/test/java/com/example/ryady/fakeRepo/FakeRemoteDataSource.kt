@@ -121,7 +121,8 @@ class FakeRemoteDataSource : IRemoteDataSource {
 
     override suspend fun addItemToFavourite(email: String, product: ProductByIdQuery.Product) {
         println("called")
-        favouriteList[email]?.add(product)
+        favouriteList[email] = mutableListOf(product)
+
     }
 
     override suspend fun getAllFavouriteItem(
