@@ -2,10 +2,10 @@ package com.example.ryady.fakeRepo
 
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
+import com.example.SearchProductsQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.model.Address
 import com.example.ryady.model.Currency
-import com.example.ryady.model.Order
 import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
 import com.example.ryady.network.model.Response
@@ -14,6 +14,7 @@ import com.example.type.CurrencyCode
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeRemoteDataSource : IRemoteDataSource {
@@ -47,12 +48,9 @@ class FakeRemoteDataSource : IRemoteDataSource {
                     descriptionHtml = "descriptionHtml$id",
                     priceRange = ProductByIdQuery.PriceRange(
                         ProductByIdQuery.MaxVariantPrice(
-                            id,
-                            CurrencyCode.EGP
-                        ),
-                        minVariantPrice = ProductByIdQuery.MinVariantPrice(
-                            amount = id,
-                            currencyCode = CurrencyCode.EGP
+                            id, CurrencyCode.EGP
+                        ), minVariantPrice = ProductByIdQuery.MinVariantPrice(
+                            amount = id, currencyCode = CurrencyCode.EGP
                         )
                     ),
 
@@ -86,38 +84,52 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun <T> createCartWithLines(
-        lines: List<CartLineInput>,
-        customerToken: String,
-        email: String
+        lines: List<CartLineInput>, customerToken: String, email: String
     ): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> addItemToCart(
-        cartId: String,
-        varientID: String,
-        quantity: Int
+        cartId: String, varientID: String, quantity: Int
     ): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> updateCartLine(
-        cartId: String,
-        lineID: String,
-        quantity: Int
+        cartId: String, lineID: String, quantity: Int
     ): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> deleteCartLine(
-        cartId: String,
-        lineID: String
+        cartId: String, lineID: String
     ): Response<T> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
-        TODO("Not yet implemented")
+        return flow {
+            emit(
+                Response.Success(
+                    listOf(
+                        SearchProductsQuery.Edge(
+                            node = SearchProductsQuery.Node(
+                                __typename = "",
+                                onProduct = SearchProductsQuery.OnProduct(
+                                    id = "123",
+                                    title = "title1",
+                                    description = "description1",
+                                    totalInventory = 123,
+                                    variants = SearchProductsQuery.Variants(listOf()),
+                                    images = SearchProductsQuery.Images(listOf())
+
+                                )
+                            )
+                        )
+                    ) as T
+                )
+            )
+        }
     }
 
     override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
@@ -134,8 +146,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun getAllFavouriteItem(
-        email: String,
-        productListL: (products: List<Product>) -> Unit
+        email: String, productListL: (products: List<Product>) -> Unit
     ) {
         productListL(fireBaseFavouriteList[email]?.toList() ?: listOf())
     }
@@ -147,9 +158,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun searchForAnItem(
-        email: String,
-        itemId: String,
-        isFound: (found: Boolean) -> Unit
+        email: String, itemId: String, isFound: (found: Boolean) -> Unit
     ) {
         favouriteList[email]?.forEach { product ->
             if (product.id == itemId) {
@@ -165,21 +174,18 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun checkVerification(
-        newCustomer: CustomerCreateInput,
-        isVerified: (isVerified: Boolean) -> Unit
+        newCustomer: CustomerCreateInput, isVerified: (isVerified: Boolean) -> Unit
     ) {
         TODO("Not yet implemented")
     }
 
-   
 
     override suspend fun <T> getCustomerData(token: String): Flow<Response<T>> {
         TODO("Not yet implemented")
     }
 
     override suspend fun <T> createEmptyCart(
-        email: String,
-        token: String
+        email: String, token: String
     ): Response<T> {
         TODO("Not yet implemented")
     }
@@ -193,8 +199,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun <T> createUserAddress(
-        token: String,
-        address: Address
+        token: String, address: Address
     ): Response<T> {
         TODO("Not yet implemented")
     }
