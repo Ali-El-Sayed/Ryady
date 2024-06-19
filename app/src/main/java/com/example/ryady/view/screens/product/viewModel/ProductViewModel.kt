@@ -8,7 +8,6 @@ import com.example.ryady.network.model.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -55,8 +54,7 @@ var cartId = ""
     }
 
     fun addItemToFav(email: String,product: ProductByIdQuery.Product) {
-        viewModelScope.launch {
-
+        viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.addItemToFavourite(email = email, product = product)
         }
     }
