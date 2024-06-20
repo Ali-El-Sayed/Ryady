@@ -40,10 +40,10 @@ class ProductsAdapter(
 
     inner class ViewHolder(val binding: ProductCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
-            binding.currency.text = TheExchangeRate.choosedCurrency.first
+            binding.currency.text = TheExchangeRate.chosenCurrency.first
             val total = product.maxPrice.toDouble()
             val totalExchanged =
-                total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+                total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.chosenCurrency.first)!!)
 
             binding.price.text = totalExchanged.roundTo2DecimalPlaces().toString()
             binding.productName.let {

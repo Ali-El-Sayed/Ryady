@@ -183,20 +183,20 @@ class CartFragment : Fragment() {
                         total = result.data.cost.totalAmount.amount.toString().toDouble()
                         val totalExchanged =
                             total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
                         binding.totalPrice.text = totalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
+                            .toString() + " " + TheExchangeRate.chosenCurrency.first
 
                         val subtotal =
                             result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
                         val subtotalExchanged =
                             subtotal / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
 
                         binding.subtotalPrice.text = subtotalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
+                            .toString() + " " + TheExchangeRate.chosenCurrency.first
                         binding.tax.text =
                             (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces().toString()
                         cartAdapter.updateList(nList)

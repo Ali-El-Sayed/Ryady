@@ -44,9 +44,9 @@ class OrderDetailsDialog : BottomSheetDialogFragment() {
         binding.itemsNumber.text = "$${viewModel.selectedOrder.items.size} Items"
         val total =
             (viewModel.selectedOrder.totalPrice.toDouble() / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.choosedCurrency.first
+                TheExchangeRate.chosenCurrency.first
             )!!)).roundTo2DecimalPlaces()
-        binding.totalPrice.text = "$$total ${TheExchangeRate.choosedCurrency.first}"
+        binding.totalPrice.text = "$$total ${TheExchangeRate.chosenCurrency.first}"
         binding.closeBtn.setOnClickListener { dismiss() }
     }
 

@@ -4,16 +4,20 @@ import android.util.Range
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ryady.datasource.remote.IRemoteDataSource
+import com.example.ryady.model.Currency
 import com.example.ryady.model.Product
 import com.example.ryady.network.model.Response
-import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "ProductsViewmodel"
 
-class ProductsViewmodel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
+class ProductsViewmodel(
+    private val remoteDataSource: IRemoteDataSource,
+    private val currency: Currency,
+    private val chosenCurrency: Pair<String, String>
+) : ViewModel() {
     private var products: MutableStateFlow<Response<List<Product>>> = MutableStateFlow(Response.Loading())
     val productList = products.asStateFlow()
     private var productsByCategory: MutableStateFlow<Response<List<Product>>> = MutableStateFlow(Response.Loading())
@@ -38,34 +42,31 @@ class ProductsViewmodel(private val remoteDataSource: IRemoteDataSource) : ViewM
     }
 
     suspend fun getProductsByCategory() {
-        productsByCategory.value = Response.Loading()
+        productsByCategory.emit(Response.Loading())
         val response = remoteDataSource.fetchProductsByCategory<Response<List<Product>>>(categoryType.category)
         when (response) {
-            is Response.Loading -> productsByCategory.value = Response.Loading()
+            is Response.Loading -> productsByCategory.emit(Response.Loading())
             is Response.Success -> {
                 val filteredProducts = (response.data as ArrayList<Product>).filter {
                     val maxPrice = it.maxPrice.toDouble()
 
-                    val maxPriceExchanged =
-                        maxPrice / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                            TheExchangeRate.choosedCurrency.first
-                        )!!)
+                    val maxPriceExchanged = maxPrice / (currency.rates?.get("EGP")!!) * (currency.rates?.get(
+                        chosenCurrency.first
+                    )!!)
                     val minPrice = it.minPrice.toDouble()
-                    val minPriceExchanged =
-                        minPrice / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                            TheExchangeRate.choosedCurrency.first
-                        )!!)
+                    val minPriceExchanged = minPrice / (currency.rates?.get("EGP")!!) * (currency.rates?.get(
+                        chosenCurrency.first
+                    )!!)
                     it.tags.joinToString().contains(humanType.type) && priceRange.contains(
                         Range.create(
-                            minPriceExchanged,
-                            maxPriceExchanged
+                            minPriceExchanged, maxPriceExchanged
                         )
                     )
                 }
-                productsByCategory.value = Response.Success(filteredProducts)
+                productsByCategory.emit(Response.Success(filteredProducts))
             }
 
-            is Response.Error -> products.value = Response.Error(response.message)
+            is Response.Error -> products.emit(Response.Error(response.message))
         }
     }
 }

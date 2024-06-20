@@ -42,13 +42,9 @@ class ProductInfo {
         // then return data successfully
         viewModel.productInfo.take(1).collectLatest { result ->
             when (result) {
-                is Response.Error -> {
+                is Response.Error -> {}
 
-                }
-
-                is Response.Loading -> {
-
-                }
+                is Response.Loading -> {}
 
                 is Response.Success -> {
                     MatcherAssert.assertThat(result.data.id, `is`("123"))
@@ -73,12 +69,9 @@ class ProductInfo {
             descriptionHtml = "descriptionHtml$123",
             priceRange = ProductByIdQuery.PriceRange(
                 ProductByIdQuery.MaxVariantPrice(
-                    123,
-                    CurrencyCode.EGP
-                ),
-                minVariantPrice = ProductByIdQuery.MinVariantPrice(
-                    amount = 123,
-                    currencyCode = CurrencyCode.EGP
+                    123, CurrencyCode.EGP
+                ), minVariantPrice = ProductByIdQuery.MinVariantPrice(
+                    amount = 123, currencyCode = CurrencyCode.EGP
                 )
             ),
 
@@ -95,12 +88,9 @@ class ProductInfo {
             descriptionHtml = "descriptionHtml$567",
             priceRange = ProductByIdQuery.PriceRange(
                 ProductByIdQuery.MaxVariantPrice(
-                    567,
-                    CurrencyCode.EGP
-                ),
-                minVariantPrice = ProductByIdQuery.MinVariantPrice(
-                    amount = 567,
-                    currencyCode = CurrencyCode.EGP
+                    567, CurrencyCode.EGP
+                ), minVariantPrice = ProductByIdQuery.MinVariantPrice(
+                    amount = 567, currencyCode = CurrencyCode.EGP
                 )
             ),
 
@@ -111,8 +101,8 @@ class ProductInfo {
         )
 
         // when we give email(key) and item(value) to method we add value to list of product that match key
-        viewModel.addItemToFav(email,item1)
-        viewModel.addItemToFav(email,item2)
+        viewModel.addItemToFav(email, item1)
+        viewModel.addItemToFav(email, item2)
         delay(300)
         println(remote)
 

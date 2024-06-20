@@ -142,7 +142,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
     override suspend fun fetchExchangeRates(): Flow<retrofit2.Response<Currency>> = flow {
-        emit(currencyRetrofitService.getExchangerate())
+        emit(currencyRetrofitService.getExchangeRate())
     }
 
 
