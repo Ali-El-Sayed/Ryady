@@ -30,9 +30,9 @@ class AddressViewModel(private val remote: IRemoteDataSource, var userToken: Str
     }
 
     suspend fun deleteAddress(addressId: String) {
+        _addresses.emit(Response.Loading())
         viewModelScope.launch(Dispatchers.IO) {
             remote.deleteAddress(userToken, addressId)
-//            fetchAddresses()
         }
     }
 
