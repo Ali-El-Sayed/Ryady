@@ -32,6 +32,9 @@ import com.example.ryady.model.extensions.toBrandsList
 import com.example.ryady.model.extensions.toOrderList
 import com.example.ryady.model.extensions.toProductList
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.screens.cart.OrderRequest
+import com.example.ryady.view.screens.cart.OrderRetrofitHelper
+import com.example.ryady.view.screens.cart.OrderService
 import com.example.ryady.view.screens.settings.countries.RetrofitHelper
 import com.example.ryady.view.screens.settings.countries.SettingsService
 import com.example.ryady.view.screens.settings.currency.CurrencyRetrofitHelper
@@ -107,6 +110,8 @@ interface IRemoteDataSource {
     suspend fun <T> createUserAddress(token: String, address: Address): Response<T>
 
     suspend fun <T> fetchOrders(userToken: String): Response<T>
+
+    suspend fun createOrder(orderRequest: OrderRequest): Int
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -118,6 +123,9 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     private val currencyRetrofitService: CurrencyService by lazy {
         CurrencyRetrofitHelper.retrofit.create(CurrencyService::class.java)
+    }
+    private val ordersRetrofitService: OrderService by lazy {
+        OrderRetrofitHelper.retrofit.create(OrderService::class.java)
     }
 
     private val database: FirebaseDatabase by lazy {
@@ -516,6 +524,15 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             )
 
             else -> Response.Success(response.data?.customer?.orders?.toOrderList() as T)
+        }
+    }
+
+    override suspend fun createOrder(orderRequest: OrderRequest): Int {
+        val response = ordersRetrofitService.createOrder(orderRequest)
+        return if (response.isSuccessful) {
+            1
+        } else {
+            0
         }
     }
 }

@@ -19,6 +19,19 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/cart_list_item" />
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="-16dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
         android:id="@+id/empty_image"
         android:layout_width="match_parent"
@@ -48,7 +61,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginBottom="8dp"
         android:text="@string/total_amount"
         android:textSize="24sp"
@@ -60,7 +73,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginBottom="8dp"
         android:text="@string/tax"
         android:textColor="@color/grey_font"
@@ -73,7 +86,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginBottom="8dp"
         android:text="@string/subtotal_amount"
         android:textColor="@color/grey_font"
@@ -131,4 +144,6 @@
 
 
     </FrameLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
