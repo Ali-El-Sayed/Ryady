@@ -7,6 +7,7 @@ import com.example.ryady.model.Address
 import com.example.ryady.model.Currency
 import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
+import com.example.ryady.view.screens.cart.OrderRequest
 import com.example.type.CartLineInput
 import com.example.type.CurrencyCode
 import com.example.type.CustomerAccessTokenCreateInput
@@ -221,6 +222,10 @@ class FakeDataSource : IRemoteDataSource {
     }
 
     override suspend fun <T> fetchOrders(userToken: String): com.example.ryady.network.model.Response<T> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createOrder(orderRequest: OrderRequest): Int {
         TODO("Not yet implemented")
     }
 }
