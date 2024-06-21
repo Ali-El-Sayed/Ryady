@@ -32,7 +32,8 @@ class CartAdapter(
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = CartListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            CartListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -49,7 +50,8 @@ class CartAdapter(
 
     }
 
-    inner class ViewHolder(private val binding: CartListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: CartListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(node: RetrieveCartQuery.Node) {
             binding.favView.setOnLongClickListener {
                 binding.checkb.visibility = View.VISIBLE
@@ -88,7 +90,7 @@ class CartAdapter(
                     passedScope.launch {
                         viewModel.deleteCartLine(
                             viewModel.cartId,
-                            lineID = node.id
+                            lineID = arrayListOf(node.id)
                         )
                     }
                 }
@@ -98,7 +100,7 @@ class CartAdapter(
                 passedScope.launch {
                     viewModel.deleteCartLine(
                         viewModel.cartId,
-                        lineID = node.id
+                        lineID = arrayListOf(node.id)
                     )
                 }
             }
@@ -109,7 +111,8 @@ class CartAdapter(
             fun deleteLambda() {
                 val modifiedText = "%icon%" // you can use resource string here
                 val span = SpannableString(modifiedText)
-                val drawable = ResourcesCompat.getDrawable(context.resources, R.drawable.ic_delete, null)
+                val drawable =
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.ic_delete, null)
                 drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
                 val image = drawable?.let { ImageSpan(it, ImageSpan.ALIGN_BOTTOM) }
                 val startIndex = modifiedText.indexOf("%icon%")
@@ -136,11 +139,15 @@ class CartAdapter(
             binding.textCount.text = node.quantity.toString()
             binding.textCount.visibility = View.VISIBLE
             binding.animationView.visibility = View.GONE
-                val total = node.cost.totalAmount.amount.toString().toDouble()
-            val totalExchanged = total/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.choosedCurrency.first)!!)
+            val total = node.cost.totalAmount.amount.toString().toDouble()
+            val totalExchanged =
+                total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                    TheExchangeRate.choosedCurrency.first
+                )!!)
 
-            val priceText = "${totalExchanged.roundTo2DecimalPlaces().toString()} ${TheExchangeRate.choosedCurrency.first}"
+            val priceText = "${
+                totalExchanged.roundTo2DecimalPlaces().toString()
+            } ${TheExchangeRate.choosedCurrency.first}"
             binding.price.text = priceText
             binding.imageView.load(node.merchandise.onProductVariant?.image?.src) {
                 crossfade(true)
