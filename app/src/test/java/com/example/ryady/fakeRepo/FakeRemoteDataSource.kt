@@ -16,10 +16,20 @@ import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.util.Locale
+import java.util.UUID
 
 class FakeRemoteDataSource : IRemoteDataSource {
 
     val favouriteList: MutableMap<String, MutableList<ProductByIdQuery.Product>> = mutableMapOf()
+    val addressList: ArrayList<Address> = ArrayList(
+        mutableListOf(
+            Address(city = "Cairo", country = "Egypt"),
+            Address(city = "Alexandria", country = "Egypt"),
+            Address(city = "Aswan", country = "Egypt"),
+            Address(city = "Luxor", country = "Egypt")
+        )
+    )
+
     override suspend fun fetchCountries(): Flow<retrofit2.Response<HashMap<String, String>>> {
         TODO("Not yet implemented")
     }
@@ -81,8 +91,19 @@ class FakeRemoteDataSource : IRemoteDataSource {
     )
 
     override suspend fun <T> fetchProductsByBrandId(id: String): Response<T> {
-        TODO("Not yet implemented")
+        val products = mutableListOf(
+            Product("123", "title123", "description123", "Addidas", "vendor123"),
+            Product("456", "title456", "description456", "Addidas", "vendor456"),
+            Product("789", "title789", "description789", "Addidas", "vendor789"),
+            Product("123", "title123", "description123", "Nike", "vendor123"),
+            Product("456", "title456", "description456", "Nike", "vendor456"),
+            Product("789", "title789", "description789", "Nike", "vendor789"),
+        )
+        return Response.Success(products.filter { product ->
+            product.vendor.lowercase() == id.lowercase()
+        } as T)
     }
+
 
     override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
         TODO("Not yet implemented")
@@ -215,18 +236,18 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchAddresses(token: String): Response<T> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun <T> fetchAddresses(token: String): Response<T> = Response.Success(addressList as T)
 
     override suspend fun deleteAddress(token: String, addressId: String) {
-        TODO("Not yet implemented")
+        addressList.removeAll { address -> address.id == addressId }
     }
 
     override suspend fun <T> createUserAddress(
         token: String, address: Address
     ): Response<T> {
-        TODO("Not yet implemented")
+        address.id = UUID.randomUUID().toString()
+        addressList.add(address)
+        return Response.Success(true as T)
     }
 
     override suspend fun <T> fetchOrders(userToken: String): Response<T> {

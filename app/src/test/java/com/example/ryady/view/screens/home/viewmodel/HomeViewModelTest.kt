@@ -37,11 +37,7 @@ class HomeViewModelTest {
         // THEN
         val state = viewModel.productList.value
         val p = (state as Response.Success).data.first()
-        assertThat(p.id, `is`(product.id))
-        assertThat(p.title, `is`(product.title))
-        assertThat(p.vendor, `is`(product.vendor))
-        assertThat(p.bodyHtml, `is`(product.bodyHtml))
-        assertThat(p.productType, `is`(product.productType))
+        assertThat(p, `is`(product))
     }
 
     @Test
@@ -52,8 +48,6 @@ class HomeViewModelTest {
         // THEN
         val state = viewModel.brandList.value
         val b = (state as Response.Success).data.first()
-        assertThat(b.id, `is`(brand.id))
-        assertThat(b.title, `is`(brand.title))
-        assertThat(b.imageUrl, `is`(brand.imageUrl))
+        assertThat(b, `is`(brand))
     }
 }

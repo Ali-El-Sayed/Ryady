@@ -12,17 +12,13 @@ import kotlinx.coroutines.launch
 
 class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
 
-    private val _productList: MutableStateFlow<Response<List<Product>>> =
-        MutableStateFlow(Response.Loading())
+    private val _productList: MutableStateFlow<Response<List<Product>>> = MutableStateFlow(Response.Loading())
     var productList: StateFlow<Response<List<Product>>> = _productList
 
 
     fun getAllFavouriteProduct(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
-
-
             remoteDataSource.getAllFavouriteItem(email) {
-
                 _productList.value = Response.Success(it)
             }
         }
@@ -30,7 +26,6 @@ class FavouriteViewModel(private val remoteDataSource: IRemoteDataSource) : View
 
     fun deleteItem(email: String, itemId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-
             remoteDataSource.deleteItem(email = email, itemId)
         }
     }

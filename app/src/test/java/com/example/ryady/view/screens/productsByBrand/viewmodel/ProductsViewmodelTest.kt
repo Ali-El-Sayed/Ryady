@@ -8,13 +8,12 @@ import com.example.ryady.rules.MainCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.`is`
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.annotation.Config
 
-@Config(manifest = Config.NONE, sdk = [34])
 @RunWith(AndroidJUnit4::class)
 class ProductsViewmodelTest {
     @get:Rule
@@ -50,6 +49,18 @@ class ProductsViewmodelTest {
         val state = viewModel.productsByCategoryList.value
         val p = (state as Response.Success).data.first()
         assertThat(p.tags, contains(HumanType.MEN.type))
+    }
+
+    @Test
+    fun getProductsByBrandId_success() = mainCoroutineRule.scope.runTest {
+        // GIVEN
+        val brand = "Addidas"
+        // WHEN
+        viewModel.getProductsByBrandId(brand)
+        // THEN
+        val state = viewModel.productList.value
+        val p = (state as Response.Success).data.first()
+        assertThat(p.vendor, `is`(brand))
     }
 
 }

@@ -24,27 +24,27 @@ class AddressViewModel(private val remote: IRemoteDataSource, var userToken: Str
 
     suspend fun fetchAddresses() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (userToken.isNotEmpty()) _addresses.value = remote.fetchAddresses(userToken)
-            else _addresses.value = Response.Error("No token provided")
+            if (userToken.isNotEmpty()) _addresses.emit(remote.fetchAddresses(userToken))
+            else _addresses.emit(Response.Error("No token provided"))
         }
     }
 
     suspend fun deleteAddress(addressId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             remote.deleteAddress(userToken, addressId)
-            fetchAddresses()
+//            fetchAddresses()
         }
     }
 
     suspend fun saveAddress() {
         viewModelScope.launch(Dispatchers.IO) {
-            _isAddressSaved.value = Response.Loading()
+            _isAddressSaved.emit(Response.Loading())
             if (userToken.isNotEmpty()) {
                 val response = async { remote.createUserAddress<Boolean>(userToken, address) }.await()
                 when (response) {
-                    is Response.Loading -> _isAddressSaved.value = response
-                    is Response.Error -> _isAddressSaved.value = response
-                    is Response.Success -> _isAddressSaved.value = response
+                    is Response.Loading -> _isAddressSaved.emit(Response.Loading())
+                    is Response.Error -> _isAddressSaved.emit(response)
+                    is Response.Success -> _isAddressSaved.emit(response)
                 }
             }
         }

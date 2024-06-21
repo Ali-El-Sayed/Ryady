@@ -18,9 +18,7 @@ import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.getbase.floatingactionbutton.FloatingActionButton
 
 class FavouriteListAdapter(
-    private val listProduct: MutableList<Product>,
-    private val listener: IFavouriteFragment,
-    private val context: Context
+    private val listProduct: MutableList<Product>, private val listener: IFavouriteFragment, private val context: Context
 ) : RecyclerView.Adapter<FavouriteListAdapter.ViewHolder>() {
 
     lateinit var binding: FavouriteListItemBinding
@@ -50,21 +48,15 @@ class FavouriteListAdapter(
         holder.tvPriceCode.text = TheExchangeRate.chosenCurrency.first
         Glide.with(binding.root).load(listProduct[position].imageUrl).into(holder.ivProduct)
         holder.btnDelete.setOnClickListener {
-
             dialogBtnDelete.setOnClickListener {
                 listener.deleteItem(listProduct[position].id)
                 listProduct.removeAt(position)
                 notifyDataSetChanged()
                 dialog.dismiss()
             }
-            dialogBtnCancel.setOnClickListener {
-                dialog.dismiss()
-
-            }
+            dialogBtnCancel.setOnClickListener { dialog.dismiss() }
             dialog.show()
         }
-
-
         holder.itemView.setOnClickListener {
             listener.onItemClick(listProduct[position].id)
         }
@@ -74,8 +66,7 @@ class FavouriteListAdapter(
         dialog = Dialog(context)
         dialog.setContentView(R.layout.delete_alert_dialog)
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.window?.setBackgroundDrawable(context.getDrawable(R.drawable.verification_dialog_background))
         dialog.setCancelable(false)
@@ -83,8 +74,7 @@ class FavouriteListAdapter(
         dialogBtnCancel = dialog.findViewById(R.id.btn_cancel)
     }
 
-    inner class ViewHolder(binding: FavouriteListItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: FavouriteListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val tvTitle: TextView
         val tvPrice: TextView
         val ivProduct: ImageView
