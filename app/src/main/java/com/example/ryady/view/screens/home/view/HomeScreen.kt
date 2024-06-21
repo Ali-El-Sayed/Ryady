@@ -48,7 +48,8 @@ private const val TAG = "HomeScreen"
 class HomeScreen : Fragment() {
     private val binding by lazy { FragmentHomeScreenBinding.inflate(layoutInflater) }
     private val viewmodel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory =
+            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
 
@@ -66,7 +67,8 @@ class HomeScreen : Fragment() {
                     readCustomerData(requireContext()) { map ->
                         userToken = map["user token"] ?: ""
                         val userName = map["user name"] ?: "Guest"
-                        binding.topAppBar.subtitle = if (userToken.isEmpty()) "Guest" else userName.capitalize()
+                        binding.topAppBar.subtitle =
+                            if (userToken.isEmpty()) "Guest" else userName.capitalize()
                     }
                 }
                 TheExchangeRate.currencyInfo.collectLatest {
@@ -114,8 +116,9 @@ class HomeScreen : Fragment() {
         binding.addImageSlider.setItemClickListener(itemClickListener = object : ItemClickListener {
             override fun doubleClick(position: Int) {}
             override fun onItemSelected(position: Int) {
-                val clipboard: ClipboardManager? = getSystemService(requireContext(), ClipboardManager::class.java)
-                val clip = ClipData.newPlainText("label", "Eid20")
+                val clipboard: ClipboardManager? =
+                    getSystemService(requireContext(), ClipboardManager::class.java)
+                val clip = ClipData.newPlainText("label", "Eid24")
                 clipboard?.setPrimaryClip(clip)
                 Toast.makeText(requireContext(), "voucher copied", Toast.LENGTH_SHORT).show()
             }
@@ -145,9 +148,14 @@ class HomeScreen : Fragment() {
                             LinearLayoutManager.HORIZONTAL,
                             false,
                         )
-                        binding.brandsRv.adapter = ScaleInAnimationAdapter(BrandsAdapter(it.data) { id ->
-                            findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(brandId = id))
-                        })
+                        binding.brandsRv.adapter =
+                            ScaleInAnimationAdapter(BrandsAdapter(it.data) { id ->
+                                findNavController().navigate(
+                                    HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(
+                                        brandId = id
+                                    )
+                                )
+                            })
                     }
                 }
 
@@ -174,9 +182,14 @@ class HomeScreen : Fragment() {
                 }
 
                 is Response.Success -> {
-                    binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    binding.productsRv.layoutManager =
+                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
-                        findNavController().navigate(HomeScreenDirections.actionHomeScreenToProductInfoFragment(productId = id))
+                        findNavController().navigate(
+                            HomeScreenDirections.actionHomeScreenToProductInfoFragment(
+                                productId = id
+                            )
+                        )
                     }
                 }
 
