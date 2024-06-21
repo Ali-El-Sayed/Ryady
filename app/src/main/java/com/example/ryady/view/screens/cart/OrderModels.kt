@@ -10,7 +10,7 @@ data class OrderRequest(
 
 data class LineItems(
 
-    @SerializedName("variant_id") var variantId: Int? = null,
+    @SerializedName("variant_id") var variantId: Long? = null,
     @SerializedName("quantity") var quantity: Int? = null
 
 )
@@ -57,7 +57,7 @@ data class Order(
     @SerializedName("phone") var phone: String? = null,
     @SerializedName("billing_address") var billingAddress: ShippingAddress? = ShippingAddress(),
     @SerializedName("shipping_address") var shippingAddress: ShippingAddress? = ShippingAddress(),
-    @SerializedName("financial_status") var financialStatus: String? = null,
+    @SerializedName("financial_status") var financialStatus: String? = "pending",
     @SerializedName("discount_codes") var discountCodes: ArrayList<DiscountCodes> = arrayListOf()
 
 )

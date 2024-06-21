@@ -8,6 +8,7 @@ import com.example.RetrieveCartQuery
 import com.example.payment.State
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.datasource.remote.util.RemoteDSUtils
+import com.example.ryady.model.Address
 import com.example.ryady.model.CustomerCartData
 import com.example.ryady.model.Order
 import com.example.ryady.network.model.Response
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,11 +48,14 @@ class CartViewModel(
     private var _orderCreateInfo: MutableStateFlow<Response<Int>> =
         MutableStateFlow(Response.Loading())
     var orderCreateInfo: StateFlow<Response<Int>> = _orderCreateInfo
-
+    private val _addresses: MutableStateFlow<Response<ArrayList<Address>>> =
+        MutableStateFlow(Response.Loading())
+    val addresses = _addresses.asStateFlow()
     var currentOrder: Order = Order()
     var checkoutUrl = ""
     var cartId = ""
     var userToken = ""
+
 
     suspend fun updateCartLine(
         cartId: String, lineID: String, quantity: Int
@@ -72,7 +77,7 @@ class CartViewModel(
     }
 
     suspend fun deleteCartLine(
-        cartId: String, lineID: String
+        cartId: String, lineID: ArrayList<String>
     ) {
         _updateCartItemInfo.value = Response.Loading()
         viewModelScope.launch(dispatcher) {
@@ -170,6 +175,14 @@ class CartViewModel(
             }.addOnFailureListener {
                 Log.d("Ghoneim", "onViewCreated: firebase save faliure ${it.message}")
             }
+    }
+
+    suspend fun fetchAddresses() {
+        viewModelScope.launch(dispatcher) {
+            if (userToken.isNotEmpty()) _addresses.value =
+                remoteDataSource.fetchAddresses(userToken)
+            else _addresses.value = Response.Error("No token provided")
+        }
     }
 
     suspend fun createOrder(orderRequest: OrderRequest) {

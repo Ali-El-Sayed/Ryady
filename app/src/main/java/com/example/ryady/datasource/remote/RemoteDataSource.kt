@@ -75,7 +75,7 @@ interface IRemoteDataSource {
 
     suspend fun <T> addItemToCart(cartId: String, varientID: String, quantity: Int): Response<T>
     suspend fun <T> updateCartLine(cartId: String, lineID: String, quantity: Int): Response<T>
-    suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T>
+    suspend fun <T> deleteCartLine(cartId: String, lineID: ArrayList<String>): Response<T>
 
     suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>>
 
@@ -327,7 +327,10 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         }
     }
 
-    override suspend fun <T> deleteCartLine(cartId: String, lineID: String): Response<T> {
+    override suspend fun <T> deleteCartLine(
+        cartId: String,
+        lineID: ArrayList<String>
+    ): Response<T> {
         val response =
             client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID)).execute()
         return when {
