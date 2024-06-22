@@ -67,7 +67,7 @@ class CartViewModelTest {
     fun deleteCartLine() = mainCoroutineRule.runBlockingTest {
         viewModel.deleteCartLine(
             "gid://shopify/Cart/Z2NwLWV1cm9wZS13ZXN0MTowMUowUkozNFMwOUNUSDYyUU1ZWUNONVRONg?key=8e77553670b039b9a8ac563c991820ac",
-            "gid://shopify/line/7448707039315"
+            arrayListOf("gid://shopify/line/7448707039315")
         )
         val result = viewModel.updateCartItemInfo.first() as Response.Success
         assertEquals(

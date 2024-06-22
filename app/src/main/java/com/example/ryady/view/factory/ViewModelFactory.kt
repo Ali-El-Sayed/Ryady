@@ -35,8 +35,16 @@ class ViewModelFactory(private val remote: IRemoteDataSource) : ViewModelProvide
 
             modelClass.isAssignableFrom(FavouriteViewModel::class.java) -> FavouriteViewModel(remote) as T
             modelClass.isAssignableFrom(SettingsViewModel::class.java) -> SettingsViewModel(remote) as T
-            modelClass.isAssignableFrom(CountriesViewModel::class.java) -> CountriesViewModel(remote) as T
-            modelClass.isAssignableFrom(CurrencyViewModel::class.java) -> CurrencyViewModel(remote) as T
+            modelClass.isAssignableFrom(CountriesViewModel::class.java) -> CountriesViewModel(
+                remote,
+                Dispatchers.IO
+            ) as T
+
+            modelClass.isAssignableFrom(CurrencyViewModel::class.java) -> CurrencyViewModel(
+                remote,
+                Dispatchers.IO
+            ) as T
+
             modelClass.isAssignableFrom(AddressViewModel::class.java) -> AddressViewModel(remote) as T
             modelClass.isAssignableFrom(SearchViewModel::class.java) -> SearchViewModel(remote) as T
             modelClass.isAssignableFrom(OrdersViewModel::class.java) -> OrdersViewModel(remote) as T
