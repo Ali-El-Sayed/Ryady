@@ -114,8 +114,7 @@ class AddressFragment : Fragment() {
 
     private fun showDeleteDialog(addressId: String) {
         val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.delete_alert_dialog)
-        dialog.setContentView(R.layout.delete_alert_dialog)
+        dialog.setContentView(R.layout.order_confirmation_dialog)
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )

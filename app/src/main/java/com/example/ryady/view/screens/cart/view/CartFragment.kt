@@ -1,9 +1,11 @@
 package com.example.ryady.view.screens.cart.view
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -235,5 +237,20 @@ class CartFragment : Fragment() {
         }
     }
 
+    private fun showOrderConfirmationDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.order_confirmation_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(
+            AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.verification_dialog_background
+            )
+        )
+        dialog.setCancelable(false)
+        dialog.show()
+    }
 
 }
