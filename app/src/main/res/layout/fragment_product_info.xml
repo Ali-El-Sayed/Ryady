@@ -75,6 +75,7 @@
                         android:src="@drawable/star" />
 
                     <TextView
+                        android:id="@+id/tv_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"
@@ -230,10 +231,22 @@
                 app:trimCollapsedText="Read More"
                 app:trimExpandedText="Read Less"
                 app:trimLines="2"
-
                 tools:layout_editor_absoluteX="20dp"
                 tools:text="Meet your new favorite tee, the Nike Crackle Print T-Shirt. Bringing its A-game in soft, premium fabric, it features a ribbed crew neck and a woven Nike label on the hem." />
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                tools:itemCount="3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@drawable/background_rv_review"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                tools:listitem="@layout/review_item"/>
             <Button
                 android:id="@+id/add_to_cart"
                 android:layout_width="match_parent"
@@ -243,21 +256,23 @@
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="@color/secondary"
                 android:fontFamily="@font/regular"
-                android:text="Add to Cart"
+                android:text="@string/add_to_cart"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/description" />
+                app:layout_constraintTop_toBottomOf="@id/rv_review" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-       <com.airbnb.lottie.LottieAnimationView
-           android:id="@+id/animation"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:background="@color/white"
-           app:lottie_autoPlay="true"
-           app:lottie_loop="true"
-           app:lottie_renderMode="hardware"
-           app:lottie_rawRes="@raw/loading_cart"/>
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_cart" />
     </FrameLayout>
 </ScrollView>

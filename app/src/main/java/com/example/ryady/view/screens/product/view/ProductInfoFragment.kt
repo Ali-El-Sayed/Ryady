@@ -25,6 +25,7 @@ import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.utils.readCart
 import com.example.ryady.utils.readCustomerData
+import com.example.ryady.utils.reviews
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -33,6 +34,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 private const val TAG = "ProductInfoFragment"
 
@@ -70,7 +73,6 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         }
 
         id = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
-        Log.i(TAG, "onCreate Id: $id")
         lifecycleScope.launch {
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -186,6 +188,15 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         binding.gender.text = productInfo.tags[1]
         checkEmptyInStock(0)
 
+
+        val reviewsLayoutManager = LinearLayoutManager(requireContext())
+        reviewsLayoutManager.orientation = RecyclerView.VERTICAL
+        binding.rvReview.layoutManager = reviewsLayoutManager
+        val reviewList = reviews.shuffled().take(3)
+        var rating = reviewList.sumOf { it.rating }.toFloat()/3
+        rating = BigDecimal(rating.toDouble()).setScale(1, RoundingMode.HALF_EVEN).toFloat()
+        binding.tvRating.text = rating.toString()
+        binding.rvReview.adapter = ReviewsAdapter(reviewList,requireContext())
 
 
         if (isFavourite) {

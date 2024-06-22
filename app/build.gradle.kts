@@ -178,4 +178,8 @@ dependencies {
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 
 
+    // Circular Image 
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+
 }

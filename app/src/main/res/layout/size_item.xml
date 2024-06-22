@@ -7,7 +7,7 @@
     app:cardCornerRadius="16dp"
     app:cardUseCompatPadding="true"
     app:cardBackgroundColor="@color/white"
-    app:strokeColor="@color/black"
+    app:strokeColor="@color/secondary"
     xmlns:tools="http://schemas.android.com/tools"
     app:strokeWidth="2dp">
 
@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         tools:text="XL"
         android:textSize="18sp"
+        android:fontFamily="@font/regular"
         android:textColor="@color/black"
         android:textAlignment="center"
         android:layout_gravity="center"
