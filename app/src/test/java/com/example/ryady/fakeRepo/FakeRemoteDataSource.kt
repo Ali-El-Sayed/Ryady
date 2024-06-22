@@ -1,5 +1,6 @@
 package com.example.ryady.fakeRepo
 
+import com.example.CustomerCreateMutation
 import com.example.ProductByIdQuery
 import com.example.RetrieveCartQuery
 import com.example.SearchProductsQuery
@@ -33,6 +34,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
         )
     )
 
+    val createdAccount: MutableList<CustomerCreateInput> = mutableListOf()
     override suspend fun fetchCountries(): Flow<retrofit2.Response<HashMap<String, String>>> {
         TODO("Not yet implemented")
     }
@@ -111,7 +113,16 @@ class FakeRemoteDataSource : IRemoteDataSource {
 
 
     override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
-        TODO("Not yet implemented")
+        val customer = CustomerCreateMutation.Customer(
+            firstName = newCustomer.firstName.getOrNull(),
+            lastName = newCustomer.lastName.getOrNull(),
+            email = newCustomer.email,
+            acceptsMarketing = newCustomer.acceptsMarketing.getOrNull() ?: true,
+            displayName = "${newCustomer.firstName} ${newCustomer.lastName}" ,
+            phone = "011111",
+            id = newCustomer.email
+        )
+        return Response.Success(customer as T)
     }
 
     override suspend fun <T> createCartWithLines(
@@ -254,13 +265,17 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun createAccountUsingFirebase(newCustomer: CustomerCreateInput) {
-        TODO("Not yet implemented")
+        createdAccount.add(newCustomer)
     }
 
     override suspend fun checkVerification(
         newCustomer: CustomerCreateInput, isVerified: (isVerified: Boolean) -> Unit
     ) {
-        TODO("Not yet implemented")
+        if (newCustomer.acceptsMarketing.getOrNull()!!) {
+            isVerified(true)
+        } else {
+            isVerified(false)
+        }
     }
 
     override suspend fun <T> getCustomerData(token: String): Flow<Response<T>> {
