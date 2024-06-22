@@ -1,5 +1,6 @@
 package com.example.ryady.view.screens.cart.view
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -256,20 +258,20 @@ class CartFragment : Fragment() {
                         total = result.data.cost.totalAmount.amount.toString().toDouble()
                         val totalExchanged =
                             total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
                         binding.totalPrice.text = totalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
+                            .toString() + " " + TheExchangeRate.chosenCurrency.first
 
                         val subtotal =
                             result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
                         val subtotalExchanged =
                             subtotal / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
 
                         binding.subtotalPrice.text = subtotalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
+                            .toString() + " " + TheExchangeRate.chosenCurrency.first
                         binding.tax.text =
                             (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces()
                                 .toString()
@@ -352,6 +354,22 @@ class CartFragment : Fragment() {
         val matchResult = regex.find(gid)
         return matchResult?.value?.toLong()
             ?: throw IllegalArgumentException("No number found in the provided gid")
+    }
+
+    private fun showOrderConfirmationDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.order_confirmation_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(
+            AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.verification_dialog_background
+            )
+        )
+        dialog.setCancelable(false)
+        dialog.show()
     }
 
     fun convertToShippingAddress(address: Address): ShippingAddress {

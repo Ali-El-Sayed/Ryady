@@ -5,6 +5,7 @@ import com.example.RetrieveCartQuery
 import com.example.SearchProductsQuery
 import com.example.ryady.datasource.remote.IRemoteDataSource
 import com.example.ryady.model.Address
+import com.example.ryady.model.Brand
 import com.example.ryady.model.Currency
 import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
@@ -16,11 +17,22 @@ import com.example.type.CustomerCreateInput
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import java.util.Locale
+import java.util.UUID
 
 class FakeRemoteDataSource : IRemoteDataSource {
 
     val favouriteList: MutableMap<String, MutableList<ProductByIdQuery.Product>> = mutableMapOf()
     val fireBaseFavouriteList: MutableMap<String, MutableList<Product>> = mutableMapOf()
+    val addressList: ArrayList<Address> = ArrayList(
+        mutableListOf(
+            Address(city = "Cairo", country = "Egypt"),
+            Address(city = "Alexandria", country = "Egypt"),
+            Address(city = "Aswan", country = "Egypt"),
+            Address(city = "Luxor", country = "Egypt")
+        )
+    )
+
     override suspend fun fetchCountries(): Flow<retrofit2.Response<HashMap<String, String>>> {
         TODO("Not yet implemented")
     }
@@ -33,9 +45,13 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchProducts(): Response<T> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun <T> fetchProducts(): Response<T> = Response.Success(
+        mutableListOf(
+            Product("123", "title123", "description123", "Addidas", "vendor123"),
+            Product("456", "title456", "description456", "Addidas", "vendor456"),
+            Product("789", "title789", "description789", "Addidas", "vendor789"),
+        ) as T
+    )
 
     override suspend fun fetchProductById(id: String): Flow<Response<ProductByIdQuery.Product>> {
         return flowOf(
@@ -71,13 +87,28 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchBrands(): Response<T> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun <T> fetchBrands(): Response<T> = Response.Success(
+        mutableListOf(
+            Brand("123", "title123", "description123"),
+            Brand("456", "title456", "description456"),
+            Brand("789", "title789", "description789"),
+        ) as T
+    )
 
     override suspend fun <T> fetchProductsByBrandId(id: String): Response<T> {
-        TODO("Not yet implemented")
+        val products = mutableListOf(
+            Product("123", "title123", "description123", "Addidas", "vendor123"),
+            Product("456", "title456", "description456", "Addidas", "vendor456"),
+            Product("789", "title789", "description789", "Addidas", "vendor789"),
+            Product("123", "title123", "description123", "Nike", "vendor123"),
+            Product("456", "title456", "description456", "Nike", "vendor456"),
+            Product("789", "title789", "description789", "Nike", "vendor789"),
+        )
+        return Response.Success(products.filter { product ->
+            product.vendor.lowercase() == id.lowercase()
+        } as T)
     }
+
 
     override suspend fun <T> createCustomer(newCustomer: CustomerCreateInput): Response<T> {
         TODO("Not yet implemented")
@@ -131,9 +162,62 @@ class FakeRemoteDataSource : IRemoteDataSource {
             )
         }
     }
-
     override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
-        TODO("Not yet implemented")
+        val products = mutableListOf(
+            Product(
+                vendor = "123",
+                title = "title123",
+                bodyHtml = "description123",
+                tags = mutableListOf("men"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "456",
+                title = "title456",
+                bodyHtml = "description456",
+                tags = mutableListOf("women"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "789",
+                title = "title789",
+                bodyHtml = "description789",
+                tags = mutableListOf("kids"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "123",
+                title = "title123",
+                bodyHtml = "description123",
+                tags = mutableListOf("men"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "456",
+                title = "title456",
+                bodyHtml = "description456",
+                tags = mutableListOf("women"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "789",
+                title = "title789",
+                bodyHtml = "description789",
+                tags = mutableListOf("kids"),
+                minPrice = "100",
+                maxPrice = "1000"
+            ), Product(
+                vendor = "123",
+                title = "title123",
+                bodyHtml = "description123",
+                tags = mutableListOf("men"),
+                minPrice = "100",
+                maxPrice = "1000"
+            )
+        )
+        return if (category.isNotEmpty()) return Response.Success(products.filter { product ->
+            product.tags.contains(category.lowercase(Locale.getDefault()))
+        } as T) else Response.Success(products as T)
     }
 
     override suspend fun addItemToFavourite(email: String, product: ProductByIdQuery.Product) {
@@ -179,7 +263,6 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-
     override suspend fun <T> getCustomerData(token: String): Flow<Response<T>> {
         TODO("Not yet implemented")
     }
@@ -190,18 +273,18 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> fetchAddresses(token: String): Response<T> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun <T> fetchAddresses(token: String): Response<T> = Response.Success(addressList as T)
 
     override suspend fun deleteAddress(token: String, addressId: String) {
-        TODO("Not yet implemented")
+        addressList.removeAll { address -> address.id == addressId }
     }
 
     override suspend fun <T> createUserAddress(
         token: String, address: Address
     ): Response<T> {
-        TODO("Not yet implemented")
+        address.id = UUID.randomUUID().toString()
+        addressList.add(address)
+        return Response.Success(true as T)
     }
 
     override suspend fun <T> fetchOrders(userToken: String): Response<T> {

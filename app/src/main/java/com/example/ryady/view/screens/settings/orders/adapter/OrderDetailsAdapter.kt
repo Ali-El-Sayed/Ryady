@@ -36,9 +36,9 @@ class OrderDetailsAdapter : ListAdapter<Item, OrderDetailsAdapter.ViewHolder>(It
             binding.productQuantity.text = "x${item.quantity}"
             val total =
                 (item.price.toDouble() / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                    TheExchangeRate.choosedCurrency.first
+                    TheExchangeRate.chosenCurrency.first
                 )!!)).roundTo2DecimalPlaces()
-            binding.productPrice.text = "$$total ${TheExchangeRate.choosedCurrency.first}"
+            binding.productPrice.text = "$$total ${TheExchangeRate.chosenCurrency.first}"
         }
     }
 }

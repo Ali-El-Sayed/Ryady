@@ -17,6 +17,7 @@ firebaseDatabaseKtx = "21.0.0"
 playServicesLocation = "21.3.0"
 firebaseAuthKtx = "23.0.0"
 junitKtx = "1.1.5"
+junitJupiter = "5.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

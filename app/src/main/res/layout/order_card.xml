@@ -25,7 +25,7 @@
             android:layout_alignBottom="@id/order_id"
             android:layout_marginStart="6dp"
             android:gravity="center"
-            android:textColor="@color/grey"
+            android:textColor="@color/grey_font"
             tools:text="Apr 02, 2022 12:00 PM" />
 
         <com.google.android.material.button.MaterialButton
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/arrow_button"
             android:layout_marginStart="6dp"
-            android:textColor="@color/grey"
+            android:textColor="@color/grey_font"
             android:textSize="18sp"
             tools:text="7 items" />
 

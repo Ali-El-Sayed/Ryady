@@ -37,11 +37,11 @@ class SearchProductItemAdapter(
 
             val price = product.variants.edges.first().node.price.amount.toString().toDouble()
             val priceExchanged =
-                price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+                price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.chosenCurrency.first)!!)
 
 
             holder.tvPriceAmount.text = priceExchanged.roundTo2DecimalPlaces().toString()
-            holder.tvPriceCode.text = TheExchangeRate.choosedCurrency.first
+            holder.tvPriceCode.text = TheExchangeRate.chosenCurrency.first
         }
 
         holder.cardItem.setOnClickListener {

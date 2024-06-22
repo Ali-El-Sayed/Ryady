@@ -44,7 +44,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
+    testOptions.unitTests {
+        // Always show the result of every unit test when running via command line, even if it passes.
+        isIncludeAndroidResources = true
+    }
 }
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -116,24 +119,16 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     // Animators
 
-
     implementation("jp.wasabeef:recyclerview-animators:4.0.2")
 
 
     /*
     // === TESTING ===
-    // hamcrest
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
-    // Junit
+    // Dependencies for local unit tests
     testImplementation("junit:junit:4.13.2")
-    // Coroutines test dependencies
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2")
-    // Robolectric
-    testImplementation("org.robolectric:robolectric:4.12")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation("org.hamcrest:hamcrest-all:1.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.robolectric:robolectric:4.8")
 
 */
 

@@ -12,6 +12,7 @@ import com.example.ryady.view.screens.productsByBrand.viewmodel.ProductsViewmode
 import com.example.ryady.view.screens.search.viewModel.SearchViewModel
 import com.example.ryady.view.screens.settings.address.viewModel.AddressViewModel
 import com.example.ryady.view.screens.settings.countries.viewmodel.CountriesViewModel
+import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.ryady.view.screens.settings.currency.viewmodel.CurrencyViewModel
 import com.example.ryady.view.screens.settings.orders.viewModel.OrdersViewModel
 import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
@@ -21,11 +22,13 @@ import kotlinx.coroutines.Dispatchers
 class ViewModelFactory(private val remote: IRemoteDataSource) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(HomeViewModel::class.java) -> HomeViewModel(
-                remote
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> HomeViewModel(remote) as T
+            modelClass.isAssignableFrom(ProductsViewmodel::class.java) -> ProductsViewmodel(
+                remote,
+                TheExchangeRate.currency,
+                TheExchangeRate.chosenCurrency
             ) as T
 
-            modelClass.isAssignableFrom(ProductsViewmodel::class.java) -> ProductsViewmodel(remote) as T
             modelClass.isAssignableFrom(ProductViewModel::class.java) -> ProductViewModel(remote) as T
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(remote) as T
             modelClass.isAssignableFrom(CartViewModel::class.java) -> CartViewModel(
