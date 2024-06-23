@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_homeScreen_to_favouriteFragment"
             app:destination="@id/favouriteFragment" />
+        <action
+            android:id="@+id/action_homeScreen_to_cartFragment"
+            app:destination="@id/cartFragment" />
 
     </fragment>
     <fragment
@@ -133,11 +136,11 @@
         android:label="fragment_address"
         tools:layout="@layout/fragment_address">
         <action
-            android:id="@+id/action_addressFragment_to_customerDataFragment2"
-            app:destination="@id/customerDataFragment2" />
+            android:id="@+id/action_addressFragment_to_customerDataFragment"
+            app:destination="@id/customerDataFragment" />
     </fragment>
     <fragment
-        android:id="@+id/customerDataFragment2"
+        android:id="@+id/customerDataFragment"
         android:name="com.example.ryady.view.screens.settings.address.view.AddNewAddressFragment"
         android:label="fragment_customer_data"
         tools:layout="@layout/fragment_add_new_address" />
@@ -146,4 +149,13 @@
         android:name="com.example.ryady.view.screens.settings.orders.view.OrdersFragment"
         android:label="OrdersFragment"
         tools:layout="@layout/fragment_orders" />
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.ryady.view.screens.cart.view.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cartFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
+    </fragment>
 </navigation>

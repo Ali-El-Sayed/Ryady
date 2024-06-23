@@ -15,7 +15,6 @@ import com.example.ryady.view.screens.settings.countries.viewmodel.CountriesView
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.ryady.view.screens.settings.currency.viewmodel.CurrencyViewModel
 import com.example.ryady.view.screens.settings.orders.viewModel.OrdersViewModel
-import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 
 @Suppress("UNCHECKED_CAST")
@@ -37,7 +36,6 @@ class ViewModelFactory(private val remote: IRemoteDataSource) : ViewModelProvide
             ) as T
 
             modelClass.isAssignableFrom(FavouriteViewModel::class.java) -> FavouriteViewModel(remote) as T
-            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> SettingsViewModel(remote) as T
             modelClass.isAssignableFrom(CountriesViewModel::class.java) -> CountriesViewModel(remote) as T
             modelClass.isAssignableFrom(CurrencyViewModel::class.java) -> CurrencyViewModel(remote) as T
             modelClass.isAssignableFrom(AddressViewModel::class.java) -> AddressViewModel(remote) as T

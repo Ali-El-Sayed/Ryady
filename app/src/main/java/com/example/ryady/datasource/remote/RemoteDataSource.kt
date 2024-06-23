@@ -189,8 +189,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
             )
 
             else -> response.data?.collection?.products?.toProductList().let {
-                it?.get(0)?.vendorImageUrl =
-                    (response.data?.collection?.image?.url ?: "").toString()
+                it?.get(0)?.vendorImageUrl = (response.data?.collection?.image?.url ?: "").toString()
                 return Response.Success(it as T)
             }
         }
@@ -217,12 +216,11 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
     override suspend fun <T> searchForProducts(itemName: String): Flow<Response<T>> {
         val numberOfItem = Optional.present(10)
-        client.query(SearchProductsQuery(itemName, numberOfItem))
-            .execute().data?.search?.edges?.let {
-                return flow {
-                    emit(Response.Success(it as T))
-                }
+        client.query(SearchProductsQuery(itemName, numberOfItem)).execute().data?.search?.edges?.let {
+            return flow {
+                emit(Response.Success(it as T))
             }
+        }
         return flow { emit(Response.Error("data not found ")) }
     }
 
@@ -239,8 +237,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         return when {
             (((response.data?.customerCreate?.customerUserErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.customerCreate?.customerUserErrors?.first()?.message
-                        ?: "customer error == null"
+                    response.data?.customerCreate?.customerUserErrors?.first()?.message ?: "customer error == null"
                 )
             }
 
@@ -260,16 +257,14 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         return when {
             (((response.data?.cartCreate?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartCreate?.userErrors?.first()?.message
-                        ?: "customer error == null"
+                    response.data?.cartCreate?.userErrors?.first()?.message ?: "customer error == null"
                 )
             }
 
             else -> {
                 Response.Success(
                     Pair(
-                        first = response.data?.cartCreate?.cart?.id,
-                        second = response.data?.cartCreate?.cart?.checkoutUrl
+                        first = response.data?.cartCreate?.cart?.id, second = response.data?.cartCreate?.cart?.checkoutUrl
                     ) as T
                 )
             }
@@ -289,8 +284,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             (((response.data?.cartLinesAdd?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesAdd?.userErrors?.first()?.message
-                        ?: "add to cart error == null"
+                    response.data?.cartLinesAdd?.userErrors?.first()?.message ?: "add to cart error == null"
                 )
             }
 
@@ -315,8 +309,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
 
             (((response.data?.cartLinesUpdate?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesUpdate?.userErrors?.first()?.message
-                        ?: "add to cart error == null"
+                    response.data?.cartLinesUpdate?.userErrors?.first()?.message ?: "add to cart error == null"
                 )
             }
 
@@ -328,16 +321,13 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
     }
 
     override suspend fun <T> deleteCartLine(
-        cartId: String,
-        lineID: ArrayList<String>
+        cartId: String, lineID: ArrayList<String>
     ): Response<T> {
-        val response =
-            client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID)).execute()
+        val response = client.mutation(CartLinesRemoveMutation(cartid = cartId, lineid = lineID)).execute()
         return when {
             (((response.data?.cartLinesRemove?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartLinesRemove?.userErrors?.first()?.message
-                        ?: "remove from cart error == null"
+                    response.data?.cartLinesRemove?.userErrors?.first()?.message ?: "remove from cart error == null"
                 )
             }
 
@@ -356,8 +346,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 flow {
                     emit(
                         Response.Error(
-                            response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message
-                                ?: "Error NUll"
+                            response.data?.customerAccessTokenCreate?.customerUserErrors?.first()?.message ?: "Error NUll"
                         )
                     )
                 }
@@ -403,12 +392,9 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 val product = Product(
                     id = prod.child("id").value as String,
                     title = prod.child("title").value as String,
-                    maxPrice = prod.child("priceRange").child("maxVariantPrice")
-                        .child("amount").value as String,
-                    priceCode = prod.child("priceRange").child("maxVariantPrice")
-                        .child("currencyCode").value as String,
-                    imageUrl = prod.child("images").child("edges").child("0").child("node")
-                        .child("url").value as String
+                    maxPrice = prod.child("priceRange").child("maxVariantPrice").child("amount").value as String,
+                    priceCode = prod.child("priceRange").child("maxVariantPrice").child("currencyCode").value as String,
+                    imageUrl = prod.child("images").child("edges").child("0").child("node").child("url").value as String
                 )
                 listProduct.add(product)
                 Log.i(TAG, "getAllFavouriteItem: ${listProduct.size}")
@@ -437,41 +423,35 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         newCustomer: CustomerCreateInput,
     ) {
         val auth = Firebase.auth
-        auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password)
-            .addOnSuccessListener {
-                auth.currentUser?.sendEmailVerification()
-            }.addOnFailureListener {
+        auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
+            auth.currentUser?.sendEmailVerification()
+        }.addOnFailureListener {
 
-            }
+        }
     }
 
     override suspend fun checkVerification(
-        newCustomer: CustomerCreateInput,
-        isVerified: (isVerified: Boolean) -> Unit
+        newCustomer: CustomerCreateInput, isVerified: (isVerified: Boolean) -> Unit
     ) {
         val auth = Firebase.auth
-        auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password)
-            .addOnSuccessListener {
-                auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
-            }
+        auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
+            auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
+        }
     }
 
     override suspend fun <T> createEmptyCart(email: String, token: String): Response<T> {
-        val response =
-            client.mutation(CreateCartEmptyMutation(email = email, customerToken = token)).execute()
+        val response = client.mutation(CreateCartEmptyMutation(email = email, customerToken = token)).execute()
         return when {
             (((response.data?.cartCreate?.userErrors?.size ?: -1) > 0)) -> {
                 Response.Error(
-                    response.data?.cartCreate?.userErrors?.first()?.message
-                        ?: "customer error == null"
+                    response.data?.cartCreate?.userErrors?.first()?.message ?: "customer error == null"
                 )
             }
 
             else -> {
                 Response.Success(
                     Pair(
-                        first = response.data?.cartCreate?.cart?.id,
-                        second = response.data?.cartCreate?.cart?.checkoutUrl
+                        first = response.data?.cartCreate?.cart?.id, second = response.data?.cartCreate?.cart?.checkoutUrl
                     ) as T
                 )
             }

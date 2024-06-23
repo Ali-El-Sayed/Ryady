@@ -28,7 +28,7 @@ class CartAdapter(
     private val viewModel: CartViewModel,
     private val passedScope: CoroutineScope,
     private val context: Context,
-    private val onMerchandiseClick: (id: String) -> Unit
+    private val onMerchandiseClick: (id: String) -> Unit = {}
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

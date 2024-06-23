@@ -14,6 +14,7 @@ import com.example.ryady.view.screens.cart.OrderRequest
 import com.example.type.CartLineInput
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,32 +24,22 @@ import kotlinx.coroutines.launch
 private const val TAG = "CartViewModel"
 
 class CartViewModel(
-    private val remoteDataSource: IRemoteDataSource,
-    private val dispatcher: CoroutineDispatcher
+    private val remoteDataSource: IRemoteDataSource, private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     var email = ""
     private var _cartInfo: MutableStateFlow<Response<RetrieveCartQuery.Cart>> = MutableStateFlow(
         Response.Loading()
     )
     var cartInfo: StateFlow<Response<RetrieveCartQuery.Cart>> = _cartInfo
-    private var _order = MutableStateFlow<State>(State.Loading)
-    val order: StateFlow<State> = _order
-    private var _updateCartItemInfo: MutableStateFlow<Response<Int>> =
-        MutableStateFlow(Response.Loading())
+    private var _updateCartItemInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
     var updateCartItemInfo: StateFlow<Response<Int>> = _updateCartItemInfo
-    private var _cartCreate: MutableStateFlow<Response<Pair<String, String>>> =
-        MutableStateFlow(Response.Loading())
+    private var _cartCreate: MutableStateFlow<Response<Pair<String, String>>> = MutableStateFlow(Response.Loading())
     var cartCreate: StateFlow<Response<Pair<String, String>>> = _cartCreate
-    private var _createCartState: MutableStateFlow<Response<Pair<String, String>>> =
-        MutableStateFlow(Response.Loading())
-    val createCartState: StateFlow<Response<Pair<String, String>>> = _createCartState
-    private var _orderCreateInfo: MutableStateFlow<Response<Int>> =
-        MutableStateFlow(Response.Loading())
+    private var _createCartState: MutableStateFlow<Response<Pair<String, String>>> = MutableStateFlow(Response.Loading())
+    private var _orderCreateInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
     var orderCreateInfo: StateFlow<Response<Int>> = _orderCreateInfo
-    private val _addresses: MutableStateFlow<Response<ArrayList<Address>>> =
-        MutableStateFlow(Response.Loading())
+    private val _addresses: MutableStateFlow<Response<ArrayList<Address>>> = MutableStateFlow(Response.Loading())
     val addresses = _addresses.asStateFlow()
-    var currentOrder: Order = Order()
     var checkoutUrl = ""
     var cartId = ""
     var userToken = ""
@@ -60,9 +51,7 @@ class CartViewModel(
         _updateCartItemInfo.value = Response.Loading()
         viewModelScope.launch(dispatcher) {
             val response = remoteDataSource.updateCartLine<Int>(
-                cartId = cartId,
-                lineID = lineID,
-                quantity = quantity
+                cartId = cartId, lineID = lineID, quantity = quantity
             )
             when (response) {
                 is Response.Error -> _updateCartItemInfo.value = Response.Error(response.message)
@@ -103,15 +92,11 @@ class CartViewModel(
     }
 
     suspend fun createCartWithLines(
-        lines: List<CartLineInput>,
-        customerToken: String,
-        email: String
+        lines: List<CartLineInput>, customerToken: String, email: String
     ) {
         viewModelScope.launch(dispatcher) {
             val response = remoteDataSource.createCartWithLines<Pair<String, String>>(
-                lines,
-                customerToken,
-                email
+                lines, customerToken, email
             )
             when (response) {
                 is Response.Error -> {}
@@ -161,18 +146,18 @@ class CartViewModel(
 
     suspend fun fetchAddresses() {
         viewModelScope.launch(dispatcher) {
-            if (userToken.isNotEmpty()) _addresses.value =
-                remoteDataSource.fetchAddresses(userToken)
-            else _addresses.value = Response.Error("No token provided")
+            if (userToken.isNotEmpty()) _addresses.emit(remoteDataSource.fetchAddresses(userToken))
+            else _addresses.emit(Response.Error("No token provided"))
         }
     }
 
     suspend fun createOrder(orderRequest: OrderRequest) {
         viewModelScope.launch(dispatcher) {
             val response = remoteDataSource.createOrder(orderRequest)
+            _orderCreateInfo.emit(Response.Loading())
             when (response) {
-                0 -> _orderCreateInfo.value = Response.Error("error")
-                1 -> _orderCreateInfo.value = Response.Success(response)
+                0 -> _orderCreateInfo.emit(Response.Error("error"))
+                1 -> _orderCreateInfo.emit(Response.Success(response))
             }
 
         }

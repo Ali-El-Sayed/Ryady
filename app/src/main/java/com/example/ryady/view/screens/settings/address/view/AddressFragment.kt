@@ -1,11 +1,9 @@
 package com.example.ryady.view.screens.settings.address.view
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -16,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ryady.R
+import com.example.ryady.databinding.DeleteAlertDialogBinding
 import com.example.ryady.databinding.FragmentAddressBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -25,6 +24,7 @@ import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.settings.address.utils.SwipeToDeleteCallback
 import com.example.ryady.view.screens.settings.address.view.adapter.AddressListAdapter
 import com.example.ryady.view.screens.settings.address.viewModel.AddressViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import jp.wasabeef.recyclerview.animators.LandingAnimator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,7 +49,7 @@ class AddressFragment : Fragment() {
             }
         }
         binding.fabAddAddress.setOnClickListener {
-            findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCustomerDataFragment2())
+            findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCustomerDataFragment())
         }
 
 
@@ -113,21 +113,14 @@ class AddressFragment : Fragment() {
 
 
     private fun showDeleteDialog(addressId: String) {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.order_confirmation_dialog)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog.window?.setBackgroundDrawable(
+        val binding = DeleteAlertDialogBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).setCancelable(false).setBackground(
             AppCompatResources.getDrawable(
-                requireContext(),
-                R.drawable.verification_dialog_background
+                requireContext(), R.drawable.verification_dialog_background
             )
-        )
-        dialog.setCancelable(false)
-        val dialogBtnDelete: Button = dialog.findViewById(R.id.btn_delete)
-        val dialogBtnCancel: Button = dialog.findViewById(R.id.btn_cancel)
-        dialogBtnDelete.setOnClickListener {
+        ).create()
+
+        binding.btnDelete.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 launch {
                     viewModel.deleteAddress(addressId)
@@ -137,7 +130,7 @@ class AddressFragment : Fragment() {
             }
             dialog.dismiss()
         }
-        dialogBtnCancel.setOnClickListener {
+        binding.btnCancel.setOnClickListener {
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }

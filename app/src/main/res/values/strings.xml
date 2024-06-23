@@ -82,6 +82,7 @@
     <string name="verification_message">Please go to your Email and verify your Account after that Click Verified</string>
     <string name="verified">Verified</string>
     <string name="delete_confirmation">Delete Confirmation</string>
-    <string name="delete_message">Are you sure to delete this Product</string>
+    <string name="delete_message">You are about to delete this Item\n Are you sure ? </string>
+    <string name="add_new_address">Add New Address</string>
 
 </resources>

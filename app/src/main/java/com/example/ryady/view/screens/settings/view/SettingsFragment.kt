@@ -7,15 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.GetCustomerDataQuery
 import com.example.ryady.databinding.FragmentSettingsBinding
-import com.example.ryady.datasource.remote.RemoteDataSource
-import com.example.ryady.network.GraphqlClient
 import com.example.ryady.utils.readCountry
 import com.example.ryady.utils.readCurrency
 import com.example.ryady.utils.saveCart
@@ -23,9 +20,7 @@ import com.example.ryady.utils.saveCountry
 import com.example.ryady.utils.saveCurrency
 import com.example.ryady.utils.saveUserData
 import com.example.ryady.view.extensions.move
-import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.auth.AuthActivity
-import com.example.ryady.view.screens.settings.viewmodel.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,16 +28,6 @@ import kotlinx.coroutines.withContext
 class SettingsFragment : Fragment() {
 
     lateinit var binding: FragmentSettingsBinding
-
-    private val viewModel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
-        ViewModelProvider(this, factory)[SettingsViewModel::class.java]
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
