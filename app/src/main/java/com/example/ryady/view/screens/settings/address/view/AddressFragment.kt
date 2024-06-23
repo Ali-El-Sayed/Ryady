@@ -31,7 +31,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-private const val TAG = "AddressFragment"
 
 class AddressFragment : Fragment() {
     private val binding: FragmentAddressBinding by lazy { FragmentAddressBinding.inflate(layoutInflater) }

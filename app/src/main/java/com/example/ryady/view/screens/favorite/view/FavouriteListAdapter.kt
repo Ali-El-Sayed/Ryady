@@ -19,7 +19,9 @@ import com.getbase.floatingactionbutton.FloatingActionButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class FavouriteListAdapter(
-    private val listProduct: MutableList<Product>, private val listener: IFavouriteFragment, private val context: Context
+    private val listProduct: MutableList<Product>,
+    private val listener: IFavouriteFragment,
+    private val context: Context
 ) : RecyclerView.Adapter<FavouriteListAdapter.ViewHolder>() {
 
     lateinit var binding: FavouriteListItemBinding
@@ -37,16 +39,17 @@ class FavouriteListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tvTitle.text = listProduct[position].title
         val price = listProduct[position].maxPrice.toDouble()
-        val priceExchanged = price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-            TheExchangeRate.chosenCurrency.first
-        )!!)
+        val priceExchanged =
+            price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                TheExchangeRate.chosenCurrency.first
+            )!!)
 
         holder.tvPrice.text = priceExchanged.roundTo2DecimalPlaces().toString()
         holder.tvPriceCode.text = TheExchangeRate.chosenCurrency.first
         Glide.with(binding.root).load(listProduct[position].imageUrl).into(holder.ivProduct)
         holder.btnDelete.setOnClickListener {
             showDeleteDialog {
-                listener.deleteItem(listProduct[position].id)
+                listener.deleteItem(listProduct[position].id, listSize = listProduct.size - 1)
                 listProduct.removeAt(position)
                 notifyDataSetChanged()
             }
@@ -58,11 +61,12 @@ class FavouriteListAdapter(
 
     private fun showDeleteDialog(onDeleted: () -> Unit) {
         val binding = DeleteAlertDialogBinding.inflate(LayoutInflater.from(context))
-        val dialog = MaterialAlertDialogBuilder(context).setView(binding.root).setCancelable(false).setBackground(
-            AppCompatResources.getDrawable(
-                context, R.drawable.verification_dialog_background
-            )
-        ).create()
+        val dialog = MaterialAlertDialogBuilder(context).setView(binding.root).setCancelable(false)
+            .setBackground(
+                AppCompatResources.getDrawable(
+                    context, R.drawable.verification_dialog_background
+                )
+            ).create()
 
         binding.btnDelete.setOnClickListener {
             onDeleted()
@@ -72,7 +76,8 @@ class FavouriteListAdapter(
         dialog.show()
     }
 
-    inner class ViewHolder(binding: FavouriteListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: FavouriteListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         val tvTitle: TextView
         val tvPrice: TextView
         val ivProduct: ImageView

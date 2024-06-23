@@ -26,7 +26,8 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
     lateinit var binding: FragmentFavouriteBinding
     private lateinit var userEmail: String
     private val viewModel by lazy {
-        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory =
+            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[FavouriteViewModel::class.java]
     }
 
@@ -53,6 +54,7 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.frameLayout.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.productList.collectLatest {
                 withContext(Dispatchers.Main) {
@@ -60,8 +62,20 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
                         is Response.Error -> {}
                         is Response.Loading -> {}
                         is Response.Success -> {
-                            binding.rvFavouriteList.adapter =
-                                FavouriteListAdapter(it.data.toMutableList(), this@FavouriteFragment, requireContext())
+                            withContext(Dispatchers.Main) {
+                                binding.frameLayout.visibility = View.GONE
+                                if (it.data.isNotEmpty()){
+                                    binding.rvFavouriteList.adapter =
+                                        FavouriteListAdapter(
+                                            it.data.toMutableList(),
+                                            this@FavouriteFragment,
+                                            requireContext()
+                                        )
+                                }else{
+                                    binding.emptyImage.visibility = View.VISIBLE
+                                }
+
+                            }
                         }
                     }
                 }
@@ -69,12 +83,19 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
         }
     }
 
-    override fun deleteItem(itemId: String) {
+    override fun deleteItem(itemId: String , listSize : Int) {
+        if (listSize ==0){
+            binding.emptyImage.visibility = View.VISIBLE
+        }
         viewModel.deleteItem(userEmail, itemId)
     }
 
     override fun onItemClick(itemId: String) {
-        findNavController().navigate(FavouriteFragmentDirections.actionFavouriteFragmentToProductInfoFragment(itemId))
+        findNavController().navigate(
+            FavouriteFragmentDirections.actionFavouriteFragmentToProductInfoFragment(
+                itemId
+            )
+        )
     }
 
 }

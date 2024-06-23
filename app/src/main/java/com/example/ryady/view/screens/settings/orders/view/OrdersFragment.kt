@@ -92,6 +92,7 @@ class OrdersFragment : Fragment() {
             viewModel.selectedOrder = order
             val orderDetailsDialog = OrderDetailsDialog()
             orderDetailsDialog.isCancelable = false
+
             orderDetailsDialog.show(childFragmentManager, "offlineDialogFragment")
         }
         binding.orderList.adapter = adapter
