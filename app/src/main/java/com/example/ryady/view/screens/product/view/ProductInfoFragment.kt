@@ -26,6 +26,7 @@ import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.utils.readCart
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.utils.reviews
+import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -109,7 +110,6 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                         is Response.Success -> {
                             viewModel.searchForAnItem(email = email, itemId = id) { result ->
                                 isFavourite = result
-                                Log.i(TAG, "onCreate: $result")
                                 updateUi(it.data)
                             }
                         }
@@ -133,22 +133,25 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             }
         }
 
+
         binding.addToCart.setOnClickListener {
             if (token.isNotEmpty() || token.isNotBlank()) {
                 lifecycleScope.launch {
                     viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
                 }
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Please login first to add item to cart",
-                    Toast.LENGTH_LONG
-                ).show()
+                showRegisterDialog()
             }
         }
     }
 
-
+    private fun showRegisterDialog() {
+        val unRegisterDialogFragment = UnRegisterDialogFragment()
+        unRegisterDialogFragment.isCancelable = false
+        unRegisterDialogFragment.show(
+            parentFragmentManager, "unRegisterDialog"
+        )
+    }
     private fun updateUi(productInfo: ProductByIdQuery.Product) {
         variantId = productInfo.variants.edges.first().node.id
         variant = productInfo.variants
@@ -196,8 +199,6 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.tvRating.text = rating.toString()
         binding.rvReview.adapter = ReviewsAdapter(reviewList, requireContext())
 
-        Log.i(TAG, "updateUi: $isFavourite")
-
         if (isFavourite) {
             binding.btnFavourite.setIcon(R.drawable.favorite_fill)
         } else {
@@ -228,12 +229,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                     isFavourite = !isFavourite
                 }
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Please login first to add item to favourite",
-                    Toast.LENGTH_LONG
-                ).show()
-
+                showRegisterDialog()
             }
 
         }
