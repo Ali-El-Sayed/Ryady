@@ -67,16 +67,18 @@ class OrdersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.orders.collectLatest {
-                    when (it) {
-                        is Response.Error -> {}
-                        is Response.Loading -> toggleLoadingIndicator()
-                        is Response.Success -> {
-                            withContext(Dispatchers.Main) {
-                                if (it.data.isNotEmpty()) TheExchangeRate.currencyInfo.collectLatest { ex ->
-                                    if (ex == 1) adapter.submitList(it.data)
-                                    toggleLoadingIndicator()
+                    withContext(Dispatchers.Main){
+                        when (it) {
+                            is Response.Error -> {}
+                            is Response.Loading -> toggleLoadingIndicator()
+                            is Response.Success -> {
+                                withContext(Dispatchers.Main) {
+                                    if (it.data.isNotEmpty()) TheExchangeRate.currencyInfo.collectLatest { ex ->
+                                        if (ex == 1) adapter.submitList(it.data)
+                                        toggleLoadingIndicator()
+                                    }
+                                    else binding.imgNotFound.visibility = View.VISIBLE
                                 }
-                                else binding.imgNotFound.visibility = View.VISIBLE
                             }
                         }
                     }

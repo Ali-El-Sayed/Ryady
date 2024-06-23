@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ryady.R
+import com.example.ryady.databinding.DeleteAlertDialogBinding
 import com.example.ryady.databinding.FragmentAddressBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.network.GraphqlClient
@@ -26,6 +27,7 @@ import com.example.ryady.view.screens.settings.address.viewModel.AddressViewMode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import jp.wasabeef.recyclerview.animators.LandingAnimator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -47,7 +49,7 @@ class AddressFragment : Fragment() {
             }
         }
         binding.fabAddAddress.setOnClickListener {
-            findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCustomerDataFragment2())
+            findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToCustomerDataFragment())
         }
 
 
@@ -74,14 +76,12 @@ class AddressFragment : Fragment() {
                         is Response.Success -> {
                             binding.frameLayout.visibility = View.GONE
                             binding.imgNotFound.visibility = if (it.data.isEmpty()) View.VISIBLE else View.GONE
-                            binding.addressList.itemAnimator = LandingAnimator()
                             adapter.submitList(it.data)
                         }
 
                         is Response.Error -> {
                             binding.imgNotFound.visibility = View.GONE
                             binding.frameLayout.visibility = View.GONE
-                            // Handle error
                         }
                     }
                 }
@@ -92,6 +92,7 @@ class AddressFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = AddressListAdapter()
+        binding.addressList.itemAnimator = LandingAnimator()
         binding.addressList.adapter = adapter
     }
 
@@ -101,29 +102,38 @@ class AddressFragment : Fragment() {
                 val position = viewHolder.bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION && position < adapter.currentList.size) {
                     val address = adapter.currentList[position]
-                    MaterialAlertDialogBuilder(requireContext()).setBackground(
-                        ResourcesCompat.getDrawable(
-                            requireContext().resources, R.drawable.delete_dialog_background, requireContext().theme
-                        )
-                    )
-                        .setTitle("Delete Address")
-                        .setMessage("Are you sure you want to delete this address?")
-                        .setPositiveButton("Yes") { dialog, which ->
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                viewModel.deleteAddress(address.id)
-                            }
-                        }
-                        .setNegativeButton("No") { dialog, which ->
-                            adapter.notifyDataSetChanged()
-                            dialog.dismiss()
-                        }
-                        .create()
-                        .show()
+                    showDeleteDialog(address.id)
                 }
             }
         }
 
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(binding.addressList)
+    }
+
+
+    private fun showDeleteDialog(addressId: String) {
+        val binding = DeleteAlertDialogBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).setCancelable(false).setBackground(
+            AppCompatResources.getDrawable(
+                requireContext(), R.drawable.verification_dialog_background
+            )
+        ).create()
+
+        binding.btnDelete.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                launch {
+                    viewModel.deleteAddress(addressId)
+                    delay(500)
+                    viewModel.fetchAddresses()
+                }
+            }
+            dialog.dismiss()
+        }
+        binding.btnCancel.setOnClickListener {
+            adapter.notifyDataSetChanged()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }

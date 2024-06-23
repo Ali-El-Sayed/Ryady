@@ -26,9 +26,7 @@ import com.example.ryady.network.GraphqlClient
 import com.example.ryady.network.model.Response
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
-import com.example.ryady.view.extensions.move
 import com.example.ryady.view.factory.ViewModelFactory
-import com.example.ryady.view.screens.cart.OrderActivity
 import com.example.ryady.view.screens.home.adapters.BrandsAdapter
 import com.example.ryady.view.screens.home.adapters.CarouselAdapter
 import com.example.ryady.view.screens.home.adapters.ProductsAdapter
@@ -48,8 +46,7 @@ private const val TAG = "HomeScreen"
 class HomeScreen : Fragment() {
     private val binding by lazy { FragmentHomeScreenBinding.inflate(layoutInflater) }
     private val viewmodel by lazy {
-        val factory =
-            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[HomeViewModel::class.java]
     }
 
@@ -67,8 +64,7 @@ class HomeScreen : Fragment() {
                     readCustomerData(requireContext()) { map ->
                         userToken = map["user token"] ?: ""
                         val userName = map["user name"] ?: "Guest"
-                        binding.topAppBar.subtitle =
-                            if (userToken.isEmpty()) "Guest" else userName.capitalize()
+                        binding.topAppBar.subtitle = if (userToken.isEmpty()) "Guest" else userName.capitalize()
                     }
                 }
                 TheExchangeRate.currencyInfo.collectLatest {
@@ -78,30 +74,45 @@ class HomeScreen : Fragment() {
                 }
             }
         }
-        binding.topAppBar.setOnMenuItemClickListener {
-            if (userToken.isNotEmpty()) when (it.itemId) {
-                R.id.favouriteFragment -> {
-                    findNavController().navigate(HomeScreenDirections.actionHomeScreenToFavouriteFragment())
-                    true
-                }
-
-                R.id.shopping_cart -> {
-                    requireActivity().move(requireContext(), OrderActivity::class.java)
-                    true
-                }
-
-                R.id.settings -> {
-                    findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
-                    true
-                }
-
-                else -> true
-            }
-            else {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            // Check if the user token is not empty
+            if (userToken.isNotEmpty())
+            // Handle navigation based on the selected menu item
+                handleNavigation(menuItem.itemId)
+            else
+            // Show the registration dialog if the user token is empty
                 showRegisterDialog()
-                true
+            // Return true to indicate the click was handled
+            true
+        }
+    }
+
+    /**
+     * Handle navigation based on the selected menu item ID.
+     *
+     * @param itemId The ID of the selected menu item.
+     */
+    private fun handleNavigation(itemId: Int) {
+        when (itemId) {
+            R.id.favouriteFragment -> navigateToFavouriteFragment()
+            R.id.shopping_cart -> navigateToCartFragment()
+            R.id.settings -> navigateToSettingsFragment()
+            else -> {
+                // Handle any other menu items if necessary
             }
         }
+    }
+
+    private fun navigateToFavouriteFragment() {
+        findNavController().navigate(HomeScreenDirections.actionHomeScreenToFavouriteFragment())
+    }
+
+    private fun navigateToCartFragment() {
+        findNavController().navigate(HomeScreenDirections.actionHomeScreenToCartFragment())
+    }
+
+    private fun navigateToSettingsFragment() {
+        findNavController().navigate(HomeScreenDirections.actionHomeScreenToSettingsFragment())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,8 +127,7 @@ class HomeScreen : Fragment() {
         binding.addImageSlider.setItemClickListener(itemClickListener = object : ItemClickListener {
             override fun doubleClick(position: Int) {}
             override fun onItemSelected(position: Int) {
-                val clipboard: ClipboardManager? =
-                    getSystemService(requireContext(), ClipboardManager::class.java)
+                val clipboard: ClipboardManager? = getSystemService(requireContext(), ClipboardManager::class.java)
                 val clip = ClipData.newPlainText("label", "Eid24")
                 clipboard?.setPrimaryClip(clip)
                 Toast.makeText(requireContext(), "voucher copied", Toast.LENGTH_SHORT).show()
@@ -148,14 +158,13 @@ class HomeScreen : Fragment() {
                             LinearLayoutManager.HORIZONTAL,
                             false,
                         )
-                        binding.brandsRv.adapter =
-                            ScaleInAnimationAdapter(BrandsAdapter(it.data) { id ->
-                                findNavController().navigate(
-                                    HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(
-                                        brandId = id
-                                    )
+                        binding.brandsRv.adapter = ScaleInAnimationAdapter(BrandsAdapter(it.data) { id ->
+                            findNavController().navigate(
+                                HomeScreenDirections.actionHomeScreenToProductsByBrandFragment(
+                                    brandId = id
                                 )
-                            })
+                            )
+                        })
                     }
                 }
 
@@ -182,8 +191,7 @@ class HomeScreen : Fragment() {
                 }
 
                 is Response.Success -> {
-                    binding.productsRv.layoutManager =
-                        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    binding.productsRv.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                     binding.productsRv.adapter = ProductsAdapter(it.data) { id ->
                         findNavController().navigate(
                             HomeScreenDirections.actionHomeScreenToProductInfoFragment(

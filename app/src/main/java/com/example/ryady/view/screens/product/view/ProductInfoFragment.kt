@@ -25,6 +25,7 @@ import com.example.ryady.network.model.Response
 import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.utils.readCart
 import com.example.ryady.utils.readCustomerData
+import com.example.ryady.utils.reviews
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -33,10 +34,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 private const val TAG = "ProductInfoFragment"
 
-class ProductInfoFragment : Fragment() , IProductInfo {
+class ProductInfoFragment : Fragment(), IProductInfo {
 
     lateinit var binding: FragmentProductInfoBinding
     private var variantId = ""
@@ -70,7 +73,6 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         }
 
         id = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
-        Log.i(TAG, "onCreate Id: $id")
         lifecycleScope.launch {
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -78,11 +80,7 @@ class ProductInfoFragment : Fragment() , IProductInfo {
                     email = it["user email"].toString()
                     token = it["user token"] ?: ""
                     viewModel.fetchProductById(id)
-                    viewModel.searchForAnItem(email = email, itemId = id) {
-                        isFavourite = it
-                    }
                 }
-
             }
         }
     }
@@ -109,9 +107,11 @@ class ProductInfoFragment : Fragment() , IProductInfo {
                         }
 
                         is Response.Success -> {
-
-
-                            updateUi(it.data)
+                            viewModel.searchForAnItem(email = email, itemId = id) { result ->
+                                isFavourite = result
+                                Log.i(TAG, "onCreate: $result")
+                                updateUi(it.data)
+                            }
                         }
                     }
                 }
@@ -167,11 +167,11 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         val price = productInfo.priceRange.maxVariantPrice.amount.toString().toDouble()
         val priceExchanged =
             price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.choosedCurrency.first
+                TheExchangeRate.chosenCurrency.first
             )!!)
 
         binding.price.text = priceExchanged.roundTo2DecimalPlaces().toString()
-        binding.priceUnit.text = TheExchangeRate.choosedCurrency.first
+        binding.priceUnit.text = TheExchangeRate.chosenCurrency.first
 
         binding.imageSlider.setImageList(productImagesUrl)
 
@@ -187,13 +187,23 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         checkEmptyInStock(0)
 
 
+        val reviewsLayoutManager = LinearLayoutManager(requireContext())
+        reviewsLayoutManager.orientation = RecyclerView.VERTICAL
+        binding.rvReview.layoutManager = reviewsLayoutManager
+        val reviewList = reviews.shuffled().take(3)
+        var rating = reviewList.sumOf { it.rating }.toFloat() / 3
+        rating = BigDecimal(rating.toDouble()).setScale(1, RoundingMode.HALF_EVEN).toFloat()
+        binding.tvRating.text = rating.toString()
+        binding.rvReview.adapter = ReviewsAdapter(reviewList, requireContext())
+
+        Log.i(TAG, "updateUi: $isFavourite")
 
         if (isFavourite) {
             binding.btnFavourite.setIcon(R.drawable.favorite_fill)
         } else {
             binding.btnFavourite.setIcon(R.drawable.favorite)
         }
-        binding.sizeList.adapter = SizeAdapter(sizeList.toList(),this)
+        binding.sizeList.adapter = SizeAdapter(sizeList.toList(), this)
 
         binding.btnFavourite.setOnClickListener {
             if (token.isNotEmpty() || token.isNotBlank()) {
@@ -237,7 +247,7 @@ class ProductInfoFragment : Fragment() , IProductInfo {
         checkEmptyInStock(itemIndex)
     }
 
-    private fun checkEmptyInStock(variantIndex:Int){
+    private fun checkEmptyInStock(variantIndex: Int) {
         if ((variant.edges[variantIndex].node.quantityAvailable ?: 0) <= 0) {
             binding.addToCart.text = "Sold Out"
             binding.addToCart.setTextColor(
@@ -253,7 +263,7 @@ class ProductInfoFragment : Fragment() , IProductInfo {
                 )
             )
             binding.addToCart.isEnabled = false
-        }else{
+        } else {
             binding.addToCart.text = "Add to Cart"
             binding.addToCart.setTextColor(
                 resources.getColor(

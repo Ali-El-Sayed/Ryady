@@ -28,7 +28,7 @@ class CartAdapter(
     private val viewModel: CartViewModel,
     private val passedScope: CoroutineScope,
     private val context: Context,
-    private val onMerchandiseClick: (id: String) -> Unit
+    private val onMerchandiseClick: (id: String) -> Unit = {}
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -140,14 +140,11 @@ class CartAdapter(
             binding.textCount.visibility = View.VISIBLE
             binding.animationView.visibility = View.GONE
             val total = node.cost.totalAmount.amount.toString().toDouble()
-            val totalExchanged =
-                total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                    TheExchangeRate.choosedCurrency.first
-                )!!)
+            val totalExchanged = total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+                TheExchangeRate.chosenCurrency.first
+            )!!)
 
-            val priceText = "${
-                totalExchanged.roundTo2DecimalPlaces().toString()
-            } ${TheExchangeRate.choosedCurrency.first}"
+            val priceText = "${totalExchanged.roundTo2DecimalPlaces().toString()} ${TheExchangeRate.chosenCurrency.first}"
             binding.price.text = priceText
             binding.imageView.load(node.merchandise.onProductVariant?.image?.src) {
                 crossfade(true)

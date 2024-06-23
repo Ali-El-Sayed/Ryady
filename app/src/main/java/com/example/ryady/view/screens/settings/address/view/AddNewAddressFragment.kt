@@ -156,31 +156,45 @@ class AddNewAddressFragment : Fragment() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @SuppressLint("MissingPermission")
     suspend fun getLocationFromCoordinates(context: Context, latitude: Double, longitude: Double) {
         val geocoder = Geocoder(context, Locale.getDefault())
         try {
-            geocoder.getFromLocation(latitude, longitude, 1) {
-                lifecycleScope.launch {
-                    try {
-                        if (it.size > 0) {
-                            address = it[0]
-                            val locationName = address?.getAddressLine(0) ?: ""
-                            withContext(Dispatchers.Main) {
-                                binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
-                                binding.etPostalCode.text = Factory.getInstance().newEditable(address?.postalCode ?: "")
-                                binding.etCountry.text = Factory.getInstance().newEditable(address?.countryName ?: "")
-                                binding.etCustomerCity.text = Factory.getInstance().newEditable(address?.adminArea ?: "")
-                                toggleLoadingIndicator()
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Toast.makeText(requireActivity(), "Try Again", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) geocoder.getFromLocation(latitude, longitude, 1) {
+                handleGeocoderResult(it)
             }
+            else withContext(Dispatchers.IO) {
+                geocoder.getFromLocation(latitude, longitude, 1)?.let {
+                    withContext(Dispatchers.Main) { handleGeocoderResult(it) }
+                }
+
+            }
+
         } catch (e: IOException) {
             e.printStackTrace()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun handleGeocoderResult(addresses: List<Address>) {
+        lifecycleScope.launch {
+            try {
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    val locationName = address.getAddressLine(0) ?: ""
+                    withContext(Dispatchers.Main) {
+                        binding.etCustomerLocation.text = Factory.getInstance().newEditable(locationName)
+                        binding.etPostalCode.text = Factory.getInstance().newEditable(address.postalCode ?: "")
+                        binding.etCountry.text = Factory.getInstance().newEditable(address.countryName ?: "")
+                        binding.etCustomerCity.text = Factory.getInstance().newEditable(address.adminArea ?: "")
+                        toggleLoadingIndicator()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireActivity(), "Try Again", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

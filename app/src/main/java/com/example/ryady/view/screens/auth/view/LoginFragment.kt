@@ -37,8 +37,7 @@ class LoginFragment : Fragment() {
     private val binding: FragmentLoginBinding by lazy { FragmentLoginBinding.inflate(layoutInflater) }
     private lateinit var customerInput: CustomerAccessTokenCreateInput
     private val viewModel: LoginViewModel by lazy {
-        val factory =
-            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[LoginViewModel::class.java]
     }
 
@@ -80,23 +79,17 @@ class LoginFragment : Fragment() {
                             when (customerResponse) {
                                 is Response.Error -> {
                                     Toast.makeText(
-                                        requireContext(),
-                                        customerResponse.message,
-                                        Toast.LENGTH_LONG
+                                        requireContext(), customerResponse.message, Toast.LENGTH_LONG
                                     ).show()
 
                                     binding.frameLayout.visibility = View.GONE
                                 }
 
-                                is Response.Loading -> {
-
-                                }
+                                is Response.Loading -> {}
 
                                 is Response.Success -> {
                                     saveUserData(
-                                        context = requireContext(),
-                                        customer = customerResponse.data,
-                                        customerToken = it.data
+                                        context = requireContext(), customer = customerResponse.data, customerToken = it.data
                                     )
 
                                     val database =
@@ -107,8 +100,7 @@ class LoginFragment : Fragment() {
                                         encodeEmail(
                                             customerResponse.data.email ?: ""
                                         )
-                                    ).addListenerForSingleValueEvent(object :
-                                        ValueEventListener {
+                                    ).addListenerForSingleValueEvent(object : ValueEventListener {
                                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                                             if (dataSnapshot.exists()) {
                                                 val customerCartData = dataSnapshot.getValue(
@@ -122,21 +114,17 @@ class LoginFragment : Fragment() {
                                                     )
                                                     withContext(Dispatchers.IO) {
                                                         requireActivity().move(
-                                                            requireContext(),
-                                                            MainActivity::class.java
+                                                            requireContext(), MainActivity::class.java
                                                         )
                                                         requireActivity().finish()
                                                     }
                                                 }
-                                                println("Cart ID: ${customerCartData?.cartId}")
-                                                println("Checkout URL: ${customerCartData?.checkoutUrl}")
-                                            } else {
-                                                println("No data found for the email:")
+
                                             }
                                         }
 
                                         override fun onCancelled(databaseError: DatabaseError) {
-                                            println("Error reading data: ${databaseError.message}")
+                                         
                                         }
                                     })
 
@@ -155,8 +143,7 @@ class LoginFragment : Fragment() {
         }
         binding.btnGust.setOnClickListener {
             requireActivity().move(
-                requireContext(),
-                MainActivity::class.java
+                requireContext(), MainActivity::class.java
             )
             requireActivity().finish()
         }

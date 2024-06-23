@@ -1,6 +1,5 @@
 package com.example.ryady.view.screens.search.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -13,7 +12,6 @@ import com.example.ryady.databinding.SearchListItemBinding
 import com.example.ryady.model.extensions.roundTo2DecimalPlaces
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 
-private const val TAG = "SearchProductItemAdapter"
 
 class SearchProductItemAdapter(
     private var searchList: List<SearchProductsQuery.Edge>, private val listener: onSearchItemClick
@@ -38,18 +36,17 @@ class SearchProductItemAdapter(
             holder.tvTitle.text = product.title
 
             val price = product.variants.edges.first().node.price.amount.toString().toDouble()
-            val priceExchanged = price/(TheExchangeRate.currency.rates?.get("EGP")!!)*(TheExchangeRate.currency.rates?.get(TheExchangeRate.choosedCurrency.first)!!)
+            val priceExchanged =
+                price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(TheExchangeRate.chosenCurrency.first)!!)
 
 
             holder.tvPriceAmount.text = priceExchanged.roundTo2DecimalPlaces().toString()
-            holder.tvPriceCode.text = TheExchangeRate.choosedCurrency.first
+            holder.tvPriceCode.text = TheExchangeRate.chosenCurrency.first
         }
 
         holder.cardItem.setOnClickListener {
-            Log.i(TAG, "onBindViewHolder: ")
             searchList[position].node.onProduct?.id?.let { it1 -> listener.onItemClick(it1) }
         }
-
 
     }
 

@@ -9,11 +9,10 @@ import retrofit2.http.Query
 interface CurrencyService {
 
     @GET("v2.0/rates/latest")
-    suspend fun getExchangerate(
+    suspend fun getExchangeRate(
         @Query("apikey") apiKey: String = "0afb7b270c1c42a2b2c1a4656585dbc7"
     ): Response<Currency>
 
     @GET("v2.0/currency-symbols")
-    suspend fun getAllCurrencies():Response<Symbols>
-
+    suspend fun getAllCurrencies(): Response<Symbols>
 }

@@ -22,15 +22,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "FavouriteFragment"
-
 class FavouriteFragment : Fragment(), IFavouriteFragment {
     lateinit var binding: FragmentFavouriteBinding
-    lateinit var userEmail: String
+    private lateinit var userEmail: String
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[FavouriteViewModel::class.java]
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -48,7 +47,6 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
                     userEmail = it["user email"].toString()
                     viewModel.getAllFavouriteProduct(userEmail)
                 }
-
             }
         }
     }
@@ -78,6 +76,5 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
     override fun onItemClick(itemId: String) {
         findNavController().navigate(FavouriteFragmentDirections.actionFavouriteFragmentToProductInfoFragment(itemId))
     }
-
 
 }

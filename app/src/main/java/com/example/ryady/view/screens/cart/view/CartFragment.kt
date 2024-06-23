@@ -1,5 +1,6 @@
 package com.example.ryady.view.screens.cart.view
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -7,14 +8,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo3.api.Optional
 import com.example.RetrieveCartQuery
 import com.example.ryady.R
+import com.example.ryady.databinding.AddAddressDialogBinding
 import com.example.ryady.databinding.FragmentCartBinding
 import com.example.ryady.datasource.remote.RemoteDataSource
 import com.example.ryady.model.Address
@@ -33,12 +38,15 @@ import com.example.ryady.view.screens.cart.ShippingAddress
 import com.example.ryady.view.screens.cart.viewModel.CartViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
 import com.example.type.CartLineInput
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.shopify.checkoutsheetkit.CheckoutException
 import com.shopify.checkoutsheetkit.DefaultCheckoutEventProcessor
 import com.shopify.checkoutsheetkit.ShopifyCheckoutSheetKit
 import com.shopify.checkoutsheetkit.lifecycleevents.CheckoutCompletedEvent
 import com.skydoves.powerspinner.IconSpinnerAdapter
 import com.skydoves.powerspinner.IconSpinnerItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -46,19 +54,17 @@ class CartFragment : Fragment() {
 
     private val binding: FragmentCartBinding by lazy { FragmentCartBinding.inflate(layoutInflater) }
     private var oneTimer = 0
-    private var isCash = false
     lateinit var lines: List<CartLineInput>
     private var nList: ArrayList<RetrieveCartQuery.Node> = ArrayList()
     lateinit var buyer: RetrieveCartQuery.BuyerIdentity
     private var total: Double = 0.0
     private var taxes: Int = 0
-    var discountCodes: ArrayList<DiscountCodes> = ArrayList()
+    private var discountCodes: ArrayList<DiscountCodes> = ArrayList()
     private lateinit var cartAdapter: CartAdapter
     private val viewModel by lazy {
-        val factory =
-            ViewModelFactory(
-                RemoteDataSource.getInstance(client = GraphqlClient.apiService)
-            )
+        val factory = ViewModelFactory(
+            RemoteDataSource.getInstance(client = GraphqlClient.apiService)
+        )
         ViewModelProvider(this, factory)[CartViewModel::class.java]
     }
     var preLines = ArrayList<CartLineInput>()
@@ -67,7 +73,7 @@ class CartFragment : Fragment() {
             override fun onCheckoutCanceled() {
                 if (oneTimer == 1) {
                     oneTimer = 0
-                    requireActivity().finish()
+                    findNavController().navigateUp()
                 } else {
                     preLines.clear()
                     nList.forEach {
@@ -106,43 +112,39 @@ class CartFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         lifecycleScope.launch {
-            viewModel.cartInfo.collectLatest { result ->
-                when (result) {
-                    is Response.Error -> {}
-                    is Response.Loading -> {}
-                    is Response.Success -> {
-                        nList.clear()
-                        result.data.lines.edges.forEach { nList.add(it.node) }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.cartInfo.collectLatest { result ->
+                    when (result) {
+                        is Response.Error -> {}
+                        is Response.Loading -> {}
+                        is Response.Success -> {
+                            nList.clear()
+                            result.data.lines.edges.forEach { nList.add(it.node) }
+                        }
                     }
                 }
             }
         }
         lifecycleScope.launch {
-            readCart(requireContext()) { map ->
-                viewModel.cartId = map["cart id"] ?: "no cart"
-                viewModel.checkoutUrl = map["checkout url"] ?: "no check check"
-                lifecycleScope.launch {
-                    viewModel.fetchCartById()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                readCart(requireContext()) { map ->
+                    viewModel.cartId = map["cart id"] ?: "no cart"
+                    viewModel.checkoutUrl = map["checkout url"] ?: "no check check"
+                    lifecycleScope.launch { viewModel.fetchCartById() }
                 }
             }
         }
         lifecycleScope.launch {
-            readCustomerData(requireContext()) { map ->
-                viewModel.email = map["user email"] ?: "no email"
-                viewModel.userToken = map["user token"] ?: "no token"
-                launch {
-                    viewModel.fetchAddresses()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                readCustomerData(requireContext()) { map ->
+                    viewModel.email = map["user email"] ?: "no email"
+                    viewModel.userToken = map["user token"] ?: "no token"
+                    launch { viewModel.fetchAddresses() }
                 }
-
             }
-
         }
-
-
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -155,14 +157,8 @@ class CartFragment : Fragment() {
             viewModel = viewModel,
             passedScope = lifecycleScope,
             context = requireContext(),
-        ) {
-            // the onclick procedure
-        }
+        )
         binding.cartRecycler.adapter = cartAdapter
-
-
-        //listen to address
-
 
         // Payment Method Spinner
         binding.spinner.apply {
@@ -170,12 +166,9 @@ class CartFragment : Fragment() {
             setItems(
                 arrayListOf(
                     IconSpinnerItem(
-                        text = context.getString(R.string.cash_on_delivery),
-                        iconRes = R.drawable.ic_cash_on_delivery
-                    ),
-                    IconSpinnerItem(
-                        text = context.getString(R.string.credit_card),
-                        iconRes = R.drawable.ic_credit_card
+                        text = context.getString(R.string.cash_on_delivery), iconRes = R.drawable.ic_cash_on_delivery
+                    ), IconSpinnerItem(
+                        text = context.getString(R.string.credit_card), iconRes = R.drawable.ic_credit_card
                     )
                 )
             )
@@ -184,32 +177,30 @@ class CartFragment : Fragment() {
             lifecycleOwner = lifecycleOwner
         }
 
-
-
-
         lifecycleScope.launch {
             viewModel.orderCreateInfo.collectLatest { result ->
                 when (result) {
-                    is Response.Error -> {}
-                    is Response.Loading -> {}
-                    is Response.Success -> {
-                        // show order completed dialog
-                        var idList: ArrayList<String> = ArrayList()
-                        nList.forEach {
-                            idList.add(it.id)
+                    is Response.Success -> lifecycleScope.launch {
+                        // Show order confirmation dialog
+                        launch(Dispatchers.Main) {
+                            toggleLoadingIndicator()
+                            val dialog = showOrderConfirmationDialog()
+                            delay(2000)
+                            dialog.dismiss()
+                            findNavController().navigateUp()
                         }
-                        viewModel.deleteCartLine(
-                            viewModel.cartId,
-                            lineID = idList
-                        )
-                        requireActivity().finish()
-                        Toast.makeText(requireContext(), "Order Completed", Toast.LENGTH_LONG)
-                            .show()
+                        // Delete cart items
+                        launch {
+                            val idList: ArrayList<String> = ArrayList()
+                            nList.forEach { idList.add(it.id) }
+                            viewModel.deleteCartLine(viewModel.cartId, lineID = idList)
+                        }
                     }
+
+                    else -> {}
                 }
             }
         }
-
 
         lifecycleScope.launch {
             viewModel.cartInfo.collectLatest { result ->
@@ -227,20 +218,14 @@ class CartFragment : Fragment() {
                         }
                         if (nList.isEmpty()) {
                             binding.button.setBackgroundColor(
-                                resources.getColor(
-                                    R.color.Gray,
-                                    requireContext().theme
-                                )
+                                resources.getColor(R.color.Gray, requireContext().theme)
                             )
                             binding.button.text = "Add items to proceed"
                             binding.button.isEnabled = false
                             binding.emptyImage.visibility = View.VISIBLE
                         } else {
                             binding.button.setBackgroundColor(
-                                resources.getColor(
-                                    R.color.secondary,
-                                    requireContext().theme
-                                )
+                                resources.getColor(R.color.secondary, requireContext().theme)
                             )
                             binding.button.text = "Proceed to Payment"
                             binding.button.isEnabled = true
@@ -249,30 +234,26 @@ class CartFragment : Fragment() {
                         }
                         viewModel.checkoutUrl = result.data.checkoutUrl.toString()
                         taxes = ((result.data.cost.totalAmount.amount.toString()
-                            .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString()
-                            .toDouble()) * 100).toInt()
+                            .toDouble() - result.data.cost.checkoutChargeAmount.amount.toString().toDouble()) * 100).toInt()
 
                         buyer = result.data.buyerIdentity
                         total = result.data.cost.totalAmount.amount.toString().toDouble()
                         val totalExchanged =
                             total / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
-                        binding.totalPrice.text = totalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
+                        binding.totalPrice.text =
+                            totalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.chosenCurrency.first
 
-                        val subtotal =
-                            result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
+                        val subtotal = result.data.cost.checkoutChargeAmount.amount.toString().toDouble()
                         val subtotalExchanged =
                             subtotal / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                                TheExchangeRate.choosedCurrency.first
+                                TheExchangeRate.chosenCurrency.first
                             )!!)
 
-                        binding.subtotalPrice.text = subtotalExchanged.roundTo2DecimalPlaces()
-                            .toString() + " " + TheExchangeRate.choosedCurrency.first
-                        binding.tax.text =
-                            (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces()
-                                .toString()
+                        binding.subtotalPrice.text =
+                            subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.chosenCurrency.first
+                        binding.tax.text = (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces().toString()
                         cartAdapter.updateList(nList)
                         binding.topConstraint.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
@@ -304,57 +285,80 @@ class CartFragment : Fragment() {
 
         binding.button.setOnClickListener {
             if (binding.spinner.selectedIndex == 0) {
-                var add = viewModel.addresses.value as Response.Success
-                if (add.data.isEmpty()) {
-                    Toast.makeText(requireContext(), "add an address", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    var lineItemsarr = ArrayList<LineItems>()
+                val add = viewModel.addresses.value as Response.Success
+                // check if user has an address
+                if (add.data.isEmpty()) showAddAddressDialog()
+                else {
+                    val linesItem = ArrayList<LineItems>()
                     nList.forEach { line ->
-                        lineItemsarr.add(
+                        linesItem.add(
                             LineItems(
                                 variantId = extractNumberFromGid(
                                     line.merchandise.onProductVariant?.id ?: ""
-                                ),
-                                quantity = line.quantity
+                                ), quantity = line.quantity
                             )
                         )
                     }
+                    // add discount code
                     val possibleVoucher = getTextFromClipboard(requireContext())
-                    if (possibleVoucher != null && possibleVoucher == "Eid24") {
-                        discountCodes.add(DiscountCodes(code = possibleVoucher))
-                    }
+                    if (possibleVoucher != null && possibleVoucher == "Eid24") discountCodes.add(DiscountCodes(code = possibleVoucher))
 
-                    var order = Order(
-                        lineItems = lineItemsarr,
+                    val order = Order(
+                        lineItems = linesItem,
                         email = viewModel.email,
                         billingAddress = convertToShippingAddress(add.data.first()),
                         shippingAddress = convertToShippingAddress(add.data.first()),
                         discountCodes = discountCodes
                     )
-                    var orderRequest = OrderRequest(order = order)
-                    lifecycleScope.launch {
-                        viewModel.createOrder(orderRequest = orderRequest)
-                    }
+                    toggleLoadingIndicator()
+                    lifecycleScope.launch { viewModel.createOrder(OrderRequest(order = order)) }
                 }
-            } else {
-                ShopifyCheckoutSheetKit.present(
-                    viewModel.checkoutUrl, requireActivity(), checkoutEventProcessors
-                )
-            }
-
+            } else ShopifyCheckoutSheetKit.present(
+                viewModel.checkoutUrl, requireActivity(), checkoutEventProcessors
+            )
         }
-
     }
 
-    fun extractNumberFromGid(gid: String): Long {
+    private fun extractNumberFromGid(gid: String): Long {
         val regex = """(\d+)$""".toRegex()
         val matchResult = regex.find(gid)
-        return matchResult?.value?.toLong()
-            ?: throw IllegalArgumentException("No number found in the provided gid")
+        return matchResult?.value?.toLong() ?: throw IllegalArgumentException("No number found in the provided gid")
     }
 
-    fun convertToShippingAddress(address: Address): ShippingAddress {
+    private fun showOrderConfirmationDialog(): Dialog {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.order_confirmation_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(
+            AppCompatResources.getDrawable(
+                requireContext(), R.drawable.verification_dialog_background
+            )
+        )
+        dialog.setCancelable(false)
+        dialog.show()
+        return dialog
+    }
+
+    private fun showAddAddressDialog() {
+        val binding = AddAddressDialogBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).setCancelable(false).setBackground(
+                AppCompatResources.getDrawable(
+                    requireContext(), R.drawable.verification_dialog_background
+                )
+            ).create()
+
+        dialog.setCancelable(false)
+        binding.btnAddAddress.setOnClickListener {
+            findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
+            dialog.dismiss()
+        }
+        binding.btnCancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
+
+    private fun convertToShippingAddress(address: Address): ShippingAddress {
         return ShippingAddress(
             firstName = address.firstName,
             lastName = address.lastName,
@@ -367,7 +371,7 @@ class CartFragment : Fragment() {
         )
     }
 
-    fun getTextFromClipboard(context: Context): String? {
+    private fun getTextFromClipboard(context: Context): String? {
         // Get the clipboard manager service
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
@@ -386,5 +390,9 @@ class CartFragment : Fragment() {
 
         // Return null if no data is available
         return null
+    }
+
+    private fun toggleLoadingIndicator() {
+        binding.frameLayout.visibility = if (binding.frameLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 }

@@ -1,10 +1,11 @@
 package com.example.ryady.view.screens.auth.view
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,7 +26,6 @@ import com.example.ryady.view.screens.auth.viewModel.LoginViewModel
 import com.example.ryady.view.screens.home.MainActivity
 import com.example.type.CustomerAccessTokenCreateInput
 import com.example.type.CustomerCreateInput
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val TAG = "SingUpFragment"
 
 class SingUpFragment : Fragment() {
 
@@ -41,6 +42,10 @@ class SingUpFragment : Fragment() {
             layoutInflater
         )
     }
+
+    private lateinit var dialog: Dialog
+    private lateinit var dialogBtnVerification: Button
+    private lateinit var dialogBtnCancel: Button
     private var email = ""
     private val viewModel: LoginViewModel by lazy {
         val factory =
@@ -55,6 +60,7 @@ class SingUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeVerificationDialog()
         binding.btnSignUp.setOnClickListener {
             if (checkIsEmpty()) {
                 showErrorMessage()
@@ -65,6 +71,7 @@ class SingUpFragment : Fragment() {
                 viewModel.createAccountFirebase(customer)
                 showVerificationAlert(customer)
             }
+
 
         }
 
@@ -131,7 +138,11 @@ class SingUpFragment : Fragment() {
                         is Response.Error -> {
                             withContext(Dispatchers.Main) {
 
-                                Snackbar.make(binding.root,"Please Verify Your Account ",Snackbar.ANIMATION_MODE_SLIDE).show()
+                                Snackbar.make(
+                                    binding.root,
+                                    "Please Verify Your Account ",
+                                    Snackbar.ANIMATION_MODE_SLIDE
+                                ).show()
 
                             }
                         }
@@ -213,38 +224,43 @@ class SingUpFragment : Fragment() {
 
     }
 
+    private fun initializeVerificationDialog(){
+        dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.verification_dialog)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(requireContext().getDrawable(R.drawable.verification_dialog_background))
+        dialog.setCancelable(false)
 
+        dialogBtnVerification = dialog.findViewById(R.id.btn_verification)
+        dialogBtnCancel = dialog.findViewById(R.id.btn_cancel)
+
+        dialogBtnVerification.setOnClickListener {
+            viewModel.checkVerification(customer) {
+                binding.frameLayout.visibility = View.VISIBLE
+                if (it) {
+                    viewModel.createAccount(customer)
+                    dialog.dismiss()
+                } else {
+                    showVerificationAlert(customer)
+                    Snackbar.make(
+                        requireView(),
+                        "Please Verify Your Account and try Again",
+                        Snackbar.ANIMATION_MODE_SLIDE
+                    ).show()
+                }
+            }
+        }
+        dialogBtnCancel.setOnClickListener {
+            dialog.dismiss()
+
+        }
+    }
     private fun showVerificationAlert(customer: CustomerCreateInput) {
         binding.frameLayout.visibility = View.GONE
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        builder.setTitle("Verify Account")
-            .setMessage("Please go to your Email and verify your Account after that Click Verified")
-            .setBackground(
-                ResourcesCompat.getDrawable(
-                    requireContext().resources,
-                    R.drawable.delete_dialog_background,
-                    requireContext().theme
-                )
-            )
-            .setPositiveButton("Verified") { _, _ ->
-                viewModel.checkVerification(customer) {
-                    binding.frameLayout.visibility = View.VISIBLE
-                    if (it) {
-                        viewModel.createAccount(customer)
-                    } else {
-                        showVerificationAlert(customer)
-                        Snackbar.make(
-                            requireView(),
-                            "Please Verify Your Account and try Again",
-                            Snackbar.ANIMATION_MODE_SLIDE
-                        ).show()
-                    }
-                }
-
-            }.setNegativeButton("Cancel") { dialog, _ ->
-                dialog.cancel()
-
-            }.show()
+        dialog.show()
     }
 
 }
