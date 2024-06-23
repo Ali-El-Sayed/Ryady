@@ -185,8 +185,10 @@ class CartFragment : Fragment() {
                         launch(Dispatchers.Main) {
                             toggleLoadingIndicator()
                             val dialog = showOrderConfirmationDialog()
+                            dialog.show()
                             delay(2000)
                             dialog.dismiss()
+                            delay(500)
                             findNavController().navigateUp()
                         }
                         // Delete cart items
@@ -282,7 +284,6 @@ class CartFragment : Fragment() {
                 }
             }
         }
-
         binding.button.setOnClickListener {
             if (binding.spinner.selectedIndex == 0) {
                 val add = viewModel.addresses.value as Response.Success
@@ -326,30 +327,23 @@ class CartFragment : Fragment() {
     }
 
     private fun showOrderConfirmationDialog(): Dialog {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.order_confirmation_dialog)
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        dialog.window?.setBackgroundDrawable(
-            AppCompatResources.getDrawable(
-                requireContext(), R.drawable.verification_dialog_background
-            )
-        )
-        dialog.setCancelable(false)
-        dialog.show()
+        val dialog = MaterialAlertDialogBuilder(requireContext()).setView(R.layout.order_confirmation_dialog).setCancelable(false)
+            .setBackground(
+                AppCompatResources.getDrawable(
+                    requireContext(), R.drawable.verification_dialog_background
+                )
+            ).create()
         return dialog
     }
 
     private fun showAddAddressDialog() {
         val binding = AddAddressDialogBinding.inflate(layoutInflater)
         val dialog = MaterialAlertDialogBuilder(requireContext()).setView(binding.root).setCancelable(false).setBackground(
-                AppCompatResources.getDrawable(
-                    requireContext(), R.drawable.verification_dialog_background
-                )
-            ).create()
+            AppCompatResources.getDrawable(
+                requireContext(), R.drawable.verification_dialog_background
+            )
+        ).create()
 
-        dialog.setCancelable(false)
         binding.btnAddAddress.setOnClickListener {
             findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
             dialog.dismiss()
