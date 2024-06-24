@@ -18,15 +18,36 @@ import retrofit2.Response
 
 class FakeDataSource : IRemoteDataSource {
     override suspend fun fetchCountries(): Flow<Response<HashMap<String, String>>> {
-        TODO("Not yet implemented")
+        var countryMap = HashMap<String, String>()
+
+        countryMap.put("EG", "Egypt")
+        countryMap.put("US", "United States")
+        countryMap.put("FR", "France")
+
+        return flow { emit(Response.success(countryMap)) }
     }
 
     override suspend fun fetchAllCurrencies(): Flow<Response<Symbols>> {
-        TODO("Not yet implemented")
+        val currencies = HashMap<String, String>()
+        currencies["EGP"] = "Egyptian pound"
+        currencies["USD"] = "US Dollar"
+        currencies["EUR"] = "Euro"
+        val symbol = Symbols(currencies)
+        return flow { emit(Response.success(symbol)) }
     }
 
     override suspend fun fetchExchangeRates(): Flow<Response<Currency>> {
-        TODO("Not yet implemented")
+        val date = "2024-06-20 00:00:00+00"
+        val base = "USD"
+        val rates = HashMap<String, Double>()
+        rates["EGP"] = 30.95
+        rates["USD"] = 1.0
+        rates["EUR"] = 0.91
+
+
+        // Create Currency object
+        val currency: Currency = Currency(date, base, rates)
+        return flow { emit(Response.success(currency)) }
     }
 
     override suspend fun <T> fetchProducts(): com.example.ryady.network.model.Response<T> {
@@ -143,10 +164,11 @@ class FakeDataSource : IRemoteDataSource {
 
     override suspend fun <T> deleteCartLine(
         cartId: String,
-        lineID: String
+        lineID: ArrayList<String>
     ): com.example.ryady.network.model.Response<T> {
         return com.example.ryady.network.model.Response.Success(1 as T)
     }
+
 
     override suspend fun <T> searchForProducts(itemName: String): Flow<com.example.ryady.network.model.Response<T>> {
         TODO("Not yet implemented")
