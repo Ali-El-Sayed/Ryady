@@ -1,6 +1,5 @@
 package com.example.ryady.view.screens.product.view
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -48,9 +47,8 @@ class ProductInfoFragment : Fragment(), IProductInfo {
     private var isFavourite: Boolean = false
     private lateinit var variant: ProductByIdQuery.Variants
     var id: String = ""
-    lateinit var email: String
-    lateinit var token: String
-    lateinit var myContext: Context
+    var email: String = ""
+    var token: String = ""
 
     private val viewModel by lazy {
         val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
@@ -83,7 +81,6 @@ class ProductInfoFragment : Fragment(), IProductInfo {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        myContext = requireContext()
         binding.description.setCollapsedText("Read More")
         binding.description.setExpandedText("Read Less")
         binding.description.setCollapsedTextColor(R.color.secondary)
@@ -219,12 +216,12 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             binding.addToCart.text = "Sold Out"
             binding.addToCart.setTextColor(
                 resources.getColor(
-                    R.color.white, myContext.theme
+                    R.color.white
                 )
             )
             binding.addToCart.setBackgroundColor(
                 resources.getColor(
-                    R.color.Gray, myContext.theme
+                    R.color.Gray
                 )
             )
             binding.addToCart.isEnabled = false
@@ -232,12 +229,12 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             binding.addToCart.text = "Add to Cart"
             binding.addToCart.setTextColor(
                 resources.getColor(
-                    R.color.white, myContext.theme
+                    R.color.white
                 )
             )
             binding.addToCart.setBackgroundColor(
                 resources.getColor(
-                    R.color.secondary, myContext.theme
+                    R.color.secondary
                 )
             )
             binding.addToCart.isEnabled = true

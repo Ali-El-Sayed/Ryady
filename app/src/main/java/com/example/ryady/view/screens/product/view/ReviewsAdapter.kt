@@ -10,8 +10,8 @@ import com.example.ryady.databinding.ReviewItemBinding
 import com.example.ryady.model.CustomerReview
 
 private const val TAG = "ReviewsAdapter"
-class ReviewsAdapter(val data: List<CustomerReview>, val context: Context) :
-    RecyclerView.Adapter<ReviewsAdapter.ViewHolder>() {
+
+class ReviewsAdapter(val data: List<CustomerReview>, val context: Context) : RecyclerView.Adapter<ReviewsAdapter.ViewHolder>() {
 
     private lateinit var binding: ReviewItemBinding
     private var maleImage = true

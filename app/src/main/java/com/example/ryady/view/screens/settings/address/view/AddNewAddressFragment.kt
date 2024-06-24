@@ -174,6 +174,7 @@ class AddNewAddressFragment : Fragment() {
             e.printStackTrace()
             withContext(Dispatchers.Main) {
                 Toast.makeText(context, "Failed to get location: ${e.message}", Toast.LENGTH_SHORT).show()
+                toggleLoadingIndicator()
             }
         }
     }
