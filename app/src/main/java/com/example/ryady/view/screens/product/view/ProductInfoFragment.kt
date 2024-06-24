@@ -25,7 +25,6 @@ import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.utils.readCart
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.utils.reviews
-import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -46,8 +45,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
     private var isFavourite: Boolean = false
     private lateinit var variant: ProductByIdQuery.Variants
     var id: String = ""
-    var email: String = ""
-    var token: String = ""
+    lateinit var email: String
+    lateinit var token: String
+
 
 
     private val viewModel by lazy {
@@ -132,15 +132,14 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             }
         }
 
-
         binding.addToCart.setOnClickListener {
             if (token.isNotEmpty() || token.isNotBlank()) {
                 lifecycleScope.launch {
                     viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
                 }
-            } else {
+            } else 
                 showRegisterDialog()
-            }
+            
         }
     }
 
