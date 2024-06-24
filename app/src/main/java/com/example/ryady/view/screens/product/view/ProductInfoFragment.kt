@@ -1,5 +1,6 @@
 package com.example.ryady.view.screens.product.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,8 +12,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.ProductByIdQuery
@@ -42,42 +41,38 @@ private const val TAG = "ProductInfoFragment"
 
 class ProductInfoFragment : Fragment(), IProductInfo {
 
-    lateinit var binding: FragmentProductInfoBinding
+    private val binding: FragmentProductInfoBinding by lazy {
+        FragmentProductInfoBinding.inflate(layoutInflater)
+    }
     private var variantId = ""
     private var isFavourite: Boolean = false
     private lateinit var variant: ProductByIdQuery.Variants
     var id: String = ""
     lateinit var email: String
     lateinit var token: String
-
+    lateinit var myContext: Context
 
     private val viewModel by lazy {
-        val factory =
-            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[ProductViewModel::class.java]
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentProductInfoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View = binding.root
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            readCart(requireContext()) { map ->
+            readCart(requireActivity()) { map ->
                 viewModel.cartId = map["cart id"] ?: ""
             }
         }
 
         id = ProductInfoFragmentArgs.fromBundle(requireArguments()).productId
         lifecycleScope.launch {
-
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                readCustomerData(requireContext()) {
+                readCustomerData(requireActivity()) {
                     email = it["user email"].toString()
                     token = it["user token"] ?: ""
                     viewModel.fetchProductById(id)
@@ -88,6 +83,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        myContext = requireContext()
         binding.description.setCollapsedText("Read More")
         binding.description.setExpandedText("Read Less")
         binding.description.setCollapsedTextColor(R.color.secondary)
@@ -99,19 +95,13 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                     when (it) {
                         is Response.Error -> {
                             binding.animation.visibility = View.GONE
-                            Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE)
-                                .show()
+                            Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE).show()
                         }
 
-                        is Response.Loading -> {
-
-                        }
-
-                        is Response.Success -> {
-                            viewModel.searchForAnItem(email = email, itemId = id) { result ->
-                                isFavourite = result
-                                updateUi(it.data)
-                            }
+                        is Response.Loading -> {}
+                        is Response.Success -> viewModel.searchForAnItem(email = email, itemId = id) { result ->
+                            isFavourite = result
+                            updateUi(it.data)
                         }
                     }
                 }
@@ -124,9 +114,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                         is Response.Error -> Log.i(TAG, "onViewCreated: Error ${it.message}")
                         is Response.Loading -> {}
                         is Response.Success -> Toast.makeText(
-                            activity,
-                            "Item Added Successfully",
-                            Toast.LENGTH_SHORT
+                            activity, "Item Added Successfully", Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -135,13 +123,10 @@ class ProductInfoFragment : Fragment(), IProductInfo {
 
 
         binding.addToCart.setOnClickListener {
-            if (token.isNotEmpty() || token.isNotBlank()) {
-                lifecycleScope.launch {
-                    viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
-                }
-            } else {
-                showRegisterDialog()
+            if (token.isNotEmpty() || token.isNotBlank()) lifecycleScope.launch {
+                viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
             }
+            else showRegisterDialog()
         }
     }
 
@@ -152,6 +137,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             parentFragmentManager, "unRegisterDialog"
         )
     }
+
     private fun updateUi(productInfo: ProductByIdQuery.Product) {
         variantId = productInfo.variants.edges.first().node.id
         variant = productInfo.variants
@@ -168,10 +154,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.description.setTrimLines(2)
 
         val price = productInfo.priceRange.maxVariantPrice.amount.toString().toDouble()
-        val priceExchanged =
-            price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.chosenCurrency.first
-            )!!)
+        val priceExchanged = price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+            TheExchangeRate.chosenCurrency.first
+        )!!)
 
         binding.price.text = priceExchanged.roundTo2DecimalPlaces().toString()
         binding.priceUnit.text = TheExchangeRate.chosenCurrency.first
@@ -179,9 +164,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.imageSlider.setImageList(productImagesUrl)
 
         binding.imageSlider.setSlideAnimation(AnimationTypes.FOREGROUND_TO_BACKGROUND)
-        val layoutManager = LinearLayoutManager(requireContext())
-        layoutManager.orientation = RecyclerView.HORIZONTAL
-        binding.sizeList.layoutManager = layoutManager
+
         val sizeList: MutableList<String> = mutableListOf()
         productInfo.variants.edges.forEach {
             sizeList.add(it.node.title.split(" /")[0])
@@ -189,15 +172,11 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.gender.text = productInfo.tags[1]
         checkEmptyInStock(0)
 
-
-        val reviewsLayoutManager = LinearLayoutManager(requireContext())
-        reviewsLayoutManager.orientation = RecyclerView.VERTICAL
-        binding.rvReview.layoutManager = reviewsLayoutManager
         val reviewList = reviews.shuffled().take(3)
         var rating = reviewList.sumOf { it.rating }.toFloat() / 3
         rating = BigDecimal(rating.toDouble()).setScale(1, RoundingMode.HALF_EVEN).toFloat()
         binding.tvRating.text = rating.toString()
-        binding.rvReview.adapter = ReviewsAdapter(reviewList, requireContext())
+        binding.rvReview.adapter = ReviewsAdapter(reviewList, requireActivity())
 
         if (isFavourite) {
             binding.btnFavourite.setIcon(R.drawable.favorite_fill)
@@ -211,31 +190,23 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                 if (isFavourite) {
                     viewModel.deleteItem(email = email, id = id)
                     Toast.makeText(
-                        requireContext(),
-                        "Product Removed from Favourites",
-                        Toast.LENGTH_LONG
+                        requireActivity(), "Product Removed from Favourites", Toast.LENGTH_SHORT
                     ).show()
                     binding.btnFavourite.setIcon(R.drawable.favorite)
                     isFavourite = !isFavourite
                 } else {
                     viewModel.addItemToFav(email = email, productInfo)
                     Toast.makeText(
-                        requireContext(),
-                        "Product Added To Favourites",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
+                        requireActivity(), "Product Added To Favourites", Toast.LENGTH_SHORT
+                    ).show()
                     binding.btnFavourite.setIcon(R.drawable.favorite_fill)
                     isFavourite = !isFavourite
                 }
-            } else {
-                showRegisterDialog()
-            }
+            } else showRegisterDialog()
+
 
         }
         binding.animation.visibility = View.GONE
-
-
     }
 
     override fun onItemSizeClick(itemIndex: Int) {
@@ -248,14 +219,12 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             binding.addToCart.text = "Sold Out"
             binding.addToCart.setTextColor(
                 resources.getColor(
-                    R.color.white,
-                    requireContext().theme
+                    R.color.white, myContext.theme
                 )
             )
             binding.addToCart.setBackgroundColor(
                 resources.getColor(
-                    R.color.Gray,
-                    requireContext().theme
+                    R.color.Gray, myContext.theme
                 )
             )
             binding.addToCart.isEnabled = false
@@ -263,14 +232,12 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             binding.addToCart.text = "Add to Cart"
             binding.addToCart.setTextColor(
                 resources.getColor(
-                    R.color.white,
-                    requireContext().theme
+                    R.color.white, myContext.theme
                 )
             )
             binding.addToCart.setBackgroundColor(
                 resources.getColor(
-                    R.color.secondary,
-                    requireContext().theme
+                    R.color.secondary, myContext.theme
                 )
             )
             binding.addToCart.isEnabled = true
