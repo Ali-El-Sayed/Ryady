@@ -40,20 +40,12 @@
 
 
     <!--  Loading Bar  -->
-    <FrameLayout
+    <include
         android:id="@+id/frameLayout"
+        layout="@layout/loading_indicator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/product_glass_background"
-        android:visibility="gone">
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
+        android:visibility="gone" />
 
     <!--  Not Found  -->
     <ImageView

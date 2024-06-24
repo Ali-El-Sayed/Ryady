@@ -27,7 +27,6 @@ class ReviewsAdapter(val data: List<CustomerReview>) : RecyclerView.Adapter<Revi
         binding.customerReview.text = data[position].review
         binding.customerName.text = data[position].name
         if (data[position].gender == "Male") {
-            Log.i(TAG, "onBindViewHolder: $maleImage")
             val drawableResId = if (maleImage) R.drawable.male1 else R.drawable.male2
             maleImage = !maleImage
             binding.customerProfileImage.setImageResource(drawableResId)

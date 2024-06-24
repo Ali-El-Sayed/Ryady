@@ -55,7 +55,7 @@ class CategoryScreen : Fragment() {
         viewModel.productsByCategoryList.collect {
             when (it) {
                 is Response.Loading -> {
-                    binding.frameLayout.visibility = View.VISIBLE
+                    binding.frameLayout.root.visibility = View.VISIBLE
                 }
 
                 is Response.Success -> {
@@ -68,12 +68,12 @@ class CategoryScreen : Fragment() {
                         )
                     }
                     binding.imgNotFound.visibility = if (it.data.isEmpty()) View.VISIBLE else View.GONE
-                    binding.frameLayout.visibility = View.GONE
+                    binding.frameLayout.root.visibility = View.GONE
                 }
 
                 is Response.Error -> {
                     binding.imgNotFound.visibility = View.GONE
-                    binding.frameLayout.visibility = View.GONE
+                    binding.frameLayout.root.visibility = View.GONE
                     // handle Error
                 }
             }

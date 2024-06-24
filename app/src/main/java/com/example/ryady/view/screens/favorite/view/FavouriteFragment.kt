@@ -54,7 +54,7 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.frameLayout.visibility = View.VISIBLE
+        binding.frameLayout.root.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
             viewModel.productList.collectLatest {
                 withContext(Dispatchers.Main) {
@@ -63,15 +63,15 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
                         is Response.Loading -> {}
                         is Response.Success -> {
                             withContext(Dispatchers.Main) {
-                                binding.frameLayout.visibility = View.GONE
-                                if (it.data.isNotEmpty()){
+                                binding.frameLayout.root.visibility = View.GONE
+                                if (it.data.isNotEmpty()) {
                                     binding.rvFavouriteList.adapter =
                                         FavouriteListAdapter(
                                             it.data.toMutableList(),
                                             this@FavouriteFragment,
                                             requireContext()
                                         )
-                                }else{
+                                } else {
                                     binding.emptyImage.visibility = View.VISIBLE
                                 }
 
@@ -83,8 +83,8 @@ class FavouriteFragment : Fragment(), IFavouriteFragment {
         }
     }
 
-    override fun deleteItem(itemId: String , listSize : Int) {
-        if (listSize ==0){
+    override fun deleteItem(itemId: String, listSize: Int) {
+        if (listSize == 0) {
             binding.emptyImage.visibility = View.VISIBLE
         }
         viewModel.deleteItem(userEmail, itemId)

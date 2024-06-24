@@ -275,6 +275,6 @@
             android:background="@color/white"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading_cart" />
+            app:lottie_rawRes="@raw/loading_anim" />
     </FrameLayout>
 </ScrollView>

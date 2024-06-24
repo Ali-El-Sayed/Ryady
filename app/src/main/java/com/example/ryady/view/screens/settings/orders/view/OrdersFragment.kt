@@ -67,7 +67,7 @@ class OrdersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.orders.collectLatest {
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         when (it) {
                             is Response.Error -> {}
                             is Response.Loading -> toggleLoadingIndicator()
@@ -100,6 +100,6 @@ class OrdersFragment : Fragment() {
     }
 
     private fun toggleLoadingIndicator() {
-        binding.frameLayout.visibility = if (binding.frameLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        binding.frameLayout.root.visibility = if (binding.frameLayout.root.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 }

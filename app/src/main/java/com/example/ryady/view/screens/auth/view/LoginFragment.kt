@@ -53,7 +53,7 @@ class LoginFragment : Fragment() {
             if (validateUserInputs()) {
                 showErrorMessage()
             } else {
-                binding.frameLayout.visibility = View.VISIBLE
+                binding.frameLayout.root.visibility = View.VISIBLE
                 removeErrorMessage()
                 val email = binding.etEmail.text.toString()
                 val password = binding.etPassword.text.toString()
@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(
                             requireContext(), "Email Or Password not correct", Toast.LENGTH_LONG
                         ).show()
-                        binding.frameLayout.visibility = View.GONE
+                        binding.frameLayout.root.visibility = View.GONE
                     }
 
                     is Response.Loading -> {}
@@ -82,7 +82,7 @@ class LoginFragment : Fragment() {
                                         requireContext(), customerResponse.message, Toast.LENGTH_LONG
                                     ).show()
 
-                                    binding.frameLayout.visibility = View.GONE
+                                    binding.frameLayout.root.visibility = View.GONE
                                 }
 
                                 is Response.Loading -> {}
@@ -124,7 +124,7 @@ class LoginFragment : Fragment() {
                                         }
 
                                         override fun onCancelled(databaseError: DatabaseError) {
-                                         
+
                                         }
                                     })
 

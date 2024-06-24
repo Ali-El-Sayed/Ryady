@@ -66,13 +66,13 @@ class SingUpFragment : Fragment() {
             if (checkIsEmpty()) {
                 showErrorMessage()
             } else {
-                if (isValidEmail(binding.etEmail.text.toString())){
+                if (isValidEmail(binding.etEmail.text.toString())) {
                     removeErrorMessage()
-                     createCustomerData()
-                     binding.frameLayout.visibility = View.VISIBLE
-                     viewModel.createAccountFirebase(customer)
-                     showVerificationAlert(customer)
-                }else{
+                    createCustomerData()
+                    binding.frameLayout.root.visibility = View.VISIBLE
+                    viewModel.createAccountFirebase(customer)
+                    showVerificationAlert()
+                } else {
                     showErrorMessage()
                 }
 
@@ -210,7 +210,7 @@ class SingUpFragment : Fragment() {
             Log.i(TAG, "showErrorMessage: not valid")
             binding.tilEmail.error = "Please Complete your Email"
         } else {
-            Log.i(TAG, "showErrorMessage: test else" )
+            Log.i(TAG, "showErrorMessage: test else")
             if (isValidEmail(binding.etEmail.text.toString())) {
                 binding.tilEmail.isErrorEnabled = false
             } else {
@@ -257,12 +257,12 @@ class SingUpFragment : Fragment() {
 
         dialogBtnVerification.setOnClickListener {
             viewModel.checkVerification(customer) {
-                binding.frameLayout.visibility = View.VISIBLE
+                binding.frameLayout.root.visibility = View.VISIBLE
                 if (it) {
                     viewModel.createAccount(customer)
                     dialog.dismiss()
                 } else {
-                    showVerificationAlert(customer)
+                    showVerificationAlert()
                     Snackbar.make(
                         requireView(),
                         "Please Verify Your Account and try Again",
@@ -277,8 +277,8 @@ class SingUpFragment : Fragment() {
         }
     }
 
-    private fun showVerificationAlert(customer: CustomerCreateInput) {
-        binding.frameLayout.visibility = View.GONE
+    private fun showVerificationAlert() {
+        binding.frameLayout.root.visibility = View.GONE
         dialog.show()
     }
 
