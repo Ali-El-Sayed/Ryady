@@ -1,6 +1,5 @@
 package com.example.ryady.view.screens.product.view
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import com.example.ryady.model.CustomerReview
 
 private const val TAG = "ReviewsAdapter"
 
-class ReviewsAdapter(val data: List<CustomerReview>, val context: Context) : RecyclerView.Adapter<ReviewsAdapter.ViewHolder>() {
+class ReviewsAdapter(val data: List<CustomerReview>) : RecyclerView.Adapter<ReviewsAdapter.ViewHolder>() {
 
     private lateinit var binding: ReviewItemBinding
     private var maleImage = true
@@ -31,13 +30,13 @@ class ReviewsAdapter(val data: List<CustomerReview>, val context: Context) : Rec
             Log.i(TAG, "onBindViewHolder: $maleImage")
             val drawableResId = if (maleImage) R.drawable.male1 else R.drawable.male2
             maleImage = !maleImage
-            binding.customerProfileImage.setImageDrawable(context.resources.getDrawable(drawableResId))
+            binding.customerProfileImage.setImageResource(drawableResId)
         } else {
             Log.i(TAG, "onBindViewHolder: $femaleImage")
 
             val drawableResId = if (femaleImage) R.drawable.female1 else R.drawable.female2
             femaleImage = !femaleImage
-            binding.customerProfileImage.setImageDrawable(context.resources.getDrawable(drawableResId))
+            binding.customerProfileImage.setImageResource(drawableResId)
 
         }
     }

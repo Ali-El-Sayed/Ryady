@@ -2,6 +2,7 @@ package com.example.ryady.view.screens.auth.view
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,11 +66,16 @@ class SingUpFragment : Fragment() {
             if (checkIsEmpty()) {
                 showErrorMessage()
             } else {
-                removeErrorMessage()
-                createCustomerData()
-                binding.frameLayout.visibility = View.VISIBLE
-                viewModel.createAccountFirebase(customer)
-                showVerificationAlert(customer)
+                if (isValidEmail(binding.etEmail.text.toString())){
+                    removeErrorMessage()
+                     createCustomerData()
+                     binding.frameLayout.visibility = View.VISIBLE
+                     viewModel.createAccountFirebase(customer)
+                     showVerificationAlert(customer)
+                }else{
+                    showErrorMessage()
+                }
+
             }
 
 
@@ -201,9 +207,15 @@ class SingUpFragment : Fragment() {
 
     private fun showErrorMessage() {
         if (binding.etEmail.text.isNullOrEmpty()) {
+            Log.i(TAG, "showErrorMessage: not valid")
             binding.tilEmail.error = "Please Complete your Email"
         } else {
-            binding.tilEmail.isErrorEnabled = false
+            Log.i(TAG, "showErrorMessage: test else" )
+            if (isValidEmail(binding.etEmail.text.toString())) {
+                binding.tilEmail.isErrorEnabled = false
+            } else {
+                binding.tilEmail.error = "Please Enter Valid Email"
+            }
         }
 
         if (binding.etFirstName.text.isNullOrEmpty()) {
@@ -224,7 +236,13 @@ class SingUpFragment : Fragment() {
 
     }
 
-    private fun initializeVerificationDialog(){
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$".toRegex()
+        Log.i(TAG, "isValidEmail: ${emailRegex.matches(email)}")
+        return emailRegex.matches(email)
+    }
+
+    private fun initializeVerificationDialog() {
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.verification_dialog)
         dialog.window?.setLayout(
@@ -258,6 +276,7 @@ class SingUpFragment : Fragment() {
 
         }
     }
+
     private fun showVerificationAlert(customer: CustomerCreateInput) {
         binding.frameLayout.visibility = View.GONE
         dialog.show()
