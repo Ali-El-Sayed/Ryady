@@ -25,6 +25,7 @@ import com.example.ryady.product.view.SizeAdapter
 import com.example.ryady.utils.readCart
 import com.example.ryady.utils.readCustomerData
 import com.example.ryady.utils.reviews
+import com.example.ryady.view.dialogs.unRegister.view.UnRegisterDialogFragment
 import com.example.ryady.view.factory.ViewModelFactory
 import com.example.ryady.view.screens.product.viewModel.ProductViewModel
 import com.example.ryady.view.screens.settings.currency.TheExchangeRate
@@ -47,7 +48,6 @@ class ProductInfoFragment : Fragment(), IProductInfo {
     var id: String = ""
     lateinit var email: String
     lateinit var token: String
-
 
 
     private val viewModel by lazy {
@@ -137,9 +137,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                 lifecycleScope.launch {
                     viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
                 }
-            } else 
+            } else
                 showRegisterDialog()
-            
+
         }
     }
 
@@ -150,6 +150,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             parentFragmentManager, "unRegisterDialog"
         )
     }
+
     private fun updateUi(productInfo: ProductByIdQuery.Product) {
         variantId = productInfo.variants.edges.first().node.id
         variant = productInfo.variants
