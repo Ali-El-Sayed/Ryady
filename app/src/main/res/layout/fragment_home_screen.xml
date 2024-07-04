@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/primary"
                 android:minHeight="?attr/actionBarSize"
-                app:logo="@drawable/ic_user"
+                app:logo="@drawable/ic_logo"
                 app:menu="@menu/top_app_bar"
                 app:subtitle="Username"
                 app:subtitleTextAppearance="@font/regular"

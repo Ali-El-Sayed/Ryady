@@ -81,10 +81,10 @@ class CartViewModel(
             remoteDataSource.fetchCartById(id = cartId).collectLatest {
                 when (it) {
                     is Response.Error -> {}
-                    is Response.Loading -> _cartInfo.value = Response.Loading()
+                    is Response.Loading -> _cartInfo.emit(Response.Loading())
                     is Response.Success -> {
                         checkoutUrl = it.data.checkoutUrl.toString()
-                        _cartInfo.value = it
+                        _cartInfo.emit(it)
                     }
                 }
             }

@@ -49,8 +49,7 @@ class SingUpFragment : Fragment() {
     private lateinit var dialogBtnCancel: Button
     private var email = ""
     private val viewModel: LoginViewModel by lazy {
-        val factory =
-            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[LoginViewModel::class.java]
     }
     private lateinit var customer: CustomerCreateInput
@@ -72,13 +71,8 @@ class SingUpFragment : Fragment() {
                     binding.frameLayout.root.visibility = View.VISIBLE
                     viewModel.createAccountFirebase(customer)
                     showVerificationAlert()
-                } else {
-                    showErrorMessage()
-                }
-
+                } else showErrorMessage()
             }
-
-
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -90,8 +84,7 @@ class SingUpFragment : Fragment() {
                             email = account.data.email ?: ""
                             viewModel.loginToAccount(
                                 CustomerAccessTokenCreateInput(
-                                    account.data.email.toString(),
-                                    binding.etPassword.text.toString()
+                                    account.data.email.toString(), binding.etPassword.text.toString()
                                 )
                             )
 
@@ -99,24 +92,17 @@ class SingUpFragment : Fragment() {
                                 when (token) {
                                     is Response.Error -> {
                                         Snackbar.make(
-                                            binding.root,
-                                            "error get token from server",
-                                            Snackbar.ANIMATION_MODE_SLIDE
+                                            binding.root, "error get token from server", Snackbar.ANIMATION_MODE_SLIDE
                                         ).show()
                                     }
 
-                                    is Response.Loading -> {
-
-                                    }
-
+                                    is Response.Loading -> {}
                                     is Response.Success -> {
                                         viewModel.createEmptyCart(
-                                            account.data.email.toString(),
-                                            token.data
+                                            account.data.email.toString(), token.data
                                         )
                                         saveUserData(
-                                            requireContext(),
-                                            customer = GetCustomerDataQuery.Customer(
+                                            requireContext(), customer = GetCustomerDataQuery.Customer(
                                                 email = account.data.email,
                                                 firstName = account.data.firstName,
                                                 lastName = account.data.lastName,
@@ -124,14 +110,12 @@ class SingUpFragment : Fragment() {
                                                 phone = "",
                                                 displayName = account.data.displayName,
                                                 acceptsMarketing = account.data.acceptsMarketing
-                                            ),
-                                            customerToken = token.data
+                                            ), customerToken = token.data
                                         )
 
                                         withContext(Dispatchers.Main) {
                                             requireActivity().move(
-                                                requireContext(),
-                                                MainActivity::class.java
+                                                requireContext(), MainActivity::class.java
                                             )
                                             requireActivity().finish()
                                         }
@@ -143,13 +127,9 @@ class SingUpFragment : Fragment() {
 
                         is Response.Error -> {
                             withContext(Dispatchers.Main) {
-
                                 Snackbar.make(
-                                    binding.root,
-                                    "Please Verify Your Account ",
-                                    Snackbar.ANIMATION_MODE_SLIDE
+                                    binding.root, account.message, Snackbar.ANIMATION_MODE_SLIDE
                                 ).show()
-
                             }
                         }
                     }
@@ -161,8 +141,7 @@ class SingUpFragment : Fragment() {
             viewModel.createCartState.collectLatest {
                 when (it) {
                     is Response.Error -> {
-                        Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE)
-                            .show()
+                        Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE).show()
                     }
 
                     is Response.Loading -> {
@@ -246,8 +225,7 @@ class SingUpFragment : Fragment() {
         dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.verification_dialog)
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.window?.setBackgroundDrawable(requireContext().getDrawable(R.drawable.verification_dialog_background))
         dialog.setCancelable(false)
@@ -257,16 +235,13 @@ class SingUpFragment : Fragment() {
 
         dialogBtnVerification.setOnClickListener {
             viewModel.checkVerification(customer) {
-                binding.frameLayout.root.visibility = View.VISIBLE
                 if (it) {
                     viewModel.createAccount(customer)
                     dialog.dismiss()
                 } else {
                     showVerificationAlert()
                     Snackbar.make(
-                        requireView(),
-                        "Please Verify Your Account and try Again",
-                        Snackbar.ANIMATION_MODE_SLIDE
+                        requireView(), "Please Verify Your Account and try Again", Snackbar.ANIMATION_MODE_SLIDE
                     ).show()
                 }
             }

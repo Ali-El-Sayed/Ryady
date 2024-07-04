@@ -258,8 +258,7 @@ class AddNewAddressFragment : Fragment() {
     }
 
     private fun toggleLoadingIndicator() {
-        if (binding.frameLayout.visibility == View.GONE) binding.frameLayout.visibility = View.VISIBLE
-        else binding.frameLayout.visibility = View.GONE
+        binding.frameLayout.root.visibility = if (binding.frameLayout.root.visibility == View.GONE) View.VISIBLE else View.GONE
     }
 
 }

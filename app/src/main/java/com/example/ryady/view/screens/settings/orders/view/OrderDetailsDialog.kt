@@ -41,11 +41,12 @@ class OrderDetailsDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.orderId.text = viewModel.selectedOrder.orderName
 
-        binding.itemsNumber.text = "$${viewModel.selectedOrder.items.size} Items"
-        val total =
-            (viewModel.selectedOrder.totalPrice.toDouble() / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.chosenCurrency.first
-            )!!)).roundTo2DecimalPlaces()
+        binding.itemsNumber.text = "${viewModel.selectedOrder.items.size} Items"
+        val total = (viewModel.selectedOrder.totalPrice.toDouble() / (TheExchangeRate.currency.rates.getOrDefault(
+            "EGP", 48.01
+        )) * (TheExchangeRate.currency.rates.getOrDefault(
+            TheExchangeRate.chosenCurrency.first, 48.01
+        ))).roundTo2DecimalPlaces()
         binding.totalPrice.text = "$$total ${TheExchangeRate.chosenCurrency.first}"
         binding.closeBtn.setOnClickListener { dismiss() }
     }

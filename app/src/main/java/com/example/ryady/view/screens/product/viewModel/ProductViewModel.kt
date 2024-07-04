@@ -14,60 +14,59 @@ import kotlinx.coroutines.launch
 private const val TAG = "ProductViewModel"
 
 class ProductViewModel(private val remoteDataSource: IRemoteDataSource) : ViewModel() {
-var cartId = ""
+    var cartId = ""
 
-    private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> =
-        MutableStateFlow(Response.Loading())
+    private var _productInfo: MutableStateFlow<Response<ProductByIdQuery.Product>> = MutableStateFlow(Response.Loading())
     var productInfo: StateFlow<Response<ProductByIdQuery.Product>> = _productInfo
-    private var _addItemToCartInfo: MutableStateFlow<Response<Int>> =
-        MutableStateFlow(Response.Loading())
+    private var _addItemToCartInfo: MutableStateFlow<Response<Int>> = MutableStateFlow(Response.Loading())
     var addItemToCartInfo: StateFlow<Response<Int>> = _addItemToCartInfo
 
-     fun fetchProductById(id: String) {
+    fun fetchProductById(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            remoteDataSource.fetchProductById(id = id)
-                .collectLatest {
-                    _productInfo.value = it
+            _productInfo.emit(Response.Loading())
+            remoteDataSource.fetchProductById(id = id).collectLatest {
+                when (it) {
+                    is Response.Error -> _productInfo.emit(Response.Error(it.message))
+                    is Response.Loading -> _productInfo.emit(Response.Loading())
+                    is Response.Success -> _productInfo.emit(Response.Success(it.data))
                 }
-        }
-
-    }
-
-     fun addItemToCart(
-        cartId: String,
-        varientID: String,
-        quantity: Int
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = remoteDataSource.addItemToCart<Int>(
-                cartId = cartId,
-                varientID = varientID,
-                quantity = quantity
-            )
-            when (response) {
-                is Response.Error -> _addItemToCartInfo.value = Response.Error(response.message)
-                is Response.Loading -> _addItemToCartInfo.value = Response.Loading()
-                is Response.Success -> _addItemToCartInfo.value = Response.Success(response.data)
             }
         }
 
     }
 
-    fun addItemToFav(email: String,product: ProductByIdQuery.Product) {
+    fun addItemToCart(
+        cartId: String, varientID: String, quantity: Int
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _addItemToCartInfo.emit(Response.Loading())
+            val response = remoteDataSource.addItemToCart<Int>(
+                cartId = cartId, varientID = varientID, quantity = quantity
+            )
+            when (response) {
+                is Response.Error -> _addItemToCartInfo.emit(Response.Error(response.message))
+                is Response.Loading -> _addItemToCartInfo.emit(Response.Loading())
+                is Response.Success -> _addItemToCartInfo.emit(Response.Success(response.data))
+            }
+        }
+
+    }
+
+    fun addItemToFav(email: String, product: ProductByIdQuery.Product) {
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.addItemToFavourite(email = email, product = product)
         }
     }
 
-    fun searchForAnItem(email: String,itemId: String, isFound: (found: Boolean) -> Unit) {
+    suspend fun searchForAnItem(email: String, itemId: String, isFound: (found: Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             remoteDataSource.searchForAnItem(email = email, itemId = itemId, isFound = isFound)
         }
     }
 
-    fun deleteItem(email: String,id: String) {
+    fun deleteItem(email: String, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            remoteDataSource.deleteItem(email = email , itemId = id)
+            remoteDataSource.deleteItem(email = email, itemId = id)
         }
     }
 }

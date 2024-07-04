@@ -13,15 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
-        android:elevation="4dp"
-        android:paddingTop="?attr/actionBarSize">
+        android:elevation="4dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primary"
-            android:minHeight="?attr/actionBarSize"
             app:menu="@menu/address_menu"
             app:navigationIcon="@drawable/ic_back"
             app:subtitleTextAppearance="@font/regular"
@@ -283,21 +281,12 @@
         </LinearLayout>
     </ScrollView>
 
-    <FrameLayout
+    <include
         android:id="@+id/frameLayout"
+        layout="@layout/loading_indicator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/product_glass_background"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone">
+        android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
 
 </RelativeLayout>

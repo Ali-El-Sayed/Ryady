@@ -6,7 +6,7 @@
         android:id="@+id/homeScreen"
         android:icon="@drawable/ic_home"
         android:title="@string/home"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         app:tooltipText="@string/home" />
 
     <item
@@ -18,7 +18,7 @@
         android:id="@+id/categoryScreen"
         android:icon="@drawable/ic_category"
         android:title="@string/category"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         app:tooltipText="@string/category" />
 
 </menu>

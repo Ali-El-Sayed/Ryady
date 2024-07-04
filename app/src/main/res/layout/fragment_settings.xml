@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginTop="32dp">
+    android:padding="16dp">
 
     <!-- General Section -->
-    <TextView
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Settings"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:elevation="4dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            app:subtitleTextAppearance="@font/regular"
+            app:title="@string/settings"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- General Items -->
     <LinearLayout
-        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:orientation="vertical">
 
         <!-- Address Item -->
@@ -27,16 +36,16 @@
             android:id="@+id/address_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_address"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_address" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -44,27 +53,28 @@
                 android:text="@string/address"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="16dp"/>
+            android:layout_marginVertical="16dp"
+            android:background="?android:attr/listDivider" />
 
         <!-- Orders Item -->
         <LinearLayout
             android:id="@+id/orders_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_order"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_order" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -72,28 +82,29 @@
                 android:text="@string/orders"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="16dp"/>
+            android:layout_marginVertical="16dp"
+            android:background="?android:attr/listDivider" />
 
         <!-- Currency Item -->
         <LinearLayout
             android:id="@+id/currency_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/currency_image"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_dollar"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_dollar" />
 
             <TextView
                 android:id="@+id/currency_text"
@@ -102,11 +113,12 @@
                 android:text="@string/currency"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="16dp"/>
+            android:layout_marginVertical="16dp"
+            android:background="?android:attr/listDivider" />
 
 
         <!-- Country Item -->
@@ -114,17 +126,17 @@
             android:id="@+id/countries_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/country_image"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_flag"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_flag" />
 
             <TextView
                 android:id="@+id/country_text"
@@ -133,27 +145,28 @@
                 android:text="@string/country"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="16dp"/>
+            android:layout_marginVertical="16dp"
+            android:background="?android:attr/listDivider" />
 
         <!-- About Us Item -->
         <LinearLayout
             android:id="@+id/about_us_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_info"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_info" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -161,27 +174,28 @@
                 android:text="@string/about_us"
                 android:textSize="16sp" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            android:layout_marginVertical="16dp"/>
+            android:layout_marginVertical="16dp"
+            android:background="?android:attr/listDivider" />
 
         <LinearLayout
             android:id="@+id/logout_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/logout_image"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/logout"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/logout" />
 
             <TextView
                 android:id="@+id/logout_text"

@@ -1,138 +1,214 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#ffffff">
+    android:background="#FFFFFF">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/appName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            android:text="Ryady"
+            android:textColor="#3F51B5"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Ryady"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="16dp"/>
+        <TextView
+            android:id="@+id/aboutUsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="About Us"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="About Us"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="16dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="16dp"
+            android:background="#BDBDBD" />
 
-            <TextView
+        <TextView
+            android:id="@+id/contributorsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="Contributors"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#F5F5F5"
+            android:elevation="2dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/ahmedGhoniem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Ahmed Ghoniem"
+                    android:textColor="#3F51B5"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/ahmedGhoniemDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="Ahmed is responsible for developing the Cupons (Discount code), Shopping Cart, Payment, Ads, and Settings features in Ryady."
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/ahmedGhoniemContributions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Cupons (Discount code) / Shopping Cart / Payment / Ads / Settings"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/ahmedGhoniemContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="Email: ahmed.ghoneim1011&#64;gmail.com"
+                    android:textColor="#3F51B5"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#F5F5F5"
+            android:elevation="2dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Welcome to our online store! We are a dedicated team passionate about fashion and committed to bringing you the best styles in shoes, caps, and bags."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Our Team"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/aliElSayed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Ali El-Sayed"
+                    android:textColor="#3F51B5"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ahmed Ghoneim"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="4dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ahmed is our lead designer and brings a creative touch to all our collections."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/aliElSayedDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="Ali has contributed to the development of Brands, Categories, Orders, and Home Design features, ensuring a seamless user experience."
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ali Elsayed"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="4dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ali is responsible for our marketing strategies and ensures our products reach a wide audience."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/aliElSayedContributions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Brands / Categories / Orders / Home Design"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
-            <TextView
+                <TextView
+                    android:id="@+id/aliElSayedContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="Email: alielsayedg&#64;gmail.com"
+                    android:textColor="#3F51B5"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#F5F5F5"
+            android:elevation="2dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mohamed Hussien"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="4dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mohamed oversees operations and ensures that every order is processed smoothly."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Our Collection"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/mohamedHussien"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Mohamed Hussien"
+                    android:textColor="#3F51B5"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="We offer a diverse range of fashion products including shoes, caps, and bags that cater to various styles and preferences. Browse through our app to explore our latest collections."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/mohamedHussienDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="Mohamed has worked on the Product Info, Search, Favorites, and Authentication features, enhancing the app's functionality and security."
+                    android:textColor="#757575"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Contact Us"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/mohamedHussienContributions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="4dp"
+                    android:text="Product Info / Search / Favorites / Auth"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="For any inquiries or support, feel free to reach out to us at support@fashionstore.com."
-                android:textSize="16sp"
-                android:textColor="#333333"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/mohamedHussienContact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="Email: mohamedhussein25011&#64;gmail.com"
+                    android:textColor="#3F51B5"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
-    </ScrollView>
-
-</RelativeLayout>
+    </LinearLayout>
+</ScrollView>

@@ -84,5 +84,6 @@
     <string name="delete_confirmation">Delete Confirmation</string>
     <string name="delete_message">You are about to delete this Item\n Are you sure ? </string>
     <string name="add_new_address">Add New Address</string>
+    <string name="email_alielsayedg_gmail_com"><![CDATA[Email: alielsayedg&#64;gmail.com]]></string>
 
 </resources>

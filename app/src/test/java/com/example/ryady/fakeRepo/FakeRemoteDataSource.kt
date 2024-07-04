@@ -11,6 +11,7 @@ import com.example.ryady.model.Currency
 import com.example.ryady.model.Product
 import com.example.ryady.model.Symbols
 import com.example.ryady.network.model.Response
+import com.example.ryady.view.screens.cart.OrderRequest
 import com.example.type.CartLineInput
 import com.example.type.CurrencyCode
 import com.example.type.CustomerAccessTokenCreateInput
@@ -118,7 +119,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
             lastName = newCustomer.lastName.getOrNull(),
             email = newCustomer.email,
             acceptsMarketing = newCustomer.acceptsMarketing.getOrNull() ?: true,
-            displayName = "${newCustomer.firstName} ${newCustomer.lastName}" ,
+            displayName = "${newCustomer.firstName} ${newCustomer.lastName}",
             phone = "011111",
             id = newCustomer.email
         )
@@ -143,9 +144,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun <T> deleteCartLine(
-        cartId: String, lineID: String
-    ): Response<T> {
+    override suspend fun <T> deleteCartLine(cartId: String, lineID: ArrayList<String>): Response<T> {
         TODO("Not yet implemented")
     }
 
@@ -173,6 +172,7 @@ class FakeRemoteDataSource : IRemoteDataSource {
             )
         }
     }
+
     override suspend fun <T> fetchProductsByCategory(category: String): Response<T> {
         val products = mutableListOf(
             Product(
@@ -303,6 +303,10 @@ class FakeRemoteDataSource : IRemoteDataSource {
     }
 
     override suspend fun <T> fetchOrders(userToken: String): Response<T> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createOrder(orderRequest: OrderRequest): Int {
         TODO("Not yet implemented")
     }
 }

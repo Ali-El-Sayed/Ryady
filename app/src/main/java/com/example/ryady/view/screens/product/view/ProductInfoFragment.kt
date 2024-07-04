@@ -41,28 +41,23 @@ private const val TAG = "ProductInfoFragment"
 
 class ProductInfoFragment : Fragment(), IProductInfo {
 
-    lateinit var binding: FragmentProductInfoBinding
+    private val binding: FragmentProductInfoBinding by lazy { FragmentProductInfoBinding.inflate(layoutInflater) }
     private var variantId = ""
     private var isFavourite: Boolean = false
     private lateinit var variant: ProductByIdQuery.Variants
     var id: String = ""
-    lateinit var email: String
-    lateinit var token: String
+    var email: String = ""
+    var token: String = ""
 
 
     private val viewModel by lazy {
-        val factory =
-            ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
+        val factory = ViewModelFactory(RemoteDataSource.getInstance(client = GraphqlClient.apiService))
         ViewModelProvider(this, factory)[ProductViewModel::class.java]
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentProductInfoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View = binding.root
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,18 +92,16 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                 withContext(Dispatchers.Main) {
                     when (it) {
                         is Response.Error -> {
-                            binding.animation.visibility = View.GONE
-                            Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE)
-                                .show()
+                            toggleLoadingIndicator()
+                            Snackbar.make(binding.root, it.message, Snackbar.ANIMATION_MODE_SLIDE).show()
                         }
 
-                        is Response.Loading -> {
-
-                        }
-
+                        is Response.Loading -> toggleLoadingIndicator()
                         is Response.Success -> {
+                            toggleLoadingIndicator()
                             viewModel.searchForAnItem(email = email, itemId = id) { result ->
                                 isFavourite = result
+                                Log.d(TAG, "onViewCreated: ${it.data}")
                                 updateUi(it.data)
                             }
                         }
@@ -123,9 +116,7 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                         is Response.Error -> Log.i(TAG, "onViewCreated: Error ${it.message}")
                         is Response.Loading -> {}
                         is Response.Success -> Toast.makeText(
-                            activity,
-                            "Item Added Successfully",
-                            Toast.LENGTH_SHORT
+                            activity, "Item Added Successfully", Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
@@ -133,12 +124,10 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         }
 
         binding.addToCart.setOnClickListener {
-            if (token.isNotEmpty() || token.isNotBlank()) {
-                lifecycleScope.launch {
-                    viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
-                }
-            } else
-                showRegisterDialog()
+            if (token.isNotEmpty() || token.isNotBlank()) lifecycleScope.launch {
+                viewModel.addItemToCart(viewModel.cartId, varientID = variantId, quantity = 1)
+            }
+            else showRegisterDialog()
 
         }
     }
@@ -167,10 +156,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.description.setTrimLines(2)
 
         val price = productInfo.priceRange.maxVariantPrice.amount.toString().toDouble()
-        val priceExchanged =
-            price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
-                TheExchangeRate.chosenCurrency.first
-            )!!)
+        val priceExchanged = price / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
+            TheExchangeRate.chosenCurrency.first
+        )!!)
 
         binding.price.text = priceExchanged.roundTo2DecimalPlaces().toString()
         binding.priceUnit.text = TheExchangeRate.chosenCurrency.first
@@ -193,11 +181,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
         binding.tvRating.text = rating.toString()
         binding.rvReview.adapter = ReviewsAdapter(reviewList)
 
-        if (isFavourite) {
-            binding.btnFavourite.setIcon(R.drawable.favorite_fill)
-        } else {
-            binding.btnFavourite.setIcon(R.drawable.favorite)
-        }
+        if (isFavourite) binding.btnFavourite.setIcon(R.drawable.favorite_fill)
+        else binding.btnFavourite.setIcon(R.drawable.favorite)
+
         binding.sizeList.adapter = SizeAdapter(sizeList.toList(), this)
 
         binding.btnFavourite.setOnClickListener {
@@ -205,30 +191,22 @@ class ProductInfoFragment : Fragment(), IProductInfo {
                 if (isFavourite) {
                     viewModel.deleteItem(email = email, id = id)
                     Toast.makeText(
-                        requireContext(),
-                        "Product Removed from Favourites",
-                        Toast.LENGTH_LONG
+                        requireContext(), "Product Removed from Favourites", Toast.LENGTH_LONG
                     ).show()
                     binding.btnFavourite.setIcon(R.drawable.favorite)
                     isFavourite = !isFavourite
                 } else {
                     viewModel.addItemToFav(email = email, productInfo)
                     Toast.makeText(
-                        requireContext(),
-                        "Product Added To Favourites",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
+                        requireContext(), "Product Added To Favourites", Toast.LENGTH_LONG
+                    ).show()
                     binding.btnFavourite.setIcon(R.drawable.favorite_fill)
                     isFavourite = !isFavourite
                 }
-            } else {
-                showRegisterDialog()
-            }
+            } else showRegisterDialog()
+
 
         }
-        binding.animation.visibility = View.GONE
-
 
     }
 
@@ -257,5 +235,9 @@ class ProductInfoFragment : Fragment(), IProductInfo {
             )
             binding.addToCart.isEnabled = true
         }
+    }
+
+    private fun toggleLoadingIndicator() {
+        binding.animation.visibility = if (binding.animation.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 }

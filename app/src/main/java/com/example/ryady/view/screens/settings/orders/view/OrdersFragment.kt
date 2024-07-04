@@ -73,9 +73,9 @@ class OrdersFragment : Fragment() {
                             is Response.Loading -> toggleLoadingIndicator()
                             is Response.Success -> {
                                 withContext(Dispatchers.Main) {
+                                    toggleLoadingIndicator()
                                     if (it.data.isNotEmpty()) TheExchangeRate.currencyInfo.collectLatest { ex ->
                                         if (ex == 1) adapter.submitList(it.data)
-                                        toggleLoadingIndicator()
                                     }
                                     else binding.imgNotFound.visibility = View.VISIBLE
                                 }

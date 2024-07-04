@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("StaticFieldLeak")
 object TheExchangeRate {
-    lateinit var currency: Currency
-    lateinit var chosenCurrency: Pair<String, String>
+    var currency: Currency = Currency()
+    var chosenCurrency: Pair<String, String> = Pair("", "")
     private lateinit var passedScope: CoroutineScope
     private lateinit var remoteDataSource: IRemoteDataSource
     private lateinit var context: Context

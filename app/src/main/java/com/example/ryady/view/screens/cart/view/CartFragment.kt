@@ -113,16 +113,14 @@ class CartFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.cartInfo.collectLatest { result ->
-                    when (result) {
-                        is Response.Error -> {}
-                        is Response.Loading -> {}
-                        is Response.Success -> {
-                            nList.clear()
-                            result.data.lines.edges.forEach { nList.add(it.node) }
-                        }
+            viewModel.cartInfo.collectLatest { result ->
+                when (result) {
+                    is Response.Success -> {
+                        nList.clear()
+                        result.data.lines.edges.forEach { nList.add(it.node) }
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -183,7 +181,6 @@ class CartFragment : Fragment() {
                     is Response.Success -> lifecycleScope.launch {
                         // Show order confirmation dialog
                         launch(Dispatchers.Main) {
-                            toggleLoadingIndicator()
                             val dialog = showOrderConfirmationDialog()
                             dialog.show()
                             delay(2000)
@@ -208,10 +205,7 @@ class CartFragment : Fragment() {
             viewModel.cartInfo.collectLatest { result ->
                 when (result) {
                     is Response.Error -> {}
-                    is Response.Loading -> {
-                        binding.topConstraint.visibility = View.GONE
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
+                    is Response.Loading -> binding.contentLayout.visibility = View.GONE
 
                     is Response.Success -> {
                         nList.clear()
@@ -219,20 +213,21 @@ class CartFragment : Fragment() {
                             nList.add(it.node)
                         }
                         if (nList.isEmpty()) {
-                            binding.button.setBackgroundColor(
-                                resources.getColor(R.color.Gray, requireContext().theme)
-                            )
-                            binding.button.text = "Add items to proceed"
-                            binding.button.isEnabled = false
+                            binding.button.apply {
+                                setBackgroundColor(resources.getColor(R.color.Gray, requireContext().theme))
+                                text = "Add items to proceed"
+                                isEnabled = false
+                            }
                             binding.emptyImage.visibility = View.VISIBLE
                         } else {
-                            binding.button.setBackgroundColor(
-                                resources.getColor(R.color.secondary, requireContext().theme)
-                            )
-                            binding.button.text = "Proceed to Payment"
-                            binding.button.isEnabled = true
+                            binding.button.apply {
+                                setBackgroundColor(
+                                    resources.getColor(R.color.secondary, requireContext().theme)
+                                )
+                                text = "Proceed to Payment"
+                                isEnabled = true
+                            }
                             binding.emptyImage.visibility = View.GONE
-
                         }
                         viewModel.checkoutUrl = result.data.checkoutUrl.toString()
                         taxes = ((result.data.cost.totalAmount.amount.toString()
@@ -257,8 +252,7 @@ class CartFragment : Fragment() {
                             subtotalExchanged.roundTo2DecimalPlaces().toString() + " " + TheExchangeRate.chosenCurrency.first
                         binding.tax.text = (totalExchanged - subtotalExchanged).roundTo2DecimalPlaces().toString()
                         cartAdapter.updateList(nList)
-                        binding.topConstraint.visibility = View.VISIBLE
-                        binding.progressBar.visibility = View.GONE
+                        binding.contentLayout.visibility = View.VISIBLE
                     }
                 }
             }
@@ -311,7 +305,6 @@ class CartFragment : Fragment() {
                         shippingAddress = convertToShippingAddress(add.data.first()),
                         discountCodes = discountCodes
                     )
-                    toggleLoadingIndicator()
                     lifecycleScope.launch { viewModel.createOrder(OrderRequest(order = order)) }
                 }
             } else ShopifyCheckoutSheetKit.present(
@@ -386,7 +379,4 @@ class CartFragment : Fragment() {
         return null
     }
 
-    private fun toggleLoadingIndicator() {
-        binding.frameLayout.visibility = if (binding.frameLayout.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-    }
 }

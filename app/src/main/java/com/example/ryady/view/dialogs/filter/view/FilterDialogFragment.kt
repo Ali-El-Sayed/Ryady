@@ -35,6 +35,7 @@ class FilterDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUi()
+        isCancelable = true
         binding.productsTypeChipGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.categoryType = when (checkedId) {
                 R.id.chip_shoes -> CategoryType.SHOES
@@ -72,7 +73,7 @@ class FilterDialogFragment : BottomSheetDialogFragment() {
         }
 
         if (min <= max) viewModel.priceRange = Range(min, max)
-        else Toast.makeText(requireActivity(), "Incorrect Range", Toast.LENGTH_SHORT).show()
+        else Toast.makeText(requireActivity(), "Incorrect Price Range", Toast.LENGTH_SHORT).show()
     }
 
     private fun setupUi() {
