@@ -38,10 +38,7 @@ class OrderDetailsAdapter : ListAdapter<Item, OrderDetailsAdapter.ViewHolder>(It
                 (item.price.toDouble() / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
                     TheExchangeRate.chosenCurrency.first
                 )!!)).roundTo2DecimalPlaces()
-            binding.productPrice.text = "$$total ${TheExchangeRate.chosenCurrency.first}"
+            binding.productPrice.text = "$total ${TheExchangeRate.chosenCurrency.first}"
         }
     }
 }
-
-
-

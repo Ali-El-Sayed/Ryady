@@ -41,7 +41,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-private const val TAG = "HomeScreen"
 
 class HomeScreen : Fragment() {
     private val binding by lazy { FragmentHomeScreenBinding.inflate(layoutInflater) }
