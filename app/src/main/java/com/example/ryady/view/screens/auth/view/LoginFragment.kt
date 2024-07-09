@@ -79,7 +79,9 @@ class LoginFragment : Fragment() {
                             when (customerResponse) {
                                 is Response.Error -> {
                                     Toast.makeText(
-                                        requireContext(), customerResponse.message, Toast.LENGTH_LONG
+                                        requireContext(),
+                                        customerResponse.message,
+                                        Toast.LENGTH_LONG
                                     ).show()
 
                                     binding.frameLayout.root.visibility = View.GONE
@@ -89,7 +91,9 @@ class LoginFragment : Fragment() {
 
                                 is Response.Success -> {
                                     saveUserData(
-                                        context = requireContext(), customer = customerResponse.data, customerToken = it.data
+                                        context = requireContext(),
+                                        customer = customerResponse.data,
+                                        customerToken = it.data
                                     )
 
                                     val database =
@@ -114,7 +118,8 @@ class LoginFragment : Fragment() {
                                                     )
                                                     withContext(Dispatchers.IO) {
                                                         requireActivity().move(
-                                                            requireContext(), MainActivity::class.java
+                                                            requireContext(),
+                                                            MainActivity::class.java
                                                         )
                                                         requireActivity().finish()
                                                     }

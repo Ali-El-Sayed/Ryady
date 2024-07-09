@@ -56,7 +56,7 @@ class OrdersAdapter(val onItemClicked: (Order) -> Unit) : ListAdapter<Order, Ord
                 (order.totalPrice.toDouble() / (TheExchangeRate.currency.rates?.get("EGP")!!) * (TheExchangeRate.currency.rates?.get(
                     TheExchangeRate.chosenCurrency.first
                 )!!)).roundTo2DecimalPlaces()
-            binding.totalPrice.text = "$$total ${TheExchangeRate.chosenCurrency.first}"
+            binding.totalPrice.text = "$total ${TheExchangeRate.chosenCurrency.first}"
             binding.clientName.text = "${order.address.firstName} ${order.address.lastName}".capitalize()
 
             val adapter = ProductsImagesAdapter()

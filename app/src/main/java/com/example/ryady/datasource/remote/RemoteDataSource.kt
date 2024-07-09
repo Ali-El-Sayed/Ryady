@@ -400,6 +400,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
                 Log.i(TAG, "getAllFavouriteItem: ${listProduct.size}")
             }
             productListL(listProduct)
+        }.addOnFailureListener {
+            Log.i(TAG, "checkVerification: $it")
         }
     }
 
@@ -415,6 +417,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         val parentRef = database.getReference("FavouriteCart")
         parentRef.child(encodeEmail(email)).child(itemId).get().addOnSuccessListener {
             isFound(it.exists())
+        }.addOnFailureListener {
+            Log.i(TAG, "searchForAnItem: ${it}")
         }
     }
 
@@ -426,7 +430,7 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         auth.createUserWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
             auth.currentUser?.sendEmailVerification()
         }.addOnFailureListener {
-
+            Log.i(TAG, "checkVerification: $it")
         }
     }
 
@@ -436,6 +440,8 @@ class RemoteDataSource private constructor(private val client: ApolloClient) : I
         val auth = Firebase.auth
         auth.signInWithEmailAndPassword(newCustomer.email, newCustomer.password).addOnSuccessListener {
             auth.currentUser?.isEmailVerified?.let { it1 -> isVerified(it1) }
+        }.addOnFailureListener {
+            Log.i(TAG, "checkVerification: $it")
         }
     }
 
