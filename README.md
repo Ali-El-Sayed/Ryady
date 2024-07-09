@@ -6,6 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Project Description](#project-description)
   - [Project Members](#project-members)
+  - [Record](#record)
   - [Task Management](#task-management)
   - [Project Repository](#project-repository)
   - [Architectural Design Pattern, Tools, and Libraries](#architectural-design-pattern-tools-and-libraries)
@@ -27,6 +28,9 @@ The Android M-Commerce Mobile App is a specialized platform for selling sportswe
 | Ahmed Goneim    | Cupons(Discount code) /Shopping Cart / Payment / Ads / Settings |
 | Ali El-Sayed    | Brands / Categories / Orders / Home Design                      |
 | Mohamed Hussein | Product info / Search / Favorites / Auth                        |
+
+## Record
+[Watch the full demo video](./demo.m4v)
 
 ## Task Management
 
