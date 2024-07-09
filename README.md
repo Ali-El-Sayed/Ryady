@@ -30,7 +30,7 @@ The Android M-Commerce Mobile App is a specialized platform for selling sportswe
 | Mohamed Hussein | Product info / Search / Favorites / Auth                        |
 
 ## Record
-[Watch the full demo video](./demo.m4v)
+[Watch the full demo video](./demo/demo.m4v)
 
 ## Task Management
 
